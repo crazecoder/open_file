@@ -82,5 +82,5 @@ OpenFile.open("/sdcard/text.txt");
             {".z",      "application/x-compress"},
             {".zip",    "application/x-zip-compressed"},
             {"",        "*/*"}
-};
+}
 ```
