@@ -2,3 +2,5 @@
 
 @interface OpenFilePlugin : NSObject<FlutterPlugin>
 @end
+@interface UIDocumentInteractionControllerDelegate
+@end

@@ -3,6 +3,8 @@ package com.crazecoder.openfile;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
@@ -29,31 +31,34 @@ public class OpenFilePlugin implements MethodCallHandler {
 
     @Override
     public void onMethodCall(MethodCall call, Result result) {
-        if (call.method.equals("getPlatformVersion")) {
-            result.success("Android " + android.os.Build.VERSION.RELEASE);
-        } else if (call.method.equals("open_file")) {
-            String path = call.argument("file_path").toString();
-            open(path);
+        if (call.method.equals("open_file")) {
+            String filePath = call.argument("file_path").toString();
+            File file = new File(filePath);
+            if (!file.exists()) {
+                result.success("the " + filePath + " file is not exists");
+                return;
+            }
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.addCategory("android.intent.category.DEFAULT");
+            if (Build.VERSION.SDK_INT >= 24) {
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                String packageName = context.getPackageName();
+                Uri uri = FileProvider.getUriForFile(context, packageName + ".fileProvider", new File(filePath));
+                intent.setDataAndType(uri, getFileType(filePath));
+            } else {
+                intent.setDataAndType(Uri.fromFile(file), getFileType(filePath));
+            }
+            context.startActivity(intent);
+            result.success("done");
         } else {
             result.notImplemented();
         }
     }
 
-    private void open(String filePath) {
-        File file = new File(filePath);
-        if (!file.exists()) {
-            Log.e("open_file", "the " + filePath + " file is not exists");
-            return;
-        }
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.addCategory("android.intent.category.DEFAULT");
-        intent.setDataAndType(Uri.fromFile(file), getFileType(filePath));
-        context.startActivity(intent);
-    }
 
     private String getFileType(String filePath) {
-        String[] fileStrs = filePath.split(".");
+        String[] fileStrs = filePath.split("\\.");
         String fileTypeStr = fileStrs[fileStrs.length - 1];
         switch (fileTypeStr) {
             case "3gp":
