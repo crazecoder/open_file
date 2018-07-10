@@ -1,6 +1,6 @@
 # open_file
 
-A plug-in that can open files for android
+A plugin that can open files by native app
 
 ## Usage
 
