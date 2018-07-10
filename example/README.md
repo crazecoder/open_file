@@ -10,7 +10,7 @@ To use this plugin, add <a href = "https://pub.dartlang.org/packages/open_file#-
 ```
 import 'package:open_file/open_file.dart';
 
-OpenFile.open("/sdcard/text.txt");
+OpenFile.open("/sdcard/example.txt");
 ```
 
 ## Support
