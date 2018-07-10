@@ -1,13 +1,16 @@
 name: open_file
 description: A new Flutter project.
 version: 0.0.1
-author:
-homepage:
+author: crazecoder <crazecoder@163.com>
+homepage: https://github.com/crazecoder/open_file
+
 
 dependencies:
   flutter:
     sdk: flutter
 
+environment:
+    sdk: ">=1.19.0 <2.0.0"
 # For information on the generic Dart part of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec
 
