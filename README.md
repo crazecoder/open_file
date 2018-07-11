@@ -1,6 +1,6 @@
 # open_file
 
-A plugin that can open files by native app
+A flutter plugin that can open files by native app
 
 ## Usage
 
@@ -14,6 +14,7 @@ OpenFile.open("/sdcard/example.txt");
 ```
 
 ## Support
+###android
 ```
 {
             {".3gp",    "video/3gpp"},
@@ -82,5 +83,39 @@ OpenFile.open("/sdcard/example.txt");
             {".z",      "application/x-compress"},
             {".zip",    "application/x-zip-compressed"},
             {"",        "*/*"}
+}
+```
+###IOS
+```
+{
+            {".rtf",    "public.rtf"},
+            {".txt",    "public.plain-text"},
+            {".html",   "public.html"},
+            {".htm",    "public.html"},
+            {".xml",    "public.xml"},
+            {".tar",    "public.tar-archive"},
+            {".gz",     "org.gnu.gnu-zip-archive"},
+            {".gzip",   "org.gnu.gnu-zip-archive"},
+            {".tgz",    "org.gnu.gnu-zip-tar-archive"},
+            {".jpg",    "public.jpeg"},
+            {".jpeg",   "public.jpeg"},
+            {".png",    "public.png"},
+            {".avi",    "public.avi"},
+            {".mpg",    "public.mpeg"},
+            {".mpeg",   "public.mpeg"},
+            {".mp4",    "public.mpeg-4"},
+            {".3gpp",   "public.3gpp"},
+            {".3gp",    "public.3gpp"},
+            {".mp3",    "public.mp3"},
+            {".zip",    "com.pkware.zip-archive"},
+            {".gif",    "com.compuserve.gif"},
+            {".bmp",    "com.microsoft.bmp"},
+            {".ico",    "com.microsoft.ico"},
+            {".doc",    "com.microsoft.word.doc"},
+            {".xls",    "com.microsoft.excel.xls"},
+            {".ppt",    "com.microsoft.powerpoint.​ppt"},
+            {".wav",    "com.microsoft.waveform-​audio"},
+            {".wm",     "com.microsoft.windows-​media-wm"},
+            {".wmv",    "com.microsoft.windows-​media-wmv"}
 }
 ```
