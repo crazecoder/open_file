@@ -85,7 +85,7 @@ OpenFile.open("/sdcard/example.txt");
             {"",        "*/*"}
 }
 ```
-###IOS
+###IOS with UTI
 ```
 {
             {".rtf",    "public.rtf"},
