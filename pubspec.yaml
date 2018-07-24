@@ -1,6 +1,6 @@
 name: open_file
 description: A flutter plugin that can open files by native app
-version: 1.0.3
+version: 1.0.4
 author: crazecoder <21527312@qq.com>
 homepage: https://github.com/crazecoder/open_file
 
