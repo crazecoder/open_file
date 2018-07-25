@@ -4,7 +4,7 @@ A flutter plugin that can open files by native app
 
 ## Usage
 
-To use this plugin, add [open_file](https://pub.dartlang.org/packages/open_file#-installing-tab-)as a dependency in your pubspec.yaml file.
+To use this plugin, add [open_file](https://pub.dartlang.org/packages/open_file#-installing-tab-) as a dependency in your pubspec.yaml file.
 
 ## Example
 ```
