@@ -4,7 +4,7 @@ A plug-in that can open files for android
 
 ## Usage
 
-To use this plugin, add <a href = "https://pub.dartlang.org/packages/open_file#-installing-tab-">open_file</a> as a dependency in your pubspec.yaml file.
+To use this plugin, add [open_file](https://pub.dartlang.org/packages/open_file#-installing-tab-)as a dependency in your pubspec.yaml file.
 
 ## Example
 ```

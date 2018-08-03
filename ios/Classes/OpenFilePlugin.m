@@ -19,7 +19,7 @@ static NSString *const CHANNEL_NAME = @"open_file";
         NSFileManager *fileManager=[NSFileManager defaultManager];
         BOOL fileExist=[fileManager fileExistsAtPath:msg];
         if(fileExist){
-            NSURL *resourceToOpen = [NSURL fileURLWithPath:msg];
+//            NSURL *resourceToOpen = [NSURL fileURLWithPath:msg];
             NSString *exestr = [msg pathExtension];
             UIDocumentInteractionController* documentController = [UIDocumentInteractionController interactionControllerWithURL:[NSURL fileURLWithPath:msg]];
             documentController.delegate=[UIApplication sharedApplication].delegate.window.rootViewController.transitioningDelegate;
@@ -88,5 +88,4 @@ static NSString *const CHANNEL_NAME = @"open_file";
         result(FlutterMethodNotImplemented);
     }
 }
-
 @end

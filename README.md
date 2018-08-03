@@ -1,6 +1,6 @@
 # open_file
 
-A flutter plugin that can open files by native app
+A plug-in that can call native APP to open files with string result in flutter,support iOS(UTI) and android(intent)
 
 ## Usage
 

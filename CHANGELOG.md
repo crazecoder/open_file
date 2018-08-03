@@ -1,3 +1,5 @@
+## 1.0.5
+* Just Support >=2.0.0-dev.28.0
 ## 1.0.4
 * Just Support Dart2
 ## 1.0.3

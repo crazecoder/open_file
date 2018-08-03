@@ -1,6 +1,6 @@
 name: open_file
-description: A flutter plugin that can open files by native app
-version: 1.0.4
+description: A plug-in that can call native APP to open files with string result in flutter,support iOS(UTI) and android(intent)
+version: 1.0.5
 author: crazecoder <21527312@qq.com>
 homepage: https://github.com/crazecoder/open_file
 
@@ -10,7 +10,7 @@ dependencies:
     sdk: flutter
 
 environment:
-    sdk: ">=2.0.0 <3.0.0"
+    sdk: ">=2.0.0-dev.28.0 <3.0.0"
 # For information on the generic Dart part of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec
 
