@@ -1,3 +1,5 @@
+## 1.0.7
+* resolve conflict with other plugins about FileProvider and multi appcompat-v7 compile
 ## 1.0.6
 * resolve conflict with image_provider plugin
 ## 1.0.5

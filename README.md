@@ -84,7 +84,40 @@ OpenFile.open("/sdcard/example.txt");
             {".zip",    "application/x-zip-compressed"},
             {"",        "*/*"}
 }
+
 ```
+when Conflict with other plugins about FileProvider, add code below in your /android/app/src/main/AndroidManifest.xml
+```
+<application>
+        ...
+        <provider
+                android:name="android.support.v4.content.FileProvider"
+                android:authorities="${applicationId}.fileProvider"
+                android:exported="false"
+                android:grantUriPermissions="true"
+                tools:replace="android:authorities">
+            <meta-data
+                    android:name="android.support.FILE_PROVIDER_PATHS"
+                    android:resource="@xml/filepaths"
+                    tools:replace="android:resource" />
+        </provider>
+</application>
+```
+when Android dependency 'com.android.support:appcompat-v7' has different version for the compile error, add code below in your /android/build.gradle
+```
+subprojects {
+    project.configurations.all {
+        resolutionStrategy.eachDependency { details ->
+            if (details.requested.group == 'com.android.support'
+                    && !details.requested.name.contains('multidex') ) {
+                details.useVersion "27.1.1"
+            }
+        }
+    }
+}
+```
+
+
 ###IOS with UTI
 ```
 {
