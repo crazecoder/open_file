@@ -89,7 +89,7 @@ OpenFile.open("/sdcard/example.txt");
 when Conflict with other plugins about FileProvider, add code below in your /android/app/src/main/AndroidManifest.xml
 ```
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          xmlns:tools="http://schemas.android.com/tools
+          xmlns:tools="http://schemas.android.com/tools"
           package="xxx.xxx.xxxxx">
     <application>
         ...
