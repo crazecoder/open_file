@@ -88,7 +88,10 @@ OpenFile.open("/sdcard/example.txt");
 ```
 when Conflict with other plugins about FileProvider, add code below in your /android/app/src/main/AndroidManifest.xml
 ```
-<application>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          xmlns:tools="http://schemas.android.com/tools
+          package="xxx.xxx.xxxxx">
+    <application>
         ...
         <provider
                 android:name="android.support.v4.content.FileProvider"
@@ -101,7 +104,8 @@ when Conflict with other plugins about FileProvider, add code below in your /and
                     android:resource="@xml/filepaths"
                     tools:replace="android:resource" />
         </provider>
-</application>
+    </application>
+</manifest>
 ```
 when Android dependency 'com.android.support:appcompat-v7' has different version for the compile error, add code below in your /android/build.gradle
 ```
