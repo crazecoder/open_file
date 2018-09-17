@@ -62,7 +62,7 @@ public class OpenFilePlugin implements MethodCallHandler, PluginRegistry.Activit
     @Override
     public boolean onActivityResult(int requestCode, int resultCode, Intent intent) {
         if (requestCode == 1){
-            this.result.success('done');
+            this.result.success("done");
             return true;
         }
         return false;
