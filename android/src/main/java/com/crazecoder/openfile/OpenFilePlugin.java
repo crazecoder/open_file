@@ -1,7 +1,6 @@
 package com.crazecoder.openfile;
 
 import android.content.Context;
-import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
@@ -11,7 +10,6 @@ import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
-import io.flutter.plugin.common.PluginRegistry;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
 
 import java.io.File;
@@ -19,30 +17,21 @@ import java.io.File;
 /**
  * OpenFilePlugin
  */
-public class OpenFilePlugin implements MethodCallHandler, PluginRegistry.ActivityResultListener {
+public class OpenFilePlugin implements MethodCallHandler {
     /**
      * Plugin registration.
      */
     static Context context;
-    private Activity activity;
-    private Result result;
-
-    private OpenFilePlugin(Activity activity) {
-        this.activity = activity;
-    }
 
     public static void registerWith(Registrar registrar) {
         final MethodChannel channel = new MethodChannel(registrar.messenger(), "open_file");
-        OpenFilePlugin plugin = new OpenFilePlugin(registrar.activity());
-        channel.setMethodCallHandler(plugin);
+        channel.setMethodCallHandler(new OpenFilePlugin());
         context = registrar.context();
-        registrar.addActivityResultListener(plugin);
     }
 
     @Override
     public void onMethodCall(MethodCall call, Result result) {
         if (call.method.equals("open_file")) {
-            this.result = result;
             String filePath = call.argument("file_path").toString();
             File file = new File(filePath);
             if (!file.exists()) {
@@ -60,23 +49,12 @@ public class OpenFilePlugin implements MethodCallHandler, PluginRegistry.Activit
             } else {
                 intent.setDataAndType(Uri.fromFile(file), getFileType(filePath));
             }
-            activity.startActivityForResult(intent, 1);
-            //result.success("done");
+            context.startActivity(intent);
+            result.success("done");
         } else {
             result.notImplemented();
         }
     }
-
-    @Override
-    public boolean onActivityResult(int requestCode, int resultCode, Intent intent) {
-        Log.d("activity-result", "resultCode=" + resultCode + "; requestCode=" + requestCode);
-        if (requestCode == 1){
-            this.result.success("done");
-            return true;
-        }
-        return false;
-    }
-
 
 
     private String getFileType(String filePath) {
