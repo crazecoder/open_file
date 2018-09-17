@@ -1,6 +1,6 @@
 #import <Flutter/Flutter.h>
 
-@interface OpenFilePlugin : UIViewController<FlutterPlugin, UIDocumentInteractionControllerDelegate>
+@interface OpenFilePlugin : NSObject<FlutterPlugin>
 @end
 @interface UIDocumentInteractionControllerDelegate
 @end
