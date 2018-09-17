@@ -49,7 +49,7 @@ public class OpenFilePlugin implements MethodCallHandler, PluginRegistry.Activit
                 result.success("the " + filePath + " file is not exists");
                 return;
             }
-            Intent intent = new Intent(Intent.ACTION_PICK);
+            Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.addCategory("android.intent.category.DEFAULT");
             if (Build.VERSION.SDK_INT >= 24) {
@@ -69,6 +69,7 @@ public class OpenFilePlugin implements MethodCallHandler, PluginRegistry.Activit
 
     @Override
     public boolean onActivityResult(int requestCode, int resultCode, Intent intent) {
+        Log.d("activity-result", "resultCode=" + resultCode + "; requestCode=" + requestCode);
         if (requestCode == 1){
             this.result.success("done");
             return true;
