@@ -112,12 +112,10 @@ static NSString *const CHANNEL_NAME = @"open_file";
 }
 
 - (void)documentInteractionControllerDidEndPreview:(UIDocumentInteractionController *)controller {
-    _result(@"Finished");
-    NSLog(@"Finished");
+    _result(@"done");
 }
 
 - (UIViewController *)documentInteractionControllerViewControllerForPreview:(UIDocumentInteractionController *)controller {
-    NSLog(@"Fetching view controller");
     return  _viewController;
 }
 
