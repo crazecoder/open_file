@@ -76,6 +76,8 @@ static NSString *const CHANNEL_NAME = @"open_file";
                 documentController.UTI=@"com.microsoft.windows-​media-wm";
             }else if([exestr isEqualToString:@"wmv"]){
                 documentController.UTI=@"com.microsoft.windows-​media-wmv";
+            }else if([exestr isEqualToString:@"pdf"]){
+                documentController.UTI=@"com.adobe.pdf";
             }
             [documentController presentOpenInMenuFromRect:CGRectMake(500,20,100,100) inView:[UIApplication sharedApplication].delegate.window.rootViewController.view animated:YES];
             
