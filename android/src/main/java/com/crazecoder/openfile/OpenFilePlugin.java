@@ -1,6 +1,7 @@
 package com.crazecoder.openfile;
 
 import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
@@ -23,11 +24,17 @@ public class OpenFilePlugin implements MethodCallHandler, PluginRegistry.Activit
      * Plugin registration.
      */
     static Context context;
+    private Activity activity;
     private Result result;
+
+    private DocumentsPickerPlugin(Activity activity) {
+        this.activity = activity;
+    }
 
     public static void registerWith(Registrar registrar) {
         final MethodChannel channel = new MethodChannel(registrar.messenger(), "open_file");
-        channel.setMethodCallHandler(new OpenFilePlugin());
+        OpenFilePlugin plugin = new OpenFilePlugin(registrar.activity());
+        channel.setMethodCallHandler(plugin);
         context = registrar.context();
     }
 
@@ -52,7 +59,7 @@ public class OpenFilePlugin implements MethodCallHandler, PluginRegistry.Activit
             } else {
                 intent.setDataAndType(Uri.fromFile(file), getFileType(filePath));
             }
-            context.startActivityForResult(intent, 1);
+            activity.startActivityForResult(intent, 1);
             //result.success("done");
         } else {
             result.notImplemented();
