@@ -79,7 +79,7 @@ static NSString *const CHANNEL_NAME = @"open_file";
             }else if([exestr isEqualToString:@"pdf"]){
                 documentController.UTI=@"com.adobe.pdf";
             }
-            [documentController presentOpenInMenuFromRect:CGRectMake(500,20,100,100) inView:[UIApplication sharedApplication].delegate.window.rootViewController.view animated:YES];
+            [documentController presentPreviewAnimated:YES];
             
             result(@"done");
             
