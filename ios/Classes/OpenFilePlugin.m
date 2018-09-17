@@ -78,8 +78,14 @@ static NSString *const CHANNEL_NAME = @"open_file";
                 documentController.UTI=@"com.microsoft.windows-​media-wmv";
             }else if([exestr isEqualToString:@"pdf"]){
                 documentController.UTI=@"com.adobe.pdf";
+            }else {
+                NSLog(@"doc type not supported for preview");
+                NSLog(exestr);
             }
-            [documentController presentPreviewAnimated:YES];
+            
+            NSLog(@"openning file");
+            
+            [documentController presentOpenInMenuFromRect:CGRectMake(500,20,100,100) inView:[UIApplication sharedApplication].delegate.window.rootViewController.view animated:YES];
             
             result(@"done");
             
