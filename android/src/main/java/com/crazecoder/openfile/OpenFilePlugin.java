@@ -36,6 +36,7 @@ public class OpenFilePlugin implements MethodCallHandler, PluginRegistry.Activit
         OpenFilePlugin plugin = new OpenFilePlugin(registrar.activity());
         channel.setMethodCallHandler(plugin);
         context = registrar.context();
+        registrar.addActivityResultListener(plugin);
     }
 
     @Override
