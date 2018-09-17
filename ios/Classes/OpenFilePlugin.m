@@ -32,6 +32,7 @@ static NSString *const CHANNEL_NAME = @"open_file";
 
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
     if ([@"open_file" isEqualToString:call.method]) {
+        _result = result;
         NSString *msg = call.arguments[@"file_path"];
         NSFileManager *fileManager=[NSFileManager defaultManager];
         BOOL fileExist=[fileManager fileExistsAtPath:msg];
@@ -100,13 +101,7 @@ static NSString *const CHANNEL_NAME = @"open_file";
                 NSLog(exestr);
             }
             
-            NSLog(@"openning file");
-            
             [_documentController presentPreviewAnimated:YES];
-            
-            // [_documentController presentOpenInMenuFromRect:CGRectMake(500,20,100,100) inView:[UIApplication sharedApplication].delegate.window.rootViewController.view animated:YES];
-            
-            result(@"done");
             
         }else{
             result(@"the file is not exist");
@@ -117,21 +112,13 @@ static NSString *const CHANNEL_NAME = @"open_file";
 }
 
 - (void)documentInteractionControllerDidEndPreview:(UIDocumentInteractionController *)controller {
-   // _result(@"Finished");
+    _result(@"Finished");
     NSLog(@"Finished");
 }
 
 - (UIViewController *)documentInteractionControllerViewControllerForPreview:(UIDocumentInteractionController *)controller {
-    NSLog(@"Finished");
+    NSLog(@"Fetching view controller");
     return  _viewController;
-}
-
-- (void)documentInteractionController:(UIDocumentInteractionController *)controller willBeginSendingToApplication:(NSString *)application {
-    NSLog(@"Starting to send this to %@", application);
-}
-
-- (void)documentInteractionController:(UIDocumentInteractionController *)controller didEndSendingToApplication:(NSString *)application {
-    NSLog(@"We're done sending the document.");
 }
 
 
