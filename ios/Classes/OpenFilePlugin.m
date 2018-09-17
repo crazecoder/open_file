@@ -101,7 +101,10 @@ static NSString *const CHANNEL_NAME = @"open_file";
                 NSLog(exestr);
             }
             
-            [_documentController presentPreviewAnimated:YES];
+            BOOL previewSucceded = [_documentController presentPreviewAnimated:YES];
+            if(!previewSucceded){
+                [_documentController presentOpenInMenuFromRect:CGRectMake(500,20,100,100) inView:_viewController.view animated:YES];
+            }
             
         }else{
             result(@"the file is not exist");
