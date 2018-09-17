@@ -90,4 +90,10 @@ static NSString *const CHANNEL_NAME = @"open_file";
         result(FlutterMethodNotImplemented);
     }
 }
+
+- (UIViewController *)documentInteractionControllerViewControllerForPreview:(UIDocumentInteractionController *)controller {
+    return [UIApplication sharedApplication].delegate.window.rootViewController;
+}
+
+
 @end
