@@ -22,7 +22,7 @@ static NSString *const CHANNEL_NAME = @"open_file";
 //            NSURL *resourceToOpen = [NSURL fileURLWithPath:msg];
             NSString *exestr = [msg pathExtension];
             UIDocumentInteractionController* documentController = [UIDocumentInteractionController interactionControllerWithURL:[NSURL fileURLWithPath:msg]];
-            documentController.delegate=[UIApplication sharedApplication].delegate.window.rootViewController.transitioningDelegate;
+            [documentController setDelegate:self];
             if([exestr isEqualToString:@"rtf"]){
                 documentController.UTI=@"public.rtf";
             }else if([exestr isEqualToString:@"txt"]){
@@ -92,7 +92,7 @@ static NSString *const CHANNEL_NAME = @"open_file";
 }
 
 - (UIViewController *)documentInteractionControllerViewControllerForPreview:(UIDocumentInteractionController *)controller {
-    return [UIApplication sharedApplication].delegate.window.rootViewController;
+    return self;
 }
 
 
