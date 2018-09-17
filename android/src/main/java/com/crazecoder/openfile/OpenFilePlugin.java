@@ -17,11 +17,12 @@ import java.io.File;
 /**
  * OpenFilePlugin
  */
-public class OpenFilePlugin implements MethodCallHandler {
+public class OpenFilePlugin implements MethodCallHandler, PluginRegistry.ActivityResultListener {
     /**
      * Plugin registration.
      */
     static Context context;
+    private Result result;
 
     public static void registerWith(Registrar registrar) {
         final MethodChannel channel = new MethodChannel(registrar.messenger(), "open_file");
@@ -32,6 +33,7 @@ public class OpenFilePlugin implements MethodCallHandler {
     @Override
     public void onMethodCall(MethodCall call, Result result) {
         if (call.method.equals("open_file")) {
+            this.result = result;
             String filePath = call.argument("file_path").toString();
             File file = new File(filePath);
             if (!file.exists()) {
@@ -49,12 +51,22 @@ public class OpenFilePlugin implements MethodCallHandler {
             } else {
                 intent.setDataAndType(Uri.fromFile(file), getFileType(filePath));
             }
-            context.startActivity(intent);
-            result.success("done");
+            context.startActivityForResult(intent, 1);
+            //result.success("done");
         } else {
             result.notImplemented();
         }
     }
+
+    @Override
+    public boolean onActivityResult(int requestCode, int resultCode, Intent intent) {
+        if (requestCode == 1){
+            this.result.success('done');
+            return true;
+        }
+        return false;
+    }
+
 
 
     private String getFileType(String filePath) {
