@@ -117,7 +117,8 @@ static NSString *const CHANNEL_NAME = @"open_file";
 }
 
 - (void)documentInteractionControllerDidEndPreview:(UIDocumentInteractionController *)controller {
-    _result(@"Finished");
+   // _result(@"Finished");
+    NSLog(@"Finished");
 }
 
 - (UIViewController *)documentInteractionControllerViewControllerForPreview:(UIDocumentInteractionController *)controller {
