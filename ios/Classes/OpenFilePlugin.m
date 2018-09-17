@@ -8,6 +8,7 @@ static NSString *const CHANNEL_NAME = @"open_file";
 @implementation OpenFilePlugin{
     FlutterResult _result;
     UIViewController *_viewController;
+    UIDocumentInteractionController *_documentController;
     UIDocumentInteractionController *_interactionController;
 }
 
