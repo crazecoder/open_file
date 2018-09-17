@@ -26,7 +26,6 @@ static NSString *const CHANNEL_NAME = @"open_file";
     self = [super init];
     if (self) {
         _viewController = viewController;
-        _documentController = [UIDocumentInteractionController interactionControllerWithURL:[NSURL fileURLWithPath:msg]];
     }
     return self;
 }
@@ -39,6 +38,7 @@ static NSString *const CHANNEL_NAME = @"open_file";
         if(fileExist){
 //            NSURL *resourceToOpen = [NSURL fileURLWithPath:msg];
             NSString *exestr = [msg pathExtension];
+            _documentController = [UIDocumentInteractionController interactionControllerWithURL:[NSURL fileURLWithPath:msg]];
             _documentController.delegate = self;
             if([exestr isEqualToString:@"rtf"]){
                 _documentController.UTI=@"public.rtf";
