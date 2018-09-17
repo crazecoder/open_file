@@ -27,7 +27,7 @@ public class OpenFilePlugin implements MethodCallHandler, PluginRegistry.Activit
     private Activity activity;
     private Result result;
 
-    private DocumentsPickerPlugin(Activity activity) {
+    private OpenFilePlugin(Activity activity) {
         this.activity = activity;
     }
 
