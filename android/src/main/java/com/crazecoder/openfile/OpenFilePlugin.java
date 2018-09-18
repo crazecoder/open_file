@@ -211,7 +211,6 @@ public class OpenFilePlugin implements MethodCallHandler, PluginRegistry.Activit
     @Override
     public boolean onActivityResult(int requestCode, int resultCode, Intent intent) {
         if (requestCode == 0x317590) {
-            Log.d("activity-result", "got result!");
             result.success("done");
         }
         return false;
