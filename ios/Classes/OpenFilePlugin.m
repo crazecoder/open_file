@@ -98,11 +98,11 @@ static NSString *const CHANNEL_NAME = @"open_file";
                 _documentController.UTI=@"com.adobe.pdf";
             }else {
                 NSLog(@"doc type not supported for preview");
-                NSLog(exestr);
+                NSLog("%s", exestr);
             }
             
-            BOOL previewSucceded = [_documentController presentPreviewAnimated:YES];
-            if(!previewSucceded){
+            BOOL previewSucceeded = [_documentController presentPreviewAnimated:YES];
+            if(!previewSucceeded){
                 [_documentController presentOpenInMenuFromRect:CGRectMake(500,20,100,100) inView:_viewController.view animated:YES];
             }
             
