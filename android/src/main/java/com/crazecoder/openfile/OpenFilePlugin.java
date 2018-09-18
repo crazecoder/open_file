@@ -1,15 +1,18 @@
 package com.crazecoder.openfile;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.support.v4.content.FileProvider;
 import android.util.Log;
+
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
+import io.flutter.plugin.common.PluginRegistry;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
 
 import java.io.File;
@@ -17,21 +20,31 @@ import java.io.File;
 /**
  * OpenFilePlugin
  */
-public class OpenFilePlugin implements MethodCallHandler {
+public class OpenFilePlugin implements MethodCallHandler, PluginRegistry.ActivityResultListener {
     /**
      * Plugin registration.
      */
-    static Context context;
+    private Context context;
+    private Activity activity;
+    private Result result;
+
+
+    private OpenFilePlugin(Context context, Activity activity) {
+        this.context = context;
+        this.activity = activity;
+    }
 
     public static void registerWith(Registrar registrar) {
         final MethodChannel channel = new MethodChannel(registrar.messenger(), "open_file");
-        channel.setMethodCallHandler(new OpenFilePlugin());
-        context = registrar.context();
+        OpenFilePlugin plugin = new OpenFilePlugin(registrar.context(), registrar.activity());
+        channel.setMethodCallHandler(plugin);
+        registrar.addActivityResultListener(plugin);
     }
 
     @Override
     public void onMethodCall(MethodCall call, Result result) {
         if (call.method.equals("open_file")) {
+            this.result = result;
             String filePath = call.argument("file_path").toString();
             File file = new File(filePath);
             if (!file.exists()) {
@@ -39,7 +52,7 @@ public class OpenFilePlugin implements MethodCallHandler {
                 return;
             }
             Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
             intent.addCategory("android.intent.category.DEFAULT");
             if (Build.VERSION.SDK_INT >= 24) {
                 intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
@@ -49,8 +62,7 @@ public class OpenFilePlugin implements MethodCallHandler {
             } else {
                 intent.setDataAndType(Uri.fromFile(file), getFileType(filePath));
             }
-            context.startActivity(intent);
-            result.success("done");
+            activity.startActivityForResult(intent, 0x317590);
         } else {
             result.notImplemented();
         }
@@ -194,5 +206,14 @@ public class OpenFilePlugin implements MethodCallHandler {
             default:
                 return "*/*";
         }
+    }
+
+    @Override
+    public boolean onActivityResult(int requestCode, int resultCode, Intent intent) {
+        if (requestCode == 0x317590) {
+            Log.d("activity-result", "got result!");
+            result.success("done");
+        }
+        return false;
     }
 }
