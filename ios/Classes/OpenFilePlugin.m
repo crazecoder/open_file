@@ -98,7 +98,7 @@ static NSString *const CHANNEL_NAME = @"open_file";
                 _documentController.UTI=@"com.adobe.pdf";
             }else {
                 NSLog(@"doc type not supported for preview");
-                NSLog("%s", exestr);
+                NSLog(@"%@", exestr);
             }
             
             BOOL previewSucceeded = [_documentController presentPreviewAnimated:YES];
