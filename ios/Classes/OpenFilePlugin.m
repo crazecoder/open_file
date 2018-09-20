@@ -1,85 +1,110 @@
 #import "OpenFilePlugin.h"
 
+@interface OpenFilePlugin ()<UIDocumentInteractionControllerDelegate>
+@end
 
 static NSString *const CHANNEL_NAME = @"open_file";
 
-@implementation OpenFilePlugin
+@implementation OpenFilePlugin{
+    FlutterResult _result;
+    UIViewController *_viewController;
+    UIDocumentInteractionController *_documentController;
+    UIDocumentInteractionController *_interactionController;
+}
+
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
     FlutterMethodChannel* channel = [FlutterMethodChannel
                                      methodChannelWithName:CHANNEL_NAME
                                      binaryMessenger:[registrar messenger]];
     UIViewController *viewController =
     [UIApplication sharedApplication].delegate.window.rootViewController;
-    OpenFilePlugin* instance = [[OpenFilePlugin alloc] init];
+    OpenFilePlugin* instance = [[OpenFilePlugin alloc] initWithViewController:viewController];
     [registrar addMethodCallDelegate:instance channel:channel];
 }
+
+- (instancetype)initWithViewController:(UIViewController *)viewController {
+    self = [super init];
+    if (self) {
+        _viewController = viewController;
+    }
+    return self;
+}
+
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
     if ([@"open_file" isEqualToString:call.method]) {
+        _result = result;
         NSString *msg = call.arguments[@"file_path"];
         NSFileManager *fileManager=[NSFileManager defaultManager];
         BOOL fileExist=[fileManager fileExistsAtPath:msg];
         if(fileExist){
 //            NSURL *resourceToOpen = [NSURL fileURLWithPath:msg];
             NSString *exestr = [msg pathExtension];
-            UIDocumentInteractionController* documentController = [UIDocumentInteractionController interactionControllerWithURL:[NSURL fileURLWithPath:msg]];
-            documentController.delegate=[UIApplication sharedApplication].delegate.window.rootViewController.transitioningDelegate;
+            _documentController = [UIDocumentInteractionController interactionControllerWithURL:[NSURL fileURLWithPath:msg]];
+            _documentController.delegate = self;
             if([exestr isEqualToString:@"rtf"]){
-                documentController.UTI=@"public.rtf";
+                _documentController.UTI=@"public.rtf";
             }else if([exestr isEqualToString:@"txt"]){
-                documentController.UTI=@"public.plain-text";
+                _documentController.UTI=@"public.plain-text";
             }else if([exestr isEqualToString:@"html"]||
                      [exestr isEqualToString:@"htm"]){
-                documentController.UTI=@"public.html";
+                _documentController.UTI=@"public.html";
             }else if([exestr isEqualToString:@"xml"]){
-                documentController.UTI=@"public.xml";
+                _documentController.UTI=@"public.xml";
             }else if([exestr isEqualToString:@"tar"]){
-                documentController.UTI=@"public.tar-archive";
+                _documentController.UTI=@"public.tar-archive";
             }else if([exestr isEqualToString:@"gz"]||
                      [exestr isEqualToString:@"gzip"]){
-                documentController.UTI=@"org.gnu.gnu-zip-archive";
+                _documentController.UTI=@"org.gnu.gnu-zip-archive";
             }else if([exestr isEqualToString:@"tgz"]){
-                documentController.UTI=@"org.gnu.gnu-zip-tar-archive";
+                _documentController.UTI=@"org.gnu.gnu-zip-tar-archive";
             }else if([exestr isEqualToString:@"jpg"]||
                      [exestr isEqualToString:@"jpeg"]){
-                documentController.UTI=@"public.jpeg";
+                _documentController.UTI=@"public.jpeg";
             }else if([exestr isEqualToString:@"png"]){
-                documentController.UTI=@"public.png";
+                _documentController.UTI=@"public.png";
             }else if([exestr isEqualToString:@"avi"]){
-                documentController.UTI=@"public.avi";
+                _documentController.UTI=@"public.avi";
             }else if([exestr isEqualToString:@"mpg"]||
                      [exestr isEqualToString:@"mpeg"]){
-                documentController.UTI=@"public.mpeg";
+                _documentController.UTI=@"public.mpeg";
             }else if([exestr isEqualToString:@"mp4"]){
-                documentController.UTI=@"public.mpeg-4";
+                _documentController.UTI=@"public.mpeg-4";
             }else if([exestr isEqualToString:@"3gpp"]||
                      [exestr isEqualToString:@"3gp"]){
-                documentController.UTI=@"public.3gpp";
+                _documentController.UTI=@"public.3gpp";
             }else if([exestr isEqualToString:@"mp3"]){
-                documentController.UTI=@"public.mp3";
+                _documentController.UTI=@"public.mp3";
             }else if([exestr isEqualToString:@"zip"]){
-                documentController.UTI=@"com.pkware.zip-archive";
+                _documentController.UTI=@"com.pkware.zip-archive";
             }else if([exestr isEqualToString:@"gif"]){
-                documentController.UTI=@"com.compuserve.gif";
+                _documentController.UTI=@"com.compuserve.gif";
             }else if([exestr isEqualToString:@"bmp"]){
-                documentController.UTI=@"com.microsoft.bmp";
+                _documentController.UTI=@"com.microsoft.bmp";
             }else if([exestr isEqualToString:@"ico"]){
-                documentController.UTI=@"com.microsoft.ico";
+                _documentController.UTI=@"com.microsoft.ico";
             }else if([exestr isEqualToString:@"doc"]){
-                documentController.UTI=@"com.microsoft.word.doc";
+                _documentController.UTI=@"com.microsoft.word.doc";
             }else if([exestr isEqualToString:@"xls"]){
-                documentController.UTI=@"com.microsoft.excel.xls";
+                _documentController.UTI=@"com.microsoft.excel.xls";
             }else if([exestr isEqualToString:@"ppt"]){
-                documentController.UTI=@"com.microsoft.powerpoint.​ppt";
+                _documentController.UTI=@"com.microsoft.powerpoint.​ppt";
             }else if([exestr isEqualToString:@"wav"]){
-                documentController.UTI=@"com.microsoft.waveform-​audio";
+                _documentController.UTI=@"com.microsoft.waveform-​audio";
             }else if([exestr isEqualToString:@"wm"]){
-                documentController.UTI=@"com.microsoft.windows-​media-wm";
+                _documentController.UTI=@"com.microsoft.windows-​media-wm";
             }else if([exestr isEqualToString:@"wmv"]){
-                documentController.UTI=@"com.microsoft.windows-​media-wmv";
+                _documentController.UTI=@"com.microsoft.windows-​media-wmv";
+            }else if([exestr isEqualToString:@"pdf"]){
+                _documentController.UTI=@"com.adobe.pdf";
+            }else {
+                NSLog(@"doc type not supported for preview");
+                NSLog(@"%@", exestr);
             }
-            [documentController presentOpenInMenuFromRect:CGRectMake(500,20,100,100) inView:[UIApplication sharedApplication].delegate.window.rootViewController.view animated:YES];
             
-            result(@"done");
+            BOOL previewSucceeded = [_documentController presentPreviewAnimated:YES];
+            if(!previewSucceeded){
+                [_documentController presentOpenInMenuFromRect:CGRectMake(500,20,100,100) inView:_viewController.view animated:YES];
+            }
             
         }else{
             result(@"the file is not exist");
@@ -88,4 +113,14 @@ static NSString *const CHANNEL_NAME = @"open_file";
         result(FlutterMethodNotImplemented);
     }
 }
+
+- (void)documentInteractionControllerDidEndPreview:(UIDocumentInteractionController *)controller {
+    _result(@"done");
+}
+
+- (UIViewController *)documentInteractionControllerViewControllerForPreview:(UIDocumentInteractionController *)controller {
+    return  _viewController;
+}
+
+
 @end
