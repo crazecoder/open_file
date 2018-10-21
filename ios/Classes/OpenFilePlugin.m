@@ -101,6 +101,8 @@ static NSString *const CHANNEL_NAME = @"open_file";
                     _documentController.UTI=@"com.microsoft.windows-​media-wmv";
                 }else if([exestr isEqualToString:@"pdf"]){
                     _documentController.UTI=@"com.adobe.pdf";
+                }else if([exestr isEqualToString:@"csv"]){
+                    _documentController.UTI=@"public.comma-separated-values-text";
                 }else {
                     NSLog(@"doc type not supported for preview");
                     NSLog(@"%@", exestr);

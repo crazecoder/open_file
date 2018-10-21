@@ -28,6 +28,7 @@ OpenFile.open("/sdcard/example.txt");
             {".class",  "application/octet-stream"},
             {".conf",   "text/plain"},
             {".cpp",    "text/plain"},
+            {".csv",    "text/comma-separated-values"},
             {".doc",    "application/msword"},
             {".docx",   "application/vnd.openxmlformats-officedocument.wordprocessingml.document"},
             {".xls",    "application/vnd.ms-excel"},
@@ -154,7 +155,8 @@ subprojects {
             {".ppt",    "com.microsoft.powerpoint.​ppt"},
             {".wav",    "com.microsoft.waveform-​audio"},
             {".wm",     "com.microsoft.windows-​media-wm"},
-            {".wmv",    "com.microsoft.windows-​media-wmv"},
-            {".pdf",    "com.adobe.pdf"}
+            {".wmv",    "com.microsoft.windows-​media-wmv"}
+            {".rtf",    "public.rtf"},
+            {".csv",    "public.comma-separated-values-text"},
 }
 ```
