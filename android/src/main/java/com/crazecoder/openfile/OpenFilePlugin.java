@@ -20,13 +20,12 @@ import java.io.File;
 /**
  * OpenFilePlugin
  */
-public class OpenFilePlugin implements MethodCallHandler, PluginRegistry.ActivityResultListener {
+public class OpenFilePlugin implements MethodCallHandler {
     /**
      * Plugin registration.
      */
     private Context context;
     private Activity activity;
-    private Result result;
 
 
     private OpenFilePlugin(Context context, Activity activity) {
@@ -38,13 +37,11 @@ public class OpenFilePlugin implements MethodCallHandler, PluginRegistry.Activit
         final MethodChannel channel = new MethodChannel(registrar.messenger(), "open_file");
         OpenFilePlugin plugin = new OpenFilePlugin(registrar.context(), registrar.activity());
         channel.setMethodCallHandler(plugin);
-        registrar.addActivityResultListener(plugin);
     }
 
     @Override
     public void onMethodCall(MethodCall call, Result result) {
         if (call.method.equals("open_file")) {
-            this.result = result;
             String filePath = call.argument("file_path").toString();
             File file = new File(filePath);
             if (!file.exists()) {
@@ -62,7 +59,8 @@ public class OpenFilePlugin implements MethodCallHandler, PluginRegistry.Activit
             } else {
                 intent.setDataAndType(Uri.fromFile(file), getFileType(filePath));
             }
-            activity.startActivityForResult(intent, 0x317590);
+            activity.startActivity(intent);
+            result.success("done");
         } else {
             result.notImplemented();
         }
@@ -208,11 +206,4 @@ public class OpenFilePlugin implements MethodCallHandler, PluginRegistry.Activit
         }
     }
 
-    @Override
-    public boolean onActivityResult(int requestCode, int resultCode, Intent intent) {
-        if (requestCode == 0x317590) {
-            result.success("done");
-        }
-        return false;
-    }
 }

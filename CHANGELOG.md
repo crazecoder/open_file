@@ -1,3 +1,7 @@
+## 1.1.1
+* fix startActivity crash in android
+## 1.1.0
+* fix ios open file
 ## 1.0.7
 * resolve conflict with other plugins about FileProvider and multi appcompat-v7 compile
 ## 1.0.6

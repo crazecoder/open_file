@@ -12,11 +12,10 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   String _openResult = 'Unknown';
-
   @override
   void initState() {
     super.initState();
-    openFile("/sdcard/Download/Translate.apk").then((_result){
+    openFile("/storage/emulated/0/Download/2.jpg").then((_result){
       setState(() {
         _openResult = _result;
       });
@@ -36,7 +35,7 @@ class _MyAppState extends State<MyApp> {
           title: const Text('Plugin example app'),
         ),
         body: new Center(
-          child: new Text('open result: $_openResult\n'),
+          child: new GestureDetector(child: new Text('open result: $_openResult\n'),),
         ),
       ),
     );
