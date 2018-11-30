@@ -1,3 +1,5 @@
+## 1.1.2
+* Use FileProvider subclass to avoid collisions
 ## 1.1.1
 * fix startActivity crash in android
 ## 1.1.0

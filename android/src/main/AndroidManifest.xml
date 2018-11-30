@@ -4,14 +4,14 @@
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
     <application>
         <provider
-            android:name="android.support.v4.content.FileProvider"
+            android:name="com.crazecoder.openfile.OpenFileFileProvider"
             android:authorities="${applicationId}.fileProvider"
             android:exported="false"
             android:grantUriPermissions="true"
             >
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/filepaths"
+                android:resource="@xml/flutter_open_file_filepaths"
                  />
         </provider>
     </application>
