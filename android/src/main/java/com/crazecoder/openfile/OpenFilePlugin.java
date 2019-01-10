@@ -3,6 +3,8 @@ package com.crazecoder.openfile;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.support.v4.content.FileProvider;
@@ -16,6 +18,7 @@ import io.flutter.plugin.common.PluginRegistry;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
 
 import java.io.File;
+import java.util.List;
 
 /**
  * OpenFilePlugin
@@ -59,7 +62,12 @@ public class OpenFilePlugin implements MethodCallHandler {
             } else {
                 intent.setDataAndType(Uri.fromFile(file), getFileType(filePath));
             }
-            activity.startActivity(intent);
+            PackageManager packageManager = activity.getPackageManager();
+            List<ResolveInfo> activities = packageManager.queryIntentActivities(intent, 0);
+            boolean isIntentSafe = activities.size() == 1;
+            if(isIntentSafe) {
+                activity.startActivity(intent);
+            }
             result.success("done");
         } else {
             result.notImplemented();
