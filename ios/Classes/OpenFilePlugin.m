@@ -102,7 +102,8 @@ static NSString *const CHANNEL_NAME = @"open_file";
             }
             
             BOOL previewSucceeded = [_documentController presentPreviewAnimated:YES];
-            if(!previewSucceeded){
+            BOOL isExternalEnabled = false;
+            if(!previewSucceeded && isExternalEnabled){
                 [_documentController presentOpenInMenuFromRect:CGRectMake(500,20,100,100) inView:_viewController.view animated:YES];
             }
             

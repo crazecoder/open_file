@@ -62,9 +62,7 @@ public class OpenFilePlugin implements MethodCallHandler {
             } else {
                 intent.setDataAndType(Uri.fromFile(file), getFileType(filePath));
             }
-            PackageManager packageManager = activity.getPackageManager();
-            List<ResolveInfo> activities = packageManager.queryIntentActivities(intent, 0);
-            boolean isIntentSafe = activities.size() == 1;
+            boolean isIntentSafe = false;
             if(isIntentSafe) {
                 activity.startActivity(intent);
             }
