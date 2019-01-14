@@ -1,4 +1,5 @@
 #import "OpenFilePlugin.h"
+#import "WebKit/WebKit.h"
 
 @interface OpenFilePlugin ()<UIDocumentInteractionControllerDelegate>
 @end
@@ -101,10 +102,16 @@ static NSString *const CHANNEL_NAME = @"open_file";
                 NSLog(@"%@", exestr);
             }
             
-            BOOL previewSucceeded = [_documentController presentPreviewAnimated:YES];
+            //TODO: use this flag from flutter export enabled user permission
             BOOL isExternalEnabled = false;
-            if(!previewSucceeded && isExternalEnabled){
-                [_documentController presentOpenInMenuFromRect:CGRectMake(500,20,100,100) inView:_viewController.view animated:YES];
+            if(isExternalEnabled) {
+                BOOL previewSucceeded = [_documentController presentPreviewAnimated:YES];
+                if(!previewSucceeded) {
+                    [_documentController presentOpenInMenuFromRect:CGRectMake(500,20,100,100) inView:_viewController.view animated:YES];
+                }
+            } else {
+                NSURL *fileURL = [NSURL fileURLWithPath:msg];
+                [self loadFileWithWKWebView:fileURL];
             }
             
         }else{
@@ -113,6 +120,24 @@ static NSString *const CHANNEL_NAME = @"open_file";
     } else {
         result(FlutterMethodNotImplemented);
     }
+}
+
+- (void) loadFileWithWKWebView:(NSURL*)url {
+    WKWebView *webView = [[WKWebView alloc] initWithFrame:_viewController.view.frame];
+    NSURLRequest* urlRequest = [[NSURLRequest alloc] initWithURL:url];
+    [webView loadRequest:urlRequest];
+    UIViewController *webViewController = [[UIViewController alloc] init];
+    [webViewController.view addSubview:webView];
+    UIBarButtonItem *done =[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(dismiss)];
+    webViewController.navigationItem.leftBarButtonItem = done;
+    webViewController.navigationItem.title = url.lastPathComponent;
+    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:webViewController];
+    
+    [_viewController presentViewController:navController animated:YES completion:nil];
+}
+
+- (void)dismiss {
+    [_viewController dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void)documentInteractionControllerDidEndPreview:(UIDocumentInteractionController *)controller {
