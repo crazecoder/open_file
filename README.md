@@ -153,6 +153,7 @@ subprojects {
             {".ppt",    "com.microsoft.powerpoint.​ppt"},
             {".wav",    "com.microsoft.waveform-​audio"},
             {".wm",     "com.microsoft.windows-​media-wm"},
-            {".wmv",    "com.microsoft.windows-​media-wmv"}
+            {".wmv",    "com.microsoft.windows-​media-wmv"},
+            {".pdf",    "com.adobe.pdf"}
 }
 ```
