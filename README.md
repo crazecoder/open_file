@@ -7,14 +7,14 @@ A plug-in that can call native APP to open files with string result in flutter,s
 To use this plugin, add [open_file](https://pub.dartlang.org/packages/open_file#-installing-tab-) as a dependency in your pubspec.yaml file.
 
 ## Example
-```
+```dart
 import 'package:open_file/open_file.dart';
 
 OpenFile.open("/sdcard/example.txt");
 ```
 
 ## Support
-###android
+### android
 ```
 {
             {".3gp",    "video/3gpp"},
@@ -87,7 +87,7 @@ OpenFile.open("/sdcard/example.txt");
 
 ```
 when Conflict with other plugins about FileProvider, add code below in your /android/app/src/main/AndroidManifest.xml
-```
+```xml
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools"
           package="xxx.xxx.xxxxx">
@@ -108,7 +108,7 @@ when Conflict with other plugins about FileProvider, add code below in your /and
 </manifest>
 ```
 when Android dependency 'com.android.support:appcompat-v7' has different version for the compile error, add code below in your /android/build.gradle
-```
+```gradle
 subprojects {
     project.configurations.all {
         resolutionStrategy.eachDependency { details ->
@@ -122,7 +122,7 @@ subprojects {
 ```
 
 
-###IOS with UTI
+### IOS with UTI
 ```
 {
             {".rtf",    "public.rtf"},
