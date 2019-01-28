@@ -1,3 +1,5 @@
+## 1.2.0
+* Add custom parameters,"type" android,"uti" iOS
 ## 1.1.1
 * fix startActivity crash in android
 ## 1.1.0
