@@ -1,5 +1,6 @@
 package com.crazecoder.openfile;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -7,6 +8,9 @@ import android.net.Uri;
 import android.os.Build;
 
 import android.support.v4.content.FileProvider;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.PermissionChecker;
 
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
@@ -25,19 +29,40 @@ public class OpenFilePlugin implements MethodCallHandler {
      */
     private Context context;
     private Activity activity;
-
+    private static final String[] PERMISSIONS = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.REQUEST_INSTALL_PACKAGES,
+    };
 
     private OpenFilePlugin(Context context, Activity activity) {
         this.context = context;
         this.activity = activity;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (!hasPermissions()) {
+                ActivityCompat.requestPermissions(activity,
+                        PERMISSIONS,
+                        0);
+            }
+        }
     }
 
     public static void registerWith(Registrar registrar) {
         final MethodChannel channel = new MethodChannel(registrar.messenger(), "open_file");
         OpenFilePlugin plugin = new OpenFilePlugin(registrar.context(), registrar.activity());
         channel.setMethodCallHandler(plugin);
-    }
 
+    }
+    private boolean hasPermissions() {
+        for (String permission:PERMISSIONS){
+            if(!hasPermission(permission)){
+                return false;
+            }
+        }
+        return true;
+    }
+    private boolean hasPermission(String permission) {
+        return ContextCompat.checkSelfPermission(activity,permission) == PermissionChecker.PERMISSION_GRANTED;
+    }
     @Override
     public void onMethodCall(MethodCall call, Result result) {
         if (call.method.equals("open_file")) {
