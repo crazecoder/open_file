@@ -1,3 +1,5 @@
+## 1.2.1
+* request permission in android 6.0 or above
 ## 1.2.0
 * Add custom parameters,"type" android,"uti" iOS
 ## 1.1.1

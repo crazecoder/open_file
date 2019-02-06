@@ -23,7 +23,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<String> openFile(filePath)async{
-    return await OpenFile.open(filePath);
+    return await OpenFile.open(filePath,type: "text/comma-separated-values",uti: "public.comma-separated-values-text");
   }
 
   @override
