@@ -16,44 +16,44 @@ import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
+import io.flutter.plugin.common.PluginRegistry;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * OpenFilePlugin
  */
-public class OpenFilePlugin implements MethodCallHandler {
+public class OpenFilePlugin implements MethodCallHandler, PluginRegistry.RequestPermissionsResultListener {
     /**
      * Plugin registration.
      */
     private Context context;
     private Activity activity;
-    private static final String[] PERMISSIONS = {
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.REQUEST_INSTALL_PACKAGES,
-    };
+
+    private Result result;
+    private String filePath;
+    private String typeString;
+
+    static final int REQUEST_CODE = 33432;
+    static final String TYPE_STRING_APK = "application/vnd.android.package-archive";
 
     private OpenFilePlugin(Context context, Activity activity) {
         this.context = context;
         this.activity = activity;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (!hasPermissions()) {
-                ActivityCompat.requestPermissions(activity,
-                        PERMISSIONS,
-                        0);
-            }
-        }
     }
 
     public static void registerWith(Registrar registrar) {
         final MethodChannel channel = new MethodChannel(registrar.messenger(), "open_file");
         OpenFilePlugin plugin = new OpenFilePlugin(registrar.context(), registrar.activity());
         channel.setMethodCallHandler(plugin);
+        registrar.addRequestPermissionsResultListener(plugin);
 
     }
-    private boolean hasPermissions() {
-        for (String permission:PERMISSIONS){
+    private boolean hasPermissions(String[] permissions) {
+        for (String permission:permissions){
             if(!hasPermission(permission)){
                 return false;
             }
@@ -66,34 +66,63 @@ public class OpenFilePlugin implements MethodCallHandler {
     @Override
     public void onMethodCall(MethodCall call, Result result) {
         if (call.method.equals("open_file")) {
-            String filePath = call.argument("file_path").toString();
-            File file = new File(filePath);
-            if (!file.exists()) {
-                result.success("the " + filePath + " file is not exists");
-                return;
-            }
-            String typeString;
+            filePath = call.argument("file_path").toString();
+            this.result = result;
+
             if (call.hasArgument("type") && call.argument("type") != null) {
                 typeString = call.argument("type").toString();
             } else {
                 typeString = getFileType(filePath);
             }
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            intent.addCategory("android.intent.category.DEFAULT");
-            if (Build.VERSION.SDK_INT >= 24) {
-                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                String packageName = context.getPackageName();
-                Uri uri = FileProvider.getUriForFile(context, packageName + ".fileProvider", new File(filePath));
-                intent.setDataAndType(uri, typeString);
-            } else {
-                intent.setDataAndType(Uri.fromFile(file), typeString);
-            }
-            activity.startActivity(intent);
-            result.success("done");
+
+            checkPermissions();
         } else {
             result.notImplemented();
         }
+    }
+
+    private void checkPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            List<String> list = new ArrayList<>();
+            list.add(Manifest.permission.READ_EXTERNAL_STORAGE);
+
+            if (TYPE_STRING_APK.equals(typeString)) {
+                list.add(Manifest.permission.REQUEST_INSTALL_PACKAGES);
+            }
+
+            String[] array = list.toArray(new String[list.size()]);
+
+            if (!hasPermissions(array)) {
+
+                ActivityCompat.requestPermissions(activity, array, REQUEST_CODE);
+                // will continue in onRequestPermissionsResult
+                return;
+            }
+        }
+
+        startActivity();
+    }
+
+    private void startActivity() {
+        File file = new File(filePath);
+        if (!file.exists()) {
+            result.success("the " + filePath + " file is not exists");
+            return;
+        }
+
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        intent.addCategory("android.intent.category.DEFAULT");
+        if (Build.VERSION.SDK_INT >= 24) {
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            String packageName = context.getPackageName();
+            Uri uri = FileProvider.getUriForFile(context, packageName + ".fileProvider", new File(filePath));
+            intent.setDataAndType(uri, typeString);
+        } else {
+            intent.setDataAndType(Uri.fromFile(file), typeString);
+        }
+        activity.startActivity(intent);
+        result.success("done");
     }
 
 
@@ -104,7 +133,7 @@ public class OpenFilePlugin implements MethodCallHandler {
             case "3gp":
                 return "video/3gpp";
             case "apk":
-                return "application/vnd.android.package-archive";
+                return TYPE_STRING_APK;
             case "asf":
                 return "video/x-ms-asf";
             case "avi":
@@ -236,4 +265,20 @@ public class OpenFilePlugin implements MethodCallHandler {
         }
     }
 
+    @Override
+    public boolean onRequestPermissionsResult(int requestCode, String[] strings, int[] grantResults) {
+        if (requestCode != REQUEST_CODE) {
+            return false;
+        }
+
+        for (int x: grantResults) {
+            if (x != PermissionChecker.PERMISSION_GRANTED) {
+                result.success("no_permission");
+                return true;
+            }
+        }
+
+        startActivity();
+        return true;
+    }
 }
