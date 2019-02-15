@@ -1,5 +1,9 @@
+## 1.2.2+1
+* migrate to androidx
+## 1.2.2
+* ask for permission when needed
 ## 1.2.1
-* request permission in android 6.0 or above
+* fix somethings
 ## 1.2.0
 * Add custom parameters,"type" android,"uti" iOS
 ## 1.1.1

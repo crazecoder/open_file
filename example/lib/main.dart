@@ -12,30 +12,34 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   String _openResult = 'Unknown';
-  @override
-  void initState() {
-    super.initState();
-    openFile("/storage/emulated/0/Download/2.jpg").then((_result){
-      setState(() {
-        _openResult = _result;
-      });
-    });
-  }
 
-  Future<String> openFile(filePath)async{
-    return await OpenFile.open(filePath,type: "text/comma-separated-values",uti: "public.comma-separated-values-text");
+  Future<void> openFile() async {
+    final filePath = '/storage/emulated/0/Download/2.jpg';
+    final message = await OpenFile.open(filePath);
+
+    setState(() {
+      _openResult = message;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-
     return new MaterialApp(
       home: new Scaffold(
         appBar: new AppBar(
           title: const Text('Plugin example app'),
         ),
-        body: new Center(
-          child: new GestureDetector(child: new Text('open result: $_openResult\n'),),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text('open result: $_openResult\n'),
+              FlatButton(
+                child: Text('Tap to open file'),
+                onPressed: openFile,
+              ),
+            ],
+          ),
         ),
       ),
     );
