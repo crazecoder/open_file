@@ -1,12 +1,14 @@
 package com.crazecoder.openfile;
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 
+import android.support.annotation.RequiresApi;
 import android.support.v4.content.FileProvider;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -36,9 +38,10 @@ public class OpenFilePlugin implements MethodCallHandler, PluginRegistry.Request
     private Result result;
     private String filePath;
     private String typeString;
+    private List<String> permissions;
 
-    static final int REQUEST_CODE = 33432;
-    static final String TYPE_STRING_APK = "application/vnd.android.package-archive";
+    private static final int REQUEST_CODE = 33432;
+    private static final String TYPE_STRING_APK = "application/vnd.android.package-archive";
 
     private OpenFilePlugin(Context context, Activity activity) {
         this.context = context;
@@ -52,17 +55,22 @@ public class OpenFilePlugin implements MethodCallHandler, PluginRegistry.Request
         registrar.addRequestPermissionsResultListener(plugin);
 
     }
-    private boolean hasPermissions(String[] permissions) {
-        for (String permission:permissions){
-            if(!hasPermission(permission)){
+
+    @TargetApi(Build.VERSION_CODES.M)
+    private boolean hasPermissions() {
+        permissions = getPermissions();
+        for (String permission : permissions) {
+            if (!hasPermission(permission)) {
                 return false;
             }
         }
         return true;
     }
+
     private boolean hasPermission(String permission) {
-        return ContextCompat.checkSelfPermission(activity,permission) == PermissionChecker.PERMISSION_GRANTED;
+        return ContextCompat.checkSelfPermission(activity, permission) == PermissionChecker.PERMISSION_GRANTED;
     }
+
     @Override
     public void onMethodCall(MethodCall call, Result result) {
         if (call.method.equals("open_file")) {
@@ -74,33 +82,25 @@ public class OpenFilePlugin implements MethodCallHandler, PluginRegistry.Request
             } else {
                 typeString = getFileType(filePath);
             }
-
-            checkPermissions();
+            if (hasPermissions()) {
+                startActivity();
+            } else {
+                ActivityCompat.requestPermissions(activity, permissions.toArray(new String[permissions.size()]), REQUEST_CODE);
+            }
         } else {
             result.notImplemented();
         }
     }
 
-    private void checkPermissions() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            List<String> list = new ArrayList<>();
-            list.add(Manifest.permission.READ_EXTERNAL_STORAGE);
+    @TargetApi(Build.VERSION_CODES.M)
+    private List<String> getPermissions() {
+        List<String> list = new ArrayList<>();
+        list.add(Manifest.permission.READ_EXTERNAL_STORAGE);
 
-            if (TYPE_STRING_APK.equals(typeString)) {
-                list.add(Manifest.permission.REQUEST_INSTALL_PACKAGES);
-            }
-
-            String[] array = list.toArray(new String[list.size()]);
-
-            if (!hasPermissions(array)) {
-
-                ActivityCompat.requestPermissions(activity, array, REQUEST_CODE);
-                // will continue in onRequestPermissionsResult
-                return;
-            }
+        if (TYPE_STRING_APK.equals(typeString)) {
+            list.add(Manifest.permission.REQUEST_INSTALL_PACKAGES);
         }
-
-        startActivity();
+        return list;
     }
 
     private void startActivity() {
@@ -268,13 +268,13 @@ public class OpenFilePlugin implements MethodCallHandler, PluginRegistry.Request
     @Override
     public boolean onRequestPermissionsResult(int requestCode, String[] strings, int[] grantResults) {
         if (requestCode != REQUEST_CODE) {
+            result.success("no_permission");
             return false;
         }
-
-        for (int x: grantResults) {
-            if (x != PermissionChecker.PERMISSION_GRANTED) {
-                result.success("no_permission");
-                return true;
+        for (String string:strings){
+            if(!hasPermission(string)){
+                ActivityCompat.requestPermissions(activity, new String[]{string}, REQUEST_CODE);
+                return false;
             }
         }
 
