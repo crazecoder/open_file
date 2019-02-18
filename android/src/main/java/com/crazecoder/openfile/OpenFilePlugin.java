@@ -121,7 +121,7 @@ public class OpenFilePlugin implements MethodCallHandler, PluginRegistry.Request
             intent.setDataAndType(Uri.fromFile(file), typeString);
         }
         activity.startActivity(intent);
-        result.success("done");
+        if (result != null) result.success("done");
     }
 
 
@@ -267,11 +267,12 @@ public class OpenFilePlugin implements MethodCallHandler, PluginRegistry.Request
     @Override
     public boolean onRequestPermissionsResult(int requestCode, String[] strings, int[] grantResults) {
         if (requestCode != REQUEST_CODE) {
-            result.success("no_permission");
+            if (result != null)
+                result.success("no_permission");
             return false;
         }
-        for (String string:strings){
-            if(!hasPermission(string)){
+        for (String string : strings) {
+            if (!hasPermission(string)) {
                 ActivityCompat.requestPermissions(activity, new String[]{string}, REQUEST_CODE);
                 return false;
             }
