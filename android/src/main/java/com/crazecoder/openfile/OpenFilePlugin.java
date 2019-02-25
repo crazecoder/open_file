@@ -1,13 +1,15 @@
 package com.crazecoder.openfile;
 
 import android.Manifest;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
+import android.provider.Settings;
+import android.util.Log;
 
+import androidx.annotation.RequiresApi;
 import androidx.core.content.FileProvider;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -21,13 +23,13 @@ import io.flutter.plugin.common.PluginRegistry;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * OpenFilePlugin
  */
-public class OpenFilePlugin implements MethodCallHandler, PluginRegistry.RequestPermissionsResultListener {
+public class OpenFilePlugin implements MethodCallHandler
+        , PluginRegistry.RequestPermissionsResultListener
+        , PluginRegistry.ActivityResultListener {
     /**
      * Plugin registration.
      */
@@ -37,9 +39,11 @@ public class OpenFilePlugin implements MethodCallHandler, PluginRegistry.Request
     private Result result;
     private String filePath;
     private String typeString;
-    private List<String> permissions;
+
+    private boolean isResultSubmitted = false;
 
     private static final int REQUEST_CODE = 33432;
+    private static final int RESULT_CODE = 0x12;
     private static final String TYPE_STRING_APK = "application/vnd.android.package-archive";
 
     private OpenFilePlugin(Context context, Activity activity) {
@@ -52,19 +56,9 @@ public class OpenFilePlugin implements MethodCallHandler, PluginRegistry.Request
         OpenFilePlugin plugin = new OpenFilePlugin(registrar.context(), registrar.activity());
         channel.setMethodCallHandler(plugin);
         registrar.addRequestPermissionsResultListener(plugin);
-
+        registrar.addActivityResultListener(plugin);
     }
 
-    @TargetApi(Build.VERSION_CODES.M)
-    private boolean hasPermissions() {
-        permissions = getPermissions();
-        for (String permission : permissions) {
-            if (!hasPermission(permission)) {
-                return false;
-            }
-        }
-        return true;
-    }
 
     private boolean hasPermission(String permission) {
         return ContextCompat.checkSelfPermission(activity, permission) == PermissionChecker.PERMISSION_GRANTED;
@@ -72,6 +66,7 @@ public class OpenFilePlugin implements MethodCallHandler, PluginRegistry.Request
 
     @Override
     public void onMethodCall(MethodCall call, Result result) {
+        isResultSubmitted = false;
         if (call.method.equals("open_file")) {
             filePath = call.argument("file_path").toString();
             this.result = result;
@@ -81,38 +76,37 @@ public class OpenFilePlugin implements MethodCallHandler, PluginRegistry.Request
             } else {
                 typeString = getFileType(filePath);
             }
-            if (hasPermissions()) {
-                startActivity();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (hasPermission(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                    if (TYPE_STRING_APK.equals(typeString)) {
+                        openApkFile();
+                        return;
+                    }
+                    startActivity();
+                } else {
+                    ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_CODE);
+                }
             } else {
-                ActivityCompat.requestPermissions(activity, permissions.toArray(new String[permissions.size()]), REQUEST_CODE);
+                startActivity();
             }
         } else {
             result.notImplemented();
+            isResultSubmitted = true;
         }
     }
 
-    @TargetApi(Build.VERSION_CODES.M)
-    private List<String> getPermissions() {
-        List<String> list = new ArrayList<>();
-        list.add(Manifest.permission.READ_EXTERNAL_STORAGE);
-
-        if (TYPE_STRING_APK.equals(typeString)) {
-            list.add(Manifest.permission.REQUEST_INSTALL_PACKAGES);
-        }
-        return list;
-    }
 
     private void startActivity() {
         File file = new File(filePath);
         if (!file.exists()) {
-            result.success("the " + filePath + " file is not exists");
+            result("the " + filePath + " file is not exists");
             return;
         }
 
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         intent.addCategory("android.intent.category.DEFAULT");
-        if (Build.VERSION.SDK_INT >= 24) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             String packageName = context.getPackageName();
             Uri uri = FileProvider.getUriForFile(context, packageName + ".fileProvider", new File(filePath));
@@ -121,7 +115,7 @@ public class OpenFilePlugin implements MethodCallHandler, PluginRegistry.Request
             intent.setDataAndType(Uri.fromFile(file), typeString);
         }
         activity.startActivity(intent);
-        if (result != null) result.success("done");
+        result("done");
     }
 
 
@@ -264,21 +258,74 @@ public class OpenFilePlugin implements MethodCallHandler, PluginRegistry.Request
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private void openApkFile() {
+        if (!canInstallApk()) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                startInstallPermissionSettingActivity();
+            } else {
+                ActivityCompat.requestPermissions(activity,
+                        new String[]{Manifest.permission.REQUEST_INSTALL_PACKAGES}, REQUEST_CODE);
+            }
+        } else {
+            startActivity();
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private boolean canInstallApk() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            return activity.getPackageManager().canRequestPackageInstalls();
+        }
+        return hasPermission(Manifest.permission.REQUEST_INSTALL_PACKAGES);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void startInstallPermissionSettingActivity() {
+        if (activity == null) {
+            return;
+        }
+        Intent intent = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES);
+        activity.startActivityForResult(intent, RESULT_CODE);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public boolean onRequestPermissionsResult(int requestCode, String[] strings, int[] grantResults) {
-        if (requestCode != REQUEST_CODE) {
-            if (result != null)
-                result.success("no_permission");
+        if (requestCode == REQUEST_CODE
+                && hasPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
+                && TYPE_STRING_APK.equals(typeString)) {
+            openApkFile();
             return false;
         }
-        for (String string : strings) {
-            if (!hasPermission(string)) {
-                ActivityCompat.requestPermissions(activity, new String[]{string}, REQUEST_CODE);
+        for (int i = 0; i < strings.length; i++) {
+            if (!hasPermission(strings[i])) {
+                result("Permission denied: " + strings[i]);
                 return false;
             }
         }
-
         startActivity();
         return true;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    @Override
+    public boolean onActivityResult(int requestCode, int resultCode, Intent intent) {
+        if (requestCode == RESULT_CODE) {
+            if (canInstallApk()) {
+                startActivity();
+                result("done");
+            } else {
+                result("Permission denied: " + Manifest.permission.REQUEST_INSTALL_PACKAGES);
+            }
+        }
+        return false;
+    }
+
+    private void result(String str) {
+        if (result != null && !isResultSubmitted) {
+            result.success(str);
+            isResultSubmitted = true;
+        }
     }
 }

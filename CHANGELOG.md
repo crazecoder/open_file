@@ -1,3 +1,7 @@
+## 1.2.3
+* Optimize permission request logic on android
+## 1.2.2+2
+* fix crash when requestPermission
 ## 1.2.2+1
 * migrate to androidx
 ## 1.2.2
