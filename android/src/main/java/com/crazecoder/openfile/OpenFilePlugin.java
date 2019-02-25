@@ -1,6 +1,7 @@
 package com.crazecoder.openfile;
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -9,11 +10,13 @@ import android.os.Build;
 import android.provider.Settings;
 import android.util.Log;
 
+
 import androidx.annotation.RequiresApi;
 import androidx.core.content.FileProvider;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.PermissionChecker;
+
 
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
@@ -23,6 +26,8 @@ import io.flutter.plugin.common.PluginRegistry;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * OpenFilePlugin
@@ -40,10 +45,12 @@ public class OpenFilePlugin implements MethodCallHandler
     private String filePath;
     private String typeString;
 
+
     private boolean isResultSubmitted = false;
 
     private static final int REQUEST_CODE = 33432;
     private static final int RESULT_CODE = 0x12;
+
     private static final String TYPE_STRING_APK = "application/vnd.android.package-archive";
 
     private OpenFilePlugin(Context context, Activity activity) {
@@ -56,9 +63,9 @@ public class OpenFilePlugin implements MethodCallHandler
         OpenFilePlugin plugin = new OpenFilePlugin(registrar.context(), registrar.activity());
         channel.setMethodCallHandler(plugin);
         registrar.addRequestPermissionsResultListener(plugin);
+
         registrar.addActivityResultListener(plugin);
     }
-
 
     private boolean hasPermission(String permission) {
         return ContextCompat.checkSelfPermission(activity, permission) == PermissionChecker.PERMISSION_GRANTED;
@@ -93,6 +100,39 @@ public class OpenFilePlugin implements MethodCallHandler
             result.notImplemented();
             isResultSubmitted = true;
         }
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    private List<String> getPermissions() {
+        List<String> list = new ArrayList<>();
+        list.add(Manifest.permission.READ_EXTERNAL_STORAGE);
+
+        if (TYPE_STRING_APK.equals(typeString)) {
+            list.add(Manifest.permission.REQUEST_INSTALL_PACKAGES);
+        }
+        return list;
+    }
+
+    private void startActivity() {
+        File file = new File(filePath);
+        if (!file.exists()) {
+            result.success("the " + filePath + " file is not exists");
+            return;
+        }
+
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        intent.addCategory("android.intent.category.DEFAULT");
+        if (Build.VERSION.SDK_INT >= 24) {
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            String packageName = context.getPackageName();
+            Uri uri = FileProvider.getUriForFile(context, packageName + ".fileProvider", new File(filePath));
+            intent.setDataAndType(uri, typeString);
+        } else {
+            intent.setDataAndType(Uri.fromFile(file), typeString);
+        }
+        activity.startActivity(intent);
+        result.success("done");
     }
 
 
@@ -257,6 +297,7 @@ public class OpenFilePlugin implements MethodCallHandler
                 return "*/*";
         }
     }
+
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     private void openApkFile() {
