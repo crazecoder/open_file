@@ -1,3 +1,5 @@
+## 1.2.3+1
+* request READ_EXTERNAL_STORAGE when the file is not in the app directory
 ## 1.2.3
 * Optimize permission request logic on android
 ## 1.2.2+2
