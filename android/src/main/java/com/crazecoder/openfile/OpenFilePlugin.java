@@ -1,11 +1,13 @@
 package com.crazecoder.openfile;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Environment;
 import android.provider.Settings;
 
 import androidx.annotation.RequiresApi;
@@ -22,6 +24,7 @@ import io.flutter.plugin.common.PluginRegistry;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * OpenFilePlugin
@@ -64,6 +67,7 @@ public class OpenFilePlugin implements MethodCallHandler
     }
 
     @Override
+    @SuppressLint("NewApi")
     public void onMethodCall(MethodCall call, Result result) {
         isResultSubmitted = false;
         if (call.method.equals("open_file")) {
@@ -75,7 +79,7 @@ public class OpenFilePlugin implements MethodCallHandler
             } else {
                 typeString = getFileType(filePath);
             }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (pathRequiresPermission()) {
                 if (hasPermission(Manifest.permission.READ_EXTERNAL_STORAGE)) {
                     if (TYPE_STRING_APK.equals(typeString)) {
                         openApkFile();
@@ -91,6 +95,21 @@ public class OpenFilePlugin implements MethodCallHandler
         } else {
             result.notImplemented();
             isResultSubmitted = true;
+        }
+    }
+
+    private boolean pathRequiresPermission() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            return false;
+        }
+
+        try {
+            String appDirCanonicalPath = new File(context.getApplicationInfo().dataDir).getCanonicalPath();
+            String fileCanonicalPath = new File(filePath).getCanonicalPath();
+            return !fileCanonicalPath.startsWith(appDirCanonicalPath);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return true;
         }
     }
 
