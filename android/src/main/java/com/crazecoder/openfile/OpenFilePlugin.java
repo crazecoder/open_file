@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.provider.Settings;
+import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 import androidx.core.content.FileProvider;
@@ -30,8 +31,7 @@ import java.io.IOException;
  * OpenFilePlugin
  */
 public class OpenFilePlugin implements MethodCallHandler
-        , PluginRegistry.RequestPermissionsResultListener
-        , PluginRegistry.ActivityResultListener {
+        , PluginRegistry.RequestPermissionsResultListener {
     /**
      * Plugin registration.
      */
@@ -45,7 +45,6 @@ public class OpenFilePlugin implements MethodCallHandler
     private boolean isResultSubmitted = false;
 
     private static final int REQUEST_CODE = 33432;
-    private static final int RESULT_CODE = 0x12;
     private static final String TYPE_STRING_APK = "application/vnd.android.package-archive";
 
     private OpenFilePlugin(Context context, Activity activity) {
@@ -58,7 +57,6 @@ public class OpenFilePlugin implements MethodCallHandler
         OpenFilePlugin plugin = new OpenFilePlugin(registrar.context(), registrar.activity());
         channel.setMethodCallHandler(plugin);
         registrar.addRequestPermissionsResultListener(plugin);
-        registrar.addActivityResultListener(plugin);
     }
 
 
@@ -74,17 +72,10 @@ public class OpenFilePlugin implements MethodCallHandler
             filePath = call.argument("file_path").toString();
             this.result = result;
 
-            if (call.hasArgument("type") && call.argument("type") != null) {
-                typeString = call.argument("type").toString();
-            } else {
-                typeString = getFileType(filePath);
-            }
+            typeString = getFileType(filePath);
+
             if (pathRequiresPermission()) {
                 if (hasPermission(Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                    if (TYPE_STRING_APK.equals(typeString)) {
-                        openApkFile();
-                        return;
-                    }
                     startActivity();
                 } else {
                     ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_CODE);
@@ -116,6 +107,17 @@ public class OpenFilePlugin implements MethodCallHandler
 
     private void startActivity() {
         File file = new File(filePath);
+
+        String path = Environment.getExternalStorageDirectory().toString();
+        Log.d("Files", "Path: " + path);
+        File directory = new File(path);
+        File[] files = directory.listFiles();
+        Log.d("Files", "Size: "+ files.length);
+        for (int i = 0; i < files.length; i++)
+        {
+            Log.d("Files", "FileName:" + files[i].getName());
+        }
+
         if (!file.exists()) {
             result("the " + filePath + " file is not exists");
             return;
@@ -276,46 +278,11 @@ public class OpenFilePlugin implements MethodCallHandler
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
-    private void openApkFile() {
-        if (!canInstallApk()) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                startInstallPermissionSettingActivity();
-            } else {
-                ActivityCompat.requestPermissions(activity,
-                        new String[]{Manifest.permission.REQUEST_INSTALL_PACKAGES}, REQUEST_CODE);
-            }
-        } else {
-            startActivity();
-        }
-    }
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
-    private boolean canInstallApk() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            return activity.getPackageManager().canRequestPackageInstalls();
-        }
-        return hasPermission(Manifest.permission.REQUEST_INSTALL_PACKAGES);
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    private void startInstallPermissionSettingActivity() {
-        if (activity == null) {
-            return;
-        }
-        Intent intent = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES);
-        activity.startActivityForResult(intent, RESULT_CODE);
-    }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public boolean onRequestPermissionsResult(int requestCode, String[] strings, int[] grantResults) {
-        if (requestCode == REQUEST_CODE
-                && hasPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
-                && TYPE_STRING_APK.equals(typeString)) {
-            openApkFile();
-            return false;
-        }
         for (int i = 0; i < strings.length; i++) {
             if (!hasPermission(strings[i])) {
                 result("Permission denied: " + strings[i]);
@@ -326,19 +293,6 @@ public class OpenFilePlugin implements MethodCallHandler
         return true;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
-    @Override
-    public boolean onActivityResult(int requestCode, int resultCode, Intent intent) {
-        if (requestCode == RESULT_CODE) {
-            if (canInstallApk()) {
-                startActivity();
-                result("done");
-            } else {
-                result("Permission denied: " + Manifest.permission.REQUEST_INSTALL_PACKAGES);
-            }
-        }
-        return false;
-    }
 
     private void result(String str) {
         if (result != null && !isResultSubmitted) {
