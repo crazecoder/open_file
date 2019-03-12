@@ -107,17 +107,6 @@ public class OpenFilePlugin implements MethodCallHandler
 
     private void startActivity() {
         File file = new File(filePath);
-
-        String path = Environment.getExternalStorageDirectory().toString();
-        Log.d("Files", "Path: " + path);
-        File directory = new File(path);
-        File[] files = directory.listFiles();
-        Log.d("Files", "Size: "+ files.length);
-        for (int i = 0; i < files.length; i++)
-        {
-            Log.d("Files", "FileName:" + files[i].getName());
-        }
-
         if (!file.exists()) {
             result("the " + filePath + " file is not exists");
             return;
