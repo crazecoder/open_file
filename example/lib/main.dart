@@ -14,8 +14,7 @@ class _MyAppState extends State<MyApp> {
   String _openResult = 'Unknown';
 
   Future<void> openFile() async {
-    //final filePath = 'Attestation.pdf';
-    final filePath = '/Download/pdf-test.pdf';
+    final filePath = 'Attestation.pdf';
     final message = await OpenFile.open(filePath);
 
     setState(() {
