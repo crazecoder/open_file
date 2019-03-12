@@ -7,25 +7,21 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Environment;
-import android.provider.Settings;
-import android.util.Log;
+
+import java.io.File;
+import java.io.IOException;
 
 import androidx.annotation.RequiresApi;
-import androidx.core.content.FileProvider;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.core.content.PermissionChecker;
-
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugin.common.PluginRegistry;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
-
-import java.io.File;
-import java.io.IOException;
 
 /**
  * OpenFilePlugin
@@ -266,7 +262,6 @@ public class OpenFilePlugin implements MethodCallHandler
                 return "*/*";
         }
     }
-
 
 
     @RequiresApi(api = Build.VERSION_CODES.M)
