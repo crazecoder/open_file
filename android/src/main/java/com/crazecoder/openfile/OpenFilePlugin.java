@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
+import android.util.Log;
 
 import java.io.File;
 import java.io.IOException;
@@ -269,19 +270,23 @@ public class OpenFilePlugin implements MethodCallHandler
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public boolean onRequestPermissionsResult(int requestCode, String[] strings, int[] grantResults) {
-        for (int i = 0; i < strings.length; i++) {
-            if (!hasPermission(strings[i])) {
-                result("Permission denied: " + strings[i]);
-                return false;
+        Log.d("debug", "je suis dans onRequestPermissionsResult");
+        if (requestCode == RESULT_CODE) {
+            for (int i = 0; i < strings.length; i++) {
+                if (!hasPermission(strings[i])) {
+                    result("Permission denied: " + strings[i]);
+                    return false;
+                }
             }
-        }
-        startActivity();
-        return true;
+            startActivity();
+            return true;
+        } else return false;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public boolean onActivityResult(int requestCode, int resultCode, Intent intent) {
+        Log.d("debug", "je suis dans onActivityResult");
         if (requestCode == RESULT_CODE) {
                 startActivity();
                 result("done");
