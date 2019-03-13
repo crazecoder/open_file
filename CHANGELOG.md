@@ -1,3 +1,7 @@
+## 2.0.1
+* migrate to androidx
+## 1.3.0
+* roll back support
 ## 1.2.3+1
 * request READ_EXTERNAL_STORAGE when the file is not in the app directory
 ## 1.2.3
