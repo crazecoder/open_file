@@ -27,7 +27,8 @@ import io.flutter.plugin.common.PluginRegistry.Registrar;
  * OpenFilePlugin
  */
 public class OpenFilePlugin implements MethodCallHandler
-        , PluginRegistry.RequestPermissionsResultListener {
+        , PluginRegistry.RequestPermissionsResultListener
+        , PluginRegistry.ActivityResultListener {
     /**
      * Plugin registration.
      */
@@ -41,7 +42,7 @@ public class OpenFilePlugin implements MethodCallHandler
     private boolean isResultSubmitted = false;
 
     private static final int REQUEST_CODE = 33432;
-    private static final String TYPE_STRING_APK = "application/vnd.android.package-archive";
+    private static final int RESULT_CODE = 0x12;
 
     private OpenFilePlugin(Context context, Activity activity) {
         this.context = context;
@@ -53,6 +54,7 @@ public class OpenFilePlugin implements MethodCallHandler
         OpenFilePlugin plugin = new OpenFilePlugin(registrar.context(), registrar.activity());
         channel.setMethodCallHandler(plugin);
         registrar.addRequestPermissionsResultListener(plugin);
+        registrar.addActivityResultListener(plugin);
     }
 
 
@@ -102,7 +104,9 @@ public class OpenFilePlugin implements MethodCallHandler
 
 
     private void startActivity() {
+        //filePath = "/storage/emulated/0/Download/Conditions-generales-Macif.pdf";
         File file = new File(filePath);
+
         if (!file.exists()) {
             result("the " + filePath + " file is not exists");
             return;
@@ -130,8 +134,6 @@ public class OpenFilePlugin implements MethodCallHandler
         switch (fileTypeStr) {
             case "3gp":
                 return "video/3gpp";
-            case "apk":
-                return TYPE_STRING_APK;
             case "asf":
                 return "video/x-ms-asf";
             case "avi":
@@ -277,6 +279,16 @@ public class OpenFilePlugin implements MethodCallHandler
         return true;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    @Override
+    public boolean onActivityResult(int requestCode, int resultCode, Intent intent) {
+        if (requestCode == RESULT_CODE) {
+                startActivity();
+                result("done");
+
+        }
+        return false;
+    }
 
     private void result(String str) {
         if (result != null && !isResultSubmitted) {

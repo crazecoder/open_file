@@ -14,7 +14,7 @@ class _MyAppState extends State<MyApp> {
   String _openResult = 'Unknown';
 
   Future<void> openFile() async {
-    final filePath = '/data/user/0/com.macif.mobile.application.android/cache/Assurance véhicule.pdf';
+    final filePath = '/storage/emulated/0/Download/AttestationSki.pdf';
     final message = await OpenFile.open(filePath);
 
     setState(() {
