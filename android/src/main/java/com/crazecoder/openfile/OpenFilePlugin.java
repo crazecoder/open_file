@@ -309,8 +309,8 @@ public class OpenFilePlugin implements MethodCallHandler
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public boolean onRequestPermissionsResult(int requestCode, String[] strings, int[] grantResults) {
-        if (requestCode == REQUEST_CODE
-                && hasPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
+        if (requestCode != REQUEST_CODE) return false;
+        if (hasPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
                 && TYPE_STRING_APK.equals(typeString)) {
             openApkFile();
             return false;
