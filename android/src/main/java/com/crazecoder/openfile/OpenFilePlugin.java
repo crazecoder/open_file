@@ -105,7 +105,6 @@ public class OpenFilePlugin implements MethodCallHandler
 
 
     private void startActivity() {
-        //filePath = "/storage/emulated/0/Download/Conditions-generales-Macif.pdf";
         File file = new File(filePath);
 
         if (!file.exists()) {
