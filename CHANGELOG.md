@@ -1,3 +1,7 @@
+## 2.0.1+2
+* fix android M FLAG_GRANT_READ_URI_PERMISSION
+## 2.0.1+1
+* Fixed crash caused by third party plug-in request permissions
 ## 2.0.1
 * migrate to androidx
 ## 1.3.0
