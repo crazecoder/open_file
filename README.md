@@ -19,6 +19,7 @@ dependencies:
 import 'package:open_file/open_file.dart';
 
 OpenFile.open("/sdcard/example.txt");
+//OpenFile.open("/sdcard/example.txt", type: "text/plain", uti: "public.plain-text");
 ```
 
 ## Support
