@@ -25,6 +25,7 @@ import io.flutter.plugin.common.PluginRegistry.Registrar;
 import java.io.File;
 import java.io.IOException;
 
+
 /**
  * OpenFilePlugin
  */
@@ -131,7 +132,12 @@ public class OpenFilePlugin implements MethodCallHandler
         } else {
             intent.setDataAndType(Uri.fromFile(file), typeString);
         }
-        activity.startActivity(intent);
+        try{
+            activity.startActivity(intent);
+        }catch (Exception e){
+            result("No APP found to open this file。");
+            return;
+        }
         result("done");
     }
 
