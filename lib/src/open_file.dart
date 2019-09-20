@@ -11,7 +11,7 @@ class OpenFile {
 
   ///linuxDesktopName like 'xdg'/'gnome'
   static Future<String> open(String filePath,
-      {String type, String uti, String linuxDesktopName}) async {
+      {String type, String uti, String linuxDesktopName = "xdg"}) async {
     if (!Platform.isIOS && !Platform.isAndroid) {
       int _result;
       //file or url
@@ -19,7 +19,7 @@ class OpenFile {
         _result = mac.system('open $filePath');
       } else if (Platform.isLinux) {
         _result = linux.system(
-            '${linuxDesktopName.isEmpty ? "" : "${linuxDesktopName.isEmpty}-"}open $filePath');
+            '$linuxDesktopName-open $filePath');
       }else{
         _result = windows.ShellExecute('open',filePath);
       }
