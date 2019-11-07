@@ -14,7 +14,6 @@ class OpenFile {
       {String type, String uti, String linuxDesktopName = "xdg"}) async {
     if (!Platform.isIOS && !Platform.isAndroid) {
       int _result;
-      //file or url
       if (Platform.isMacOS) {
         _result = mac.system('open $filePath');
       } else if (Platform.isLinux) {

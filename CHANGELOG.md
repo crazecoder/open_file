@@ -1,3 +1,8 @@
+## 2.1.0
+* add web support(beta)
+* add pc support(beta)
+## 2.0.3
+* change use FileProvider from Android M to Android N
 ## 2.0.2
 * catch No Activity found to handle Intent exception
 * Optimize request REQUEST_INSTALL_PACKAGES permission on Android O
