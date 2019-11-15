@@ -25,6 +25,7 @@ import io.flutter.plugin.common.PluginRegistry.Registrar;
 import java.io.File;
 import java.io.IOException;
 
+
 /**
  * OpenFilePlugin
  */
@@ -70,11 +71,11 @@ public class OpenFilePlugin implements MethodCallHandler
     public void onMethodCall(MethodCall call, Result result) {
         isResultSubmitted = false;
         if (call.method.equals("open_file")) {
-            filePath = call.argument("file_path").toString();
+            filePath = call.argument("file_path");
             this.result = result;
 
             if (call.hasArgument("type") && call.argument("type") != null) {
-                typeString = call.argument("type").toString();
+                typeString = call.argument("type");
             } else {
                 typeString = getFileType(filePath);
             }
@@ -131,7 +132,12 @@ public class OpenFilePlugin implements MethodCallHandler
         } else {
             intent.setDataAndType(Uri.fromFile(file), typeString);
         }
-        activity.startActivity(intent);
+        try {
+            activity.startActivity(intent);
+        } catch (Exception e) {
+            result("No APP found to open this file。");
+            return;
+        }
         result("done");
     }
 
@@ -302,7 +308,8 @@ public class OpenFilePlugin implements MethodCallHandler
         if (activity == null) {
             return;
         }
-        Intent intent = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES);
+        Uri packageURI = Uri.parse("package:" + activity.getPackageName());
+        Intent intent = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, packageURI);
         activity.startActivityForResult(intent, RESULT_CODE);
     }
 
