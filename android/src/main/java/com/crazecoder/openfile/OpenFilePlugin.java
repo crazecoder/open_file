@@ -9,12 +9,16 @@ import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
 
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.content.FileProvider;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.PermissionChecker;
 
+import io.flutter.embedding.engine.plugins.FlutterPlugin;
+import io.flutter.embedding.engine.plugins.activity.ActivityAware;
+import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
@@ -30,13 +34,20 @@ import java.io.IOException;
  * OpenFilePlugin
  */
 public class OpenFilePlugin implements MethodCallHandler
+        , FlutterPlugin
+        , ActivityAware
         , PluginRegistry.RequestPermissionsResultListener
         , PluginRegistry.ActivityResultListener {
     /**
      * Plugin registration.
      */
+    private @Nullable
+    FlutterPluginBinding flutterPluginBinding;
+
     private Context context;
     private Activity activity;
+    private MethodChannel channel;
+
 
     private Result result;
     private String filePath;
@@ -48,15 +59,15 @@ public class OpenFilePlugin implements MethodCallHandler
     private static final int RESULT_CODE = 0x12;
     private static final String TYPE_STRING_APK = "application/vnd.android.package-archive";
 
-    private OpenFilePlugin(Context context, Activity activity) {
-        this.context = context;
-        this.activity = activity;
+    private OpenFilePlugin() {
     }
 
     public static void registerWith(Registrar registrar) {
-        final MethodChannel channel = new MethodChannel(registrar.messenger(), "open_file");
-        OpenFilePlugin plugin = new OpenFilePlugin(registrar.context(), registrar.activity());
-        channel.setMethodCallHandler(plugin);
+        OpenFilePlugin plugin = new OpenFilePlugin();
+        plugin.activity = registrar.activity();
+        plugin.context = registrar.context();
+        plugin.channel = new MethodChannel(registrar.messenger(), "open_file");
+        plugin.channel.setMethodCallHandler(plugin);
         registrar.addRequestPermissionsResultListener(plugin);
         registrar.addActivityResultListener(plugin);
     }
@@ -351,5 +362,47 @@ public class OpenFilePlugin implements MethodCallHandler
             result.success(str);
             isResultSubmitted = true;
         }
+    }
+
+    @Override
+    public void onAttachedToEngine(FlutterPluginBinding binding) {
+        this.flutterPluginBinding = binding;
+    }
+
+    @Override
+    public void onDetachedFromEngine(FlutterPluginBinding binding) {
+        this.flutterPluginBinding = null;
+    }
+
+    @Override
+    public void onAttachedToActivity(ActivityPluginBinding binding) {
+        channel =
+                new MethodChannel(
+                        flutterPluginBinding.getBinaryMessenger(), "open_file");
+        context = flutterPluginBinding.getApplicationContext();
+        channel.setMethodCallHandler(this);
+        binding.addRequestPermissionsResultListener(this);
+        binding.addActivityResultListener(this);
+    }
+
+    @Override
+    public void onDetachedFromActivityForConfigChanges() {
+        onDetachedFromActivity();
+    }
+
+    @Override
+    public void onReattachedToActivityForConfigChanges(ActivityPluginBinding binding) {
+        onAttachedToActivity(binding);
+    }
+
+    @Override
+    public void onDetachedFromActivity() {
+        if (channel == null) {
+            // Could be on too low of an SDK to have started listening originally.
+            return;
+        }
+
+        channel.setMethodCallHandler(null);
+        channel = null;
     }
 }
