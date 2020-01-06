@@ -59,9 +59,6 @@ public class OpenFilePlugin implements MethodCallHandler
     private static final int RESULT_CODE = 0x12;
     private static final String TYPE_STRING_APK = "application/vnd.android.package-archive";
 
-    private OpenFilePlugin() {
-    }
-
     public static void registerWith(Registrar registrar) {
         OpenFilePlugin plugin = new OpenFilePlugin();
         plugin.activity = registrar.activity();
