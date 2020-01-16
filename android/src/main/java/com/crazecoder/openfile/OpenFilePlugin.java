@@ -3,6 +3,7 @@ package com.crazecoder.openfile;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -143,13 +144,15 @@ public class OpenFilePlugin implements MethodCallHandler
         } else {
             intent.setDataAndType(Uri.fromFile(file), typeString);
         }
+        String msg = "done";
         try {
             activity.startActivity(intent);
+        } catch (ActivityNotFoundException e) {
+            msg = "No APP found to open this file。";
         } catch (Exception e) {
-            result("No APP found to open this file。");
-            return;
+            msg = "File opened incorrectly。";
         }
-        result("done");
+        result(msg);
     }
 
 

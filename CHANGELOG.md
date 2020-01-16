@@ -1,4 +1,11 @@
-## 2.1.0
+## 3.0.0
+* updated to the v2 Android Plugin APIs
+* Distinguish android errors (No APP found and others)
+* add web support
+* add pc support
+## 2.1.1
+* rollback 2.0.3
+## 2.1.0-pre.1
 * add web support(beta)
 * add pc support(beta)
 ## 2.0.3
