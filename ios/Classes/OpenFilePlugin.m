@@ -123,6 +123,10 @@ static NSString *const CHANNEL_NAME = @"open_file";
     _result(@"done");
 }
 
+- (void)documentInteractionControllerDidDismissOpenInMenu:(UIDocumentInteractionController *)controller {
+    _result(@"done");
+}
+
 - (UIViewController *)documentInteractionControllerViewControllerForPreview:(UIDocumentInteractionController *)controller {
     return  _viewController;
 }
