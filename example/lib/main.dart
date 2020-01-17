@@ -14,12 +14,14 @@ class _MyAppState extends State<MyApp> {
   String _openResult = 'Unknown';
 
   Future<void> openFile() async {
+
     final filePath = '/storage/emulated/0/update.apk';
-    final message = await OpenFile.open(filePath);
+    final result = await OpenFile.open(filePath);
 
     setState(() {
-      _openResult = message;
+      _openResult = "type=${result.type}  message=${result.message}";
     });
+
   }
 
   @override
