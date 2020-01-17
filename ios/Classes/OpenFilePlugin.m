@@ -138,7 +138,11 @@ static NSString *const CHANNEL_NAME = @"open_file";
 }
 
 - (void)documentInteractionControllerDidDismissOpenInMenu:(UIDocumentInteractionController *)controller {
-    _result(@"done");
+      NSDictionary * dict = @{@"message":@"done", @"type":@0};
+      NSData * jsonData = [NSJSONSerialization dataWithJSONObject:dict options:NSJSONWritingPrettyPrinted error:nil];
+      NSString * json = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+
+      _result(json);
 }
 
 - (UIViewController *)documentInteractionControllerViewControllerForPreview:(UIDocumentInteractionController *)controller {
