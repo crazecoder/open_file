@@ -10,12 +10,16 @@ import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.content.FileProvider;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.PermissionChecker;
+
+import com.crazecoder.openfile.utils.JsonUtil;
+import com.crazecoder.openfile.utils.MapUtil;
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityAware;
@@ -29,6 +33,7 @@ import io.flutter.plugin.common.PluginRegistry.Registrar;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 
 
 /**
@@ -77,7 +82,7 @@ public class OpenFilePlugin implements MethodCallHandler
 
     @Override
     @SuppressLint("NewApi")
-    public void onMethodCall(MethodCall call, Result result) {
+    public void onMethodCall(MethodCall call, @NonNull Result result) {
         isResultSubmitted = false;
         if (call.method.equals("open_file")) {
             filePath = call.argument("file_path");
@@ -126,7 +131,7 @@ public class OpenFilePlugin implements MethodCallHandler
     private void startActivity() {
         File file = new File(filePath);
         if (!file.exists()) {
-            result("the " + filePath + " file is not exists");
+            result(-2, "the " + filePath + " file is not exists");
             return;
         }
 
@@ -141,15 +146,18 @@ public class OpenFilePlugin implements MethodCallHandler
         } else {
             intent.setDataAndType(Uri.fromFile(file), typeString);
         }
-        String msg = "done";
+        int type = 0;
+        String message = "done";
         try {
             activity.startActivity(intent);
         } catch (ActivityNotFoundException e) {
-            msg = "No APP found to open this file。";
+            type = -1;
+            message = "No APP found to open this file。";
         } catch (Exception e) {
-            msg = "File opened incorrectly。";
+            type = -4;
+            message = "File opened incorrectly。";
         }
-        result(msg);
+        result(type, message);
     }
 
 
@@ -335,7 +343,7 @@ public class OpenFilePlugin implements MethodCallHandler
         }
         for (int i = 0; i < strings.length; i++) {
             if (!hasPermission(strings[i])) {
-                result("Permission denied: " + strings[i]);
+                result(-3, "Permission denied: " + strings[i]);
                 return false;
             }
         }
@@ -349,28 +357,29 @@ public class OpenFilePlugin implements MethodCallHandler
         if (requestCode == RESULT_CODE) {
             if (canInstallApk()) {
                 startActivity();
-                result("done");
+                result(0, "done");
             } else {
-                result("Permission denied: " + Manifest.permission.REQUEST_INSTALL_PACKAGES);
+                result(-3, "Permission denied: " + Manifest.permission.REQUEST_INSTALL_PACKAGES);
             }
         }
         return false;
     }
 
-    private void result(String str) {
+    private void result(int type, String message) {
         if (result != null && !isResultSubmitted) {
-            result.success(str);
+            Map<String, Object> map = MapUtil.createMap(type, message);
+            result.success(JsonUtil.toJson(map));
             isResultSubmitted = true;
         }
     }
 
     @Override
-    public void onAttachedToEngine(FlutterPluginBinding binding) {
+    public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
         this.flutterPluginBinding = binding;
     }
 
     @Override
-    public void onDetachedFromEngine(FlutterPluginBinding binding) {
+    public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
         this.flutterPluginBinding = null;
     }
 

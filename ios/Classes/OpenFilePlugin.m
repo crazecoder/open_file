@@ -106,13 +106,23 @@ static NSString *const CHANNEL_NAME = @"open_file";
                     NSLog(@"%@", exestr);
                 }
             }
-            BOOL previewSucceeded = [_documentController presentPreviewAnimated:YES];
-            if(!previewSucceeded){
-                [_documentController presentOpenInMenuFromRect:CGRectMake(500,20,100,100) inView:_viewController.view animated:YES];
+            @try {
+                BOOL previewSucceeded = [_documentController presentPreviewAnimated:YES];
+                if(!previewSucceeded){
+                    [_documentController presentOpenInMenuFromRect:CGRectMake(500,20,100,100) inView:_viewController.view animated:YES];
+                }
+            }@catch (NSException *exception) {
+                NSDictionary * dict = @{@"message":@"File opened incorrectly。", @"type":@-4};
+                NSData * jsonData = [NSJSONSerialization dataWithJSONObject:dict options:NSJSONWritingPrettyPrinted error:nil];
+                NSString * json = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+                result(json);
             }
-            
         }else{
-            result(@"the file is not exist");
+            NSDictionary * dict = @{@"message":@"the file is not exist", @"type":@-2};
+            NSData * jsonData = [NSJSONSerialization dataWithJSONObject:dict options:NSJSONWritingPrettyPrinted error:nil];
+            NSString * json = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+
+            result(json);
         }
     } else {
         result(FlutterMethodNotImplemented);
@@ -120,7 +130,11 @@ static NSString *const CHANNEL_NAME = @"open_file";
 }
 
 - (void)documentInteractionControllerDidEndPreview:(UIDocumentInteractionController *)controller {
-    _result(@"done");
+    NSDictionary * dict = @{@"message":@"done", @"type":@0};
+    NSData * jsonData = [NSJSONSerialization dataWithJSONObject:dict options:NSJSONWritingPrettyPrinted error:nil];
+    NSString * json = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+
+    _result(json);
 }
 
 - (UIViewController *)documentInteractionControllerViewControllerForPreview:(UIDocumentInteractionController *)controller {

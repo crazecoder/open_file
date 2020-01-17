@@ -1,9 +1,15 @@
 import 'dart:async';
+import 'package:open_file/src/common/open_result.dart';
+
 import 'web.dart' as web;
 
 class OpenFile {
-  static Future<String> open(String filePath) async {
+  static Future<OpenResult> open(String filePath) async {
     bool _b = await web.open("file://$filePath");
-    return _b ? "done" : "there are some errors when open $filePath";
+    return OpenResult(
+        type: _b ? ResultType.done : ResultType.error,
+        message: _b
+            ? "done"
+            : "there are some errors when open $filePath");
   }
 }
