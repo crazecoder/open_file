@@ -9,7 +9,7 @@ To use this plugin, add [open_file](https://pub.dartlang.org/packages/open_file#
 ```yaml
 dependencies:
   #androidx
-  open_file: ^2.x.x 
+  open_file: ^lastVersion 
   #support
   #open_file: ^1.3.0
 ```
