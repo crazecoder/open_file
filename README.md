@@ -40,6 +40,7 @@ OpenFile.open("/sdcard/example.txt");
             {".docx",   "application/vnd.openxmlformats-officedocument.wordprocessingml.document"},
             {".xls",    "application/vnd.ms-excel"},
             {".xlsx",   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"},
+            {".epub",   "application/epub+zip"},
             {".exe",    "application/octet-stream"},
             {".gif",    "image/gif"},
             {".gtar",   "application/x-gtar"},
