@@ -195,6 +195,8 @@ public class OpenFilePlugin implements MethodCallHandler
                 return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
             case "exe":
                 return "application/octet-stream";
+            case "epub":
+                return "application/epub+zip";
             case "gif":
                 return "image/gif";
             case "gtar":
