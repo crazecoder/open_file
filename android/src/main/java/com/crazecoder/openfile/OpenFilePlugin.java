@@ -69,7 +69,7 @@ public class OpenFilePlugin implements MethodCallHandler
         OpenFilePlugin plugin = new OpenFilePlugin();
         plugin.activity = registrar.activity();
         plugin.context = registrar.context();
-        plugin.channel = new MethodChannel(registrar.messenger(), "open_file");
+        plugin.channel = new MethodChannel(registrar.messenger(), "utopic_open_file");
         plugin.channel.setMethodCallHandler(plugin);
         registrar.addRequestPermissionsResultListener(plugin);
         registrar.addActivityResultListener(plugin);
@@ -84,7 +84,7 @@ public class OpenFilePlugin implements MethodCallHandler
     @SuppressLint("NewApi")
     public void onMethodCall(MethodCall call, @NonNull Result result) {
         isResultSubmitted = false;
-        if (call.method.equals("open_file")) {
+        if (call.method.equals("utopic_open_file")) {
             filePath = call.argument("file_path");
             this.result = result;
 
@@ -389,7 +389,7 @@ public class OpenFilePlugin implements MethodCallHandler
     public void onAttachedToActivity(ActivityPluginBinding binding) {
         channel =
                 new MethodChannel(
-                        flutterPluginBinding.getBinaryMessenger(), "open_file");
+                        flutterPluginBinding.getBinaryMessenger(), "utopic_open_file");
         context = flutterPluginBinding.getApplicationContext();
         activity = binding.getActivity();
         channel.setMethodCallHandler(this);

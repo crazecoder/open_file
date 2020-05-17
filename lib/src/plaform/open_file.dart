@@ -3,13 +3,13 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/services.dart';
-import 'package:open_file/src/common/open_result.dart';
+import 'package:utopic_open_file/src/common/open_result.dart';
 import 'macos.dart' as mac;
 import 'linux.dart' as linux;
 import 'windows.dart' as windows;
 
 class OpenFile {
-  static const MethodChannel _channel = const MethodChannel('open_file');
+  static const MethodChannel _channel = const MethodChannel('utopic_open_file');
 
   ///linuxDesktopName like 'xdg'/'gnome'
   static Future<OpenResult> open(String filePath,
@@ -21,7 +21,7 @@ class OpenFile {
       } else if (Platform.isLinux) {
         _result = linux.system('$linuxDesktopName-open $filePath');
       } else {
-        _result = windows.ShellExecute('open', filePath);
+        _result = windows.shellExecute('open', filePath);
       }
       return OpenResult(
           type: _result == 0 ? ResultType.done : ResultType.error,
@@ -31,7 +31,7 @@ class OpenFile {
     }
 
     Map<String, String> map = {"file_path": filePath, "type": type, "uti": uti};
-    final _result = await _channel.invokeMethod('open_file', map);
+    final _result = await _channel.invokeMethod('utopic_open_file', map);
     Map resultMap = json.decode(_result);
     return OpenResult.fromJson(resultMap);
   }

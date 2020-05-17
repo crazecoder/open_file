@@ -3,7 +3,7 @@
 @interface OpenFilePlugin ()<UIDocumentInteractionControllerDelegate>
 @end
 
-static NSString *const CHANNEL_NAME = @"open_file";
+static NSString *const CHANNEL_NAME = @"utopic_open_file";
 
 @implementation OpenFilePlugin{
     FlutterResult _result;

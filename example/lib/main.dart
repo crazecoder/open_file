@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 
-import 'package:open_file/open_file.dart';
+import 'package:utopic_open_file/utopic_open_file.dart';
 
 void main() => runApp(new MyApp());
 
