@@ -118,7 +118,7 @@ static NSString *const CHANNEL_NAME = @"open_file";
                 result(json);
             }
         }else{
-            NSDictionary * dict = @{@"message":@"the file is not exist", @"type":@-2};
+            NSDictionary * dict = @{@"message":@"the file does not exist", @"type":@-2};
             NSData * jsonData = [NSJSONSerialization dataWithJSONObject:dict options:NSJSONWritingPrettyPrinted error:nil];
             NSString * json = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
 

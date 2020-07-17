@@ -131,7 +131,7 @@ public class OpenFilePlugin implements MethodCallHandler
     private void startActivity() {
         File file = new File(filePath);
         if (!file.exists()) {
-            result(-2, "the " + filePath + " file is not exists");
+            result(-2, "the " + filePath + " file does not exists");
             return;
         }
 
