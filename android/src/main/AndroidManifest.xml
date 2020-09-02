@@ -7,7 +7,7 @@
 
     <application>
         <provider
-            android:name="androidx.core.content.FileProvider"
+            android:name="com.crazecoder.openfile.FileProvider"
             android:authorities="${applicationId}.fileProvider"
             android:exported="false"
             android:grantUriPermissions="true"
