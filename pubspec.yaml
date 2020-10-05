@@ -8,7 +8,7 @@ homepage: https://github.com/crazecoder/open_file
 dependencies:
   flutter:
     sdk: flutter
-    ffi: ^0.1.3
+  ffi: ^0.1.3
 
 environment:
     sdk: ">=2.1.0 <3.0.0"
