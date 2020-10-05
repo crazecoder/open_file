@@ -1,3 +1,26 @@
+## 3.0.0
+* updated to the v2 Android Plugin APIs
+* Distinguish android errors (No APP found and others)
+* add web support
+* add pc support
+## 2.1.1
+* rollback 2.0.3
+## 2.1.0-pre.1
+* add web support(beta)
+* add pc support(beta)
+## 2.0.3
+* change use FileProvider from Android M to Android N
+## 2.0.2
+* catch No Activity found to handle Intent exception
+* Optimize request REQUEST_INSTALL_PACKAGES permission on Android O
+## 2.0.1+2
+* fix android M FLAG_GRANT_READ_URI_PERMISSION
+## 2.0.1+1
+* Fixed crash caused by third party plug-in request permissions
+## 2.0.1
+* migrate to androidx
+## 1.3.0
+* roll back support
 ## 1.2.3+1
 * request READ_EXTERNAL_STORAGE when the file is not in the app directory
 ## 1.2.3

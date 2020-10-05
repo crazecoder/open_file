@@ -70,7 +70,7 @@ class _MyAppState extends State<MyApp> {
     final message = await OpenFile.open(filePath);
 
     setState(() {
-      _openResult = message;
+      _openResult = message.message;
     });
   }
 
