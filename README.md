@@ -6,12 +6,20 @@ A plug-in that can call native APP to open files with string result in flutter,s
 ## Usage
 
 To use this plugin, add [open_file](https://pub.dartlang.org/packages/open_file#-installing-tab-) as a dependency in your pubspec.yaml file.
+```yaml
+dependencies:
+  #androidx
+  open_file: ^lastVersion 
+  #support
+  #open_file: ^1.3.0
+```
 
 ## Example
 ```dart
 import 'package:open_file/open_file.dart';
 
 OpenFile.open("/sdcard/example.txt");
+//OpenFile.open("/sdcard/example.txt", type: "text/plain", uti: "public.plain-text");
 ```
 
 ## Support

@@ -3,20 +3,28 @@ package com.crazecoder.openfile;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
+import android.provider.Settings;
 import android.util.Log;
 
-import java.io.File;
-import java.io.IOException;
-
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.core.content.PermissionChecker;
+
+import com.crazecoder.openfile.utils.JsonUtil;
+import com.crazecoder.openfile.utils.MapUtil;
+
+import io.flutter.embedding.engine.plugins.FlutterPlugin;
+import io.flutter.embedding.engine.plugins.activity.ActivityAware;
+import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
@@ -24,17 +32,29 @@ import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugin.common.PluginRegistry;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Map;
+
+
 /**
  * OpenFilePlugin
  */
 public class OpenFilePlugin implements MethodCallHandler
+        , FlutterPlugin
+        , ActivityAware
         , PluginRegistry.RequestPermissionsResultListener
         , PluginRegistry.ActivityResultListener {
     /**
      * Plugin registration.
      */
+    private @Nullable
+    FlutterPluginBinding flutterPluginBinding;
+
     private Context context;
     private Activity activity;
+    private MethodChannel channel;
+
 
     private Result result;
     private String filePath;
@@ -45,15 +65,12 @@ public class OpenFilePlugin implements MethodCallHandler
     private static final int REQUEST_CODE = 33432;
     private static final int RESULT_CODE = 0x12;
 
-    private OpenFilePlugin(Context context, Activity activity) {
-        this.context = context;
-        this.activity = activity;
-    }
-
     public static void registerWith(Registrar registrar) {
-        final MethodChannel channel = new MethodChannel(registrar.messenger(), "open_file");
-        OpenFilePlugin plugin = new OpenFilePlugin(registrar.context(), registrar.activity());
-        channel.setMethodCallHandler(plugin);
+        OpenFilePlugin plugin = new OpenFilePlugin();
+        plugin.activity = registrar.activity();
+        plugin.context = registrar.context();
+        plugin.channel = new MethodChannel(registrar.messenger(), "open_file");
+        plugin.channel.setMethodCallHandler(plugin);
         registrar.addRequestPermissionsResultListener(plugin);
         registrar.addActivityResultListener(plugin);
     }
@@ -65,14 +82,17 @@ public class OpenFilePlugin implements MethodCallHandler
 
     @Override
     @SuppressLint("NewApi")
-    public void onMethodCall(MethodCall call, Result result) {
+    public void onMethodCall(MethodCall call, @NonNull Result result) {
         isResultSubmitted = false;
         if (call.method.equals("open_file")) {
-            filePath = call.argument("file_path").toString();
+            filePath = call.argument("file_path");
             this.result = result;
 
-            typeString = getFileType(filePath);
-
+            if (call.hasArgument("type") && call.argument("type") != null) {
+                typeString = call.argument("type");
+            } else {
+                typeString = getFileType(filePath);
+            }
             if (pathRequiresPermission()) {
                 if (hasPermission(Manifest.permission.READ_EXTERNAL_STORAGE)) {
                     startActivity();
@@ -108,14 +128,14 @@ public class OpenFilePlugin implements MethodCallHandler
         File file = new File(filePath);
 
         if (!file.exists()) {
-            result("the " + filePath + " file is not exists");
+            result(-2, "the " + filePath + " file is not exists");
             return;
         }
 
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         intent.addCategory("android.intent.category.DEFAULT");
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             String packageName = context.getPackageName();
             Uri uri = FileProvider.getUriForFile(context, packageName + ".fileProvider", new File(filePath));
@@ -123,8 +143,18 @@ public class OpenFilePlugin implements MethodCallHandler
         } else {
             intent.setDataAndType(Uri.fromFile(file), typeString);
         }
-        activity.startActivity(intent);
-        result("done");
+        int type = 0;
+        String message = "done";
+        try {
+            activity.startActivity(intent);
+        } catch (ActivityNotFoundException e) {
+            type = -1;
+            message = "No APP found to open this file。";
+        } catch (Exception e) {
+            type = -4;
+            message = "File opened incorrectly。";
+        }
+        result(type, message);
     }
 
 
@@ -269,16 +299,16 @@ public class OpenFilePlugin implements MethodCallHandler
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public boolean onRequestPermissionsResult(int requestCode, String[] strings, int[] grantResults) {
-        if (requestCode == RESULT_CODE) {
-            for (int i = 0; i < strings.length; i++) {
-                if (!hasPermission(strings[i])) {
-                    result("Permission denied: " + strings[i]);
-                    return false;
-                }
+        if (requestCode != REQUEST_CODE) return false;
+
+        for (int i = 0; i < strings.length; i++) {
+            if (!hasPermission(strings[i])) {
+                result(-3, "Permission denied: " + strings[i]);
+                return false;
             }
-            startActivity();
-            return true;
-        } else return false;
+        }
+        startActivity();
+        return true;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -286,16 +316,61 @@ public class OpenFilePlugin implements MethodCallHandler
     public boolean onActivityResult(int requestCode, int resultCode, Intent intent) {
         if (requestCode == RESULT_CODE) {
                 startActivity();
-                result("done");
-
-        }
+                result(0, "done");
+            } else {
+                result(-3, "Permission denied: " + Manifest.permission.REQUEST_INSTALL_PACKAGES);
+            }
         return false;
     }
 
-    private void result(String str) {
+    private void result(int type, String message) {
         if (result != null && !isResultSubmitted) {
-            result.success(str);
+            Map<String, Object> map = MapUtil.createMap(type, message);
+            result.success(JsonUtil.toJson(map));
             isResultSubmitted = true;
         }
+    }
+
+    @Override
+    public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
+        this.flutterPluginBinding = binding;
+    }
+
+    @Override
+    public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
+        this.flutterPluginBinding = null;
+    }
+
+    @Override
+    public void onAttachedToActivity(ActivityPluginBinding binding) {
+        channel =
+                new MethodChannel(
+                        flutterPluginBinding.getBinaryMessenger(), "open_file");
+        context = flutterPluginBinding.getApplicationContext();
+        activity = binding.getActivity();
+        channel.setMethodCallHandler(this);
+        binding.addRequestPermissionsResultListener(this);
+        binding.addActivityResultListener(this);
+    }
+
+    @Override
+    public void onDetachedFromActivityForConfigChanges() {
+        onDetachedFromActivity();
+    }
+
+    @Override
+    public void onReattachedToActivityForConfigChanges(ActivityPluginBinding binding) {
+        onAttachedToActivity(binding);
+    }
+
+    @Override
+    public void onDetachedFromActivity() {
+        if (channel == null) {
+            // Could be on too low of an SDK to have started listening originally.
+            return;
+        }
+
+        channel.setMethodCallHandler(null);
+        channel = null;
     }
 }
