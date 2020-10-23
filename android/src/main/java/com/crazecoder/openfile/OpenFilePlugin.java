@@ -136,9 +136,12 @@ public class OpenFilePlugin implements MethodCallHandler
         }
 
         Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        if(TYPE_STRING_APK.equals(typeString))
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        else
+            intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         intent.addCategory("android.intent.category.DEFAULT");
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             String packageName = context.getPackageName();
             Uri uri = FileProvider.getUriForFile(context, packageName + ".fileProvider.com.crazecoder.openfile", new File(filePath));
