@@ -38,7 +38,7 @@ static NSString *const CHANNEL_NAME = @"open_file";
         BOOL fileExist=[fileManager fileExistsAtPath:msg];
         if(fileExist){
             //            NSURL *resourceToOpen = [NSURL fileURLWithPath:msg];
-            NSString *exestr = [msg pathExtension];
+            NSString *exestr = [[msg pathExtension] lowercaseString];
             _documentController = [UIDocumentInteractionController interactionControllerWithURL:[NSURL fileURLWithPath:msg]];
             _documentController.delegate = self;
             NSString *uti = call.arguments[@"uti"];

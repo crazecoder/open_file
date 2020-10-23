@@ -163,7 +163,7 @@ public class OpenFilePlugin implements MethodCallHandler
 
     private String getFileType(String filePath) {
         String[] fileStrs = filePath.split("\\.");
-        String fileTypeStr = fileStrs[fileStrs.length - 1];
+        String fileTypeStr = fileStrs[fileStrs.length - 1].toLowerCase();
         switch (fileTypeStr) {
             case "3gp":
                 return "video/3gpp";
