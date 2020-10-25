@@ -1,7 +1,7 @@
 # open_file
 [![pub package](https://img.shields.io/pub/v/open_file.svg)](https://pub.dartlang.org/packages/open_file)
 
-A plug-in that can call native APP to open files with string result in flutter,support iOS(UTI) and android(intent)
+A plug-in that can call native APP to open files with string result in flutter, support iOS(UTI) / android(intent) / PC(ffi) / web(dart:html)
 
 ## Usage
 
