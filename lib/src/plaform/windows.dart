@@ -22,7 +22,7 @@ int ShellExecute(String operation, String file) {
 
   // Look up the `ShellExecuteW` function.
   final ShellExecuteP =
-  dylib.lookupFunction<ShellExecuteC, ShellExecuteDart>('ShellExecuteW');
+      dylib.lookupFunction<ShellExecuteC, ShellExecuteDart>('ShellExecuteW');
 
   // Allocate pointers to Utf8 arrays containing the command arguments.
   final operationP = Utf16.toUtf16(operation);

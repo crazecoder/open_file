@@ -2,10 +2,10 @@ import 'dart:async';
 import 'dart:html';
 
 Future<bool> open(String uri) async {
-  try{
+  try {
     Entry _e = await window.resolveLocalFileSystemUrl(uri);
     return _e != null;
-  }catch (e){
+  } catch (e) {
     print(e);
     return false;
   }
