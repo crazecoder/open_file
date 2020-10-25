@@ -21,7 +21,7 @@ class OpenFile {
       } else if (Platform.isLinux) {
         _result = linux.system('$linuxDesktopName-open $filePath');
       } else {
-        _result = windows.ShellExecute('open', filePath);
+        _result = windows.shellExecute('open', filePath);
       }
       return OpenResult(
           type: _result == 0 ? ResultType.done : ResultType.error,
