@@ -19,7 +19,7 @@ class OpenFile {
       if (Platform.isMacOS) {
         _result = mac.system('open $filePath');
       } else if (Platform.isLinux) {
-        _result = linux.system('$linuxDesktopName-open $filePath');
+        _result = linux.system('$linuxDesktopName-open "$filePath"');
       } else {
         _result = windows.shellExecute('open', filePath);
       }
