@@ -5,7 +5,6 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:open_file/src/common/open_result.dart';
 import 'macos.dart' as mac;
-import 'linux.dart' as linux;
 import 'windows.dart' as windows;
 
 class OpenFile {
@@ -19,7 +18,7 @@ class OpenFile {
       if (Platform.isMacOS) {
         _result = mac.system('open $filePath');
       } else if (Platform.isLinux) {
-        _result = linux.system('$linuxDesktopName-open "$filePath"');
+        _result = Process.runSync('xdg-open', [filePath]).exitCode;
       } else {
         _result = windows.shellExecute('open', filePath);
       }
