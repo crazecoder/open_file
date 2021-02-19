@@ -10,6 +10,8 @@ import 'windows.dart' as windows;
 
 class OpenFile {
   static const MethodChannel _channel = const MethodChannel('open_file');
+  
+  OpenFile._();
 
   ///linuxDesktopName like 'xdg'/'gnome'
   static Future<OpenResult> open(String filePath,
