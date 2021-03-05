@@ -10,12 +10,12 @@ import 'windows.dart' as windows;
 
 class OpenFile {
   static const MethodChannel _channel = const MethodChannel('open_file');
-  
+
   OpenFile._();
 
   ///linuxDesktopName like 'xdg'/'gnome'
   static Future<OpenResult> open(String filePath,
-      {String type, String uti, String linuxDesktopName = "xdg"}) async {
+      {String? type, String? uti, String linuxDesktopName = "xdg"}) async {
     if (!Platform.isIOS && !Platform.isAndroid) {
       int _result;
       if (Platform.isMacOS) {
@@ -32,9 +32,13 @@ class OpenFile {
               : "there are some errors when open $filePath");
     }
 
-    Map<String, String> map = {"file_path": filePath, "type": type, "uti": uti};
+    Map<String, String?> map = {
+      "file_path": filePath,
+      "type": type,
+      "uti": uti,
+    };
     final _result = await _channel.invokeMethod('open_file', map);
-    Map resultMap = json.decode(_result);
+    final resultMap = json.decode(_result) as Map<String, dynamic>;
     return OpenResult.fromJson(resultMap);
   }
 }
