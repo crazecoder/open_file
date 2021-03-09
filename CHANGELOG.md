@@ -1,7 +1,7 @@
 ## 3.1.0
-* upgrade FFI 1.0.0 [@mit-mit](!https://github.com/mit-mit)
-* add linuxByProcess parameter [@mx1up](!https://github.com/mx1up)
-* Migrate to Dart null safety system [@orevial](!https://github.com/orevial)
+* upgrade FFI 1.0.0 [@mit-mit](https://github.com/mit-mit)
+* add linuxByProcess parameter [@mx1up](https://github.com/mx1up)
+* Migrate to Dart null safety system [@orevial](https://github.com/orevial)
 ## 3.0.3
 * upgrade compileSdkVersion
 ## 3.0.2
