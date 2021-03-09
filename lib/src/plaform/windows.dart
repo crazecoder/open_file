@@ -30,10 +30,10 @@ int shellExecute(String operation, String file) {
   const int SW_SHOWNORMAL = 1;
 
   // Invoke the command, and free the pointers.
-  var result = shellExecuteP(
+  final result = shellExecuteP(
       ffi.nullptr, operationP, fileP, ffi.nullptr, ffi.nullptr, SW_SHOWNORMAL);
-//  operationP.free();
-//  fileP.free();
+  calloc.free(operationP);
+  calloc.free(fileP);
 
   return result;
 }

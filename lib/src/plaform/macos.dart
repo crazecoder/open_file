@@ -17,8 +17,8 @@ int system(String command) {
   final cmdP = command.toNativeUtf8();
 
   // Invoke the command, and free the pointer.
-  int result = systemP(cmdP);
-//  cmdP.free();
+  final result = systemP(cmdP);
+  calloc.free(cmdP);
 
   return result;
 }

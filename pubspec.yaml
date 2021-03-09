@@ -4,15 +4,14 @@ version: 3.1.0
 author: crazecoder <21527312@qq.com>
 homepage: https://github.com/crazecoder/open_file
 
-environment:
-  sdk: ">=2.9.0 <3.0.0"
-  flutter: ">=1.12.0"
-
 dependencies:
   flutter:
     sdk: flutter
   ffi: ^1.0.0
 
+environment:
+  sdk: '>=2.12.0 <3.0.0'
+  flutter: ">=1.12.0 <2.0.0"
 # For information on the generic Dart part of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec
 
