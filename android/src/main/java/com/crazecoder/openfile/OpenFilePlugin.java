@@ -65,15 +65,15 @@ public class OpenFilePlugin implements MethodCallHandler
     private static final int RESULT_CODE = 0x12;
     private static final String TYPE_STRING_APK = "application/vnd.android.package-archive";
 
-    public static void registerWith(Registrar registrar) {
-        OpenFilePlugin plugin = new OpenFilePlugin();
-        plugin.activity = registrar.activity();
-        plugin.context = registrar.context();
-        plugin.channel = new MethodChannel(registrar.messenger(), "open_file");
-        plugin.channel.setMethodCallHandler(plugin);
-        registrar.addRequestPermissionsResultListener(plugin);
-        registrar.addActivityResultListener(plugin);
-    }
+//    public static void registerWith(Registrar registrar) {
+//        OpenFilePlugin plugin = new OpenFilePlugin();
+//        plugin.activity = registrar.activity();
+//        plugin.context = registrar.context();
+//        plugin.channel = new MethodChannel(registrar.messenger(), "open_file");
+//        plugin.channel.setMethodCallHandler(plugin);
+//        registrar.addRequestPermissionsResultListener(plugin);
+//        registrar.addActivityResultListener(plugin);
+//    }
 
 
     private boolean hasPermission(String permission) {
@@ -177,13 +177,13 @@ public class OpenFilePlugin implements MethodCallHandler
             case "avi":
                 return "video/x-msvideo";
             case "bin":
+            case "class":
+            case "exe":
                 return "application/octet-stream";
             case "bmp":
                 return "image/bmp";
             case "c":
                 return "text/plain";
-            case "class":
-                return "application/octet-stream";
             case "conf":
                 return "text/plain";
             case "cpp":
@@ -196,8 +196,6 @@ public class OpenFilePlugin implements MethodCallHandler
                 return "application/vnd.ms-excel";
             case "xlsx":
                 return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-            case "exe":
-                return "application/octet-stream";
             case "gif":
                 return "image/gif";
             case "gtar":
