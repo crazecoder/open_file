@@ -1,7 +1,7 @@
 # open_file
 [![pub package](https://img.shields.io/pub/v/open_file.svg)](https://pub.dartlang.org/packages/open_file)
 
-A plug-in that can call native APP to open files with string result in flutter, support iOS(UTI) / android(intent) / PC(ffi) / web(dart:html)
+A plug-in that can call native APP to open files with string result in flutter, support iOS(DocumentInteraction) / android(intent) / PC(ffi) / web(dart:html)
 
 ## Usage
 
@@ -27,6 +27,10 @@ OpenFile.open("/sdcard/example.txt");
 ```
 {
             {".3gp",    "video/3gpp"},
+            {".torrent","application/x-bittorrent"},
+            {".kml",    "application/vnd.google-earth.kml+xml"},
+            {".gpx",    "application/gpx+xml"},
+            {".csv",    "application/vnd.ms-excel"},
             {".apk",    "application/vnd.android.package-archive"},
             {".asf",    "video/x-ms-asf"},
             {".avi",    "video/x-msvideo"},
@@ -131,7 +135,7 @@ subprojects {
 ```
 
 
-### IOS with UTI
+### IOS with UTI (DocumentInteraction Auto)
 ```
 {
             {".rtf",    "public.rtf"},
