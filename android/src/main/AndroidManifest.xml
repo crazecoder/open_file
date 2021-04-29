@@ -5,7 +5,7 @@
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
-    <application android:requestLegacyExternalStorage="true">
+    <application>
         <provider
             android:name="com.crazecoder.openfile.FileProvider"
             android:authorities="${applicationId}.fileProvider.com.crazecoder.openfile"
