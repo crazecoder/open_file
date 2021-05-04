@@ -23,12 +23,12 @@ class OpenFile {
       int _result;
       var _windowsResult;
       if (Platform.isMacOS) {
-        _result = mac.system('open $filePath');
+        _result = mac.system(['open', '$filePath']);
       } else if (Platform.isLinux) {
         if (linuxByProcess) {
           _result = Process.runSync('xdg-open', [filePath]).exitCode;
         } else {
-          _result = linux.system('$linuxDesktopName-open "$filePath"');
+          _result = linux.system(['$linuxDesktopName-open', '$filePath']);
         }
       } else if (Platform.isWindows) {
         _windowsResult = windows.shellExecute('open', filePath);
