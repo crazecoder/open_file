@@ -1,7 +1,7 @@
 import 'dart:ffi' as ffi;
 
 import 'package:ffi/ffi.dart';
-import 'package:open_file/src/plaform/parse_args.dart';
+import 'package:open_file/src/common/parse_args.dart';
 
 typedef SystemC = ffi.Int32 Function(ffi.Pointer<Utf8> command);
 

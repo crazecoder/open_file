@@ -129,6 +129,7 @@ public class OpenFilePlugin implements MethodCallHandler
 
     private void startActivity() {
         if (filePath == null) {
+            result(-4, "the file path cannot be null");
             return;
         }
         File file = new File(filePath);
@@ -367,7 +368,7 @@ public class OpenFilePlugin implements MethodCallHandler
         if (requestCode == RESULT_CODE) {
             if (canInstallApk()) {
                 startActivity();
-                result(0, "done");
+//                result(0, "done");
             } else {
                 result(-3, "Permission denied: " + Manifest.permission.REQUEST_INSTALL_PACKAGES);
             }
@@ -390,7 +391,6 @@ public class OpenFilePlugin implements MethodCallHandler
 
     @Override
     public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
-        this.flutterPluginBinding = null;
     }
 
     @Override
@@ -424,5 +424,6 @@ public class OpenFilePlugin implements MethodCallHandler
 
         channel.setMethodCallHandler(null);
         channel = null;
+        this.flutterPluginBinding = null;
     }
 }

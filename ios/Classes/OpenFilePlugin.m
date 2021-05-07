@@ -34,11 +34,18 @@ static NSString *const CHANNEL_NAME = @"open_file";
     if ([@"open_file" isEqualToString:call.method]) {
         _result = result;
         NSString *msg = call.arguments[@"file_path"];
+        if(msg==nil){
+            NSDictionary * dict = @{@"message":@"the file path cannot be null", @"type":@-4};
+            NSData * jsonData = [NSJSONSerialization dataWithJSONObject:dict options:NSJSONWritingPrettyPrinted error:nil];
+            NSString * json = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+            result(json);
+            return;
+        }
         NSFileManager *fileManager=[NSFileManager defaultManager];
         BOOL fileExist=[fileManager fileExistsAtPath:msg];
         if(fileExist){
             //            NSURL *resourceToOpen = [NSURL fileURLWithPath:msg];
-            NSString *exestr = [[msg pathExtension] lowercaseString];
+//            NSString *exestr = [[msg pathExtension] lowercaseString];
             _documentController = [UIDocumentInteractionController interactionControllerWithURL:[NSURL fileURLWithPath:msg]];
             _documentController.delegate = self;
 //             NSString *uti = call.arguments[@"uti"];
