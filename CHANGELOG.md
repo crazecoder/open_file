@@ -1,3 +1,28 @@
+## 3.2.1
+* Add command parser before create system call [#144](https://github.com/crazecoder/open_file/issues/144) (thanks to [@mludovico](https://github.com/mludovico))
+* Fix startActivity() might have NPE issue with filePath on Android (thanks to [@AlexV525](https://github.com/AlexV525))
+* Add error type return when file path is nil on iOS
+## 3.2.0
+* add csv/kml/gpx/torrent support on Android
+* remove android:requestLegacyExternalStorage
+* fix Deprecated API warning when build on Android 
+* delete uti, DocumentInteraction will be retrieved automatically on iOS (thanks to [@std-c](https://github.com/std-c))
+* fix returns wrong reponse on Windows
+## 3.1.0
+* upgrade FFI 1.0.0 (thanks to [@mit-mit](https://github.com/mit-mit))
+* add linuxByProcess parameter (thanks to [@mx1up](https://github.com/mx1up))
+* Migrate to Dart null safety system (thanks to [@orevial](https://github.com/orevial))
+## 3.0.3
+* upgrade compileSdkVersion
+## 3.0.2
+* add storage compatibility mode for AndroidQ.
+* fix [#106](https://github.com/crazecoder/open_file/issues/106) [#100](https://github.com/crazecoder/open_file/issues/100) [#74](https://github.com/crazecoder/open_file/issues/74)
+* fix multiple file providers. (thanks to [@jawa0919](https://github.com/jawa0919))
+* Take file extension in lowercase for comparison.(thanks to [@kluverua](https://github.com/kluverua))
+* Fixed a typo in the error message for fileNotFound.(thanks to [@sebas642](https://github.com/sebas642))
+## 3.0.1
+* fix web parameter error
+* Replace result value from String to OpenResult.
 ## 3.0.0
 * updated to the v2 Android Plugin APIs
 * Distinguish android errors (No APP found and others)
