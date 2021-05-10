@@ -9,11 +9,11 @@ import 'package:open_file/open_file.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pdfWidget;
 
-void main() => runApp(new MyApp());
+void main() => runApp(MyApp());
 
 class MyApp extends StatefulWidget {
   @override
-  _MyAppState createState() => new _MyAppState();
+  _MyAppState createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
@@ -24,23 +24,18 @@ class _MyAppState extends State<MyApp> {
     return directory.path;
   }
 
-  Future<File> getTempFile({@required String fileName, String fileType = "pdf"}) async {
+  Future<File> getTempFile({required String fileName, String fileType = "pdf"}) async {
     final path = await _tempPath;
     return File('$path/$fileName.$fileType');
   }
 
-  Future<File> writeFileFromBytes({@required String fileName, String fileType = "pdf", @required Uint8List fileContent}) async {
-    try {
-      File file = await getTempFile(fileName: fileName, fileType: fileType);
-      if (file != null) file.writeAsBytes(fileContent);
-      return file;
-    } catch (e) {
-      print(e);
-      return null;
-    }
+  Future<File> writeFileFromBytes({required String fileName, String fileType = "pdf", required Uint8List fileContent}) async {
+    File file = await getTempFile(fileName: fileName, fileType: fileType);
+    file.writeAsBytes(fileContent);
+    return file;
   }
 
-  Future<String> generatePdf() async{
+  Future<String?> generatePdf() async{
 
     pdfWidget.Document pdfDocument = pdfWidget.Document();
 
@@ -60,35 +55,34 @@ class _MyAppState extends State<MyApp> {
     File file = await writeFileFromBytes(
         fileName: "temp",
         fileType: "pdf",
-        fileContent: Uint8List.fromList(pdfDocument.document.save()));
-    return file != null ? file.path : null;
+        fileContent: await pdfDocument.document.save());
+    return file.path;
   }
 
   Future<void> openFile() async {
 
-    String filePath = await generatePdf();
+    String? filePath = await generatePdf();
     final message = await OpenFile.open(filePath);
 
     setState(() {
-      _openResult = message.message;
+      _openResult = "message=$message";
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return new MaterialApp(
-      home: new Scaffold(
-        appBar: new AppBar(
-          title: const Text('Plugin Open File example app'),
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text('Plugin example app'),
         ),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Text('File path: $_openResult\n'),
-              FlatButton(
-                color: Colors.blueAccent,
-                child: Text('Open file', style: TextStyle(color: Colors.white),),
+              Text('open result: $_openResult\n'),
+              TextButton(
+                child: Text('Tap to open file'),
                 onPressed: openFile,
               ),
             ],
