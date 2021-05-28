@@ -48,11 +48,12 @@ static NSString *const CHANNEL_NAME = @"open_file";
 //            NSString *exestr = [[msg pathExtension] lowercaseString];
             _documentController = [UIDocumentInteractionController interactionControllerWithURL:[NSURL fileURLWithPath:msg]];
             _documentController.delegate = self;
-//             NSString *uti = call.arguments[@"uti"];
-//             BOOL isBlank = [self isBlankString:uti];
-//             if(!isBlank){
-//                 _documentController.UTI = uti;
-//             }else{
+            NSString *uti = call.arguments[@"uti"];
+            BOOL isBlank = [self isBlankString:uti];
+            if(!isBlank){
+                _documentController.UTI = uti;
+            }
+//             else{
 //                 if([exestr isEqualToString:@"rtf"]){
 //                     _documentController.UTI=@"public.rtf";
 //                 }else if([exestr isEqualToString:@"txt"]){
