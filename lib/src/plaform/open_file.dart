@@ -26,10 +26,13 @@ class OpenFile {
       if (Platform.isMacOS) {
         _result = mac.system(['open', '$filePath']);
       } else if (Platform.isLinux) {
+        var filePathLinux = Uri.directory(filePath!);
         if (linuxByProcess) {
-          _result = Process.runSync('xdg-open', [filePath!]).exitCode;
+          _result = Process.runSync('xdg-open', ['${filePathLinux.toString()}'])
+              .exitCode;
         } else {
-          _result = linux.system(['$linuxDesktopName-open', '$filePath']);
+          _result = linux.system(
+              ['$linuxDesktopName-open', '"${filePathLinux.toString()}"']);
         }
       } else if (Platform.isWindows) {
         _windowsResult = windows.shellExecute('open', filePath!);
