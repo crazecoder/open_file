@@ -26,7 +26,7 @@ class OpenFile {
       if (Platform.isMacOS) {
         _result = mac.system(['open', '$filePath']);
       } else if (Platform.isLinux) {
-        var filePathLinux = Uri.directory(filePath!);
+        var filePathLinux = Uri.file(filePath!);
         if (linuxByProcess) {
           _result = Process.runSync('xdg-open', ['${filePathLinux.toString()}'])
               .exitCode;
