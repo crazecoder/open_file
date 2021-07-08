@@ -28,11 +28,11 @@ class OpenFile {
       } else if (Platform.isLinux) {
         var filePathLinux = Uri.file(filePath!);
         if (linuxByProcess) {
-          _result = Process.runSync('xdg-open', ['${filePathLinux.toString()}'])
+          _result = Process.runSync('xdg-open', [filePathLinux.toString()])
               .exitCode;
         } else {
           _result = linux.system(
-              ['$linuxDesktopName-open', '"${filePathLinux.toString()}"']);
+              ['$linuxDesktopName-open', filePathLinux.toString()]);
         }
       } else if (Platform.isWindows) {
         _windowsResult = windows.shellExecute('open', filePath!);
