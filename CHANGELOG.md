@@ -4,6 +4,7 @@
 * folder name corrected, ` plaform -> platform`.
 * package version updated to `3.2.2`
 * Gradle updated to `gradle-7.3.1`## 3.2.1
+## 3.2.1
 * Add command parser before create system call [#144](https://github.com/crazecoder/open_file/issues/144) (thanks to [@mludovico](https://github.com/mludovico))
 * Fix startActivity() might have NPE issue with filePath on Android (thanks to [@AlexV525](https://github.com/AlexV525))
 * Add error type return when file path is nil on iOS
