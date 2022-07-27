@@ -1,3 +1,5 @@
+## 3.6.3
+* Pub.dev badge
 ## 3.6.2
 * Fix iOS Pods
 ## 3.6.1
