@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 
-import 'package:open_file/open_file.dart';
+import 'package:better_open_file/better_open_file.dart';
 
 void main() => runApp(MyApp());
 

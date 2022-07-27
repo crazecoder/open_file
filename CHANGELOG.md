@@ -1,3 +1,10 @@
+## 3.6.2
+* Fix iOS Pods
+## 3.6.1
+* Fix iOS Pod name
+## 3.6.0
+* Bump FFi version to 2.0.1
+* Remove dangerous [Android Permission](https://github.com/crazecoder/open_file/issues/201).
 ## 3.2.1
 * Add command parser before create system call [#144](https://github.com/crazecoder/open_file/issues/144) (thanks to [@mludovico](https://github.com/mludovico))
 * Fix startActivity() might have NPE issue with filePath on Android (thanks to [@AlexV525](https://github.com/AlexV525))
@@ -5,7 +12,7 @@
 ## 3.2.0
 * add csv/kml/gpx/torrent support on Android
 * remove android:requestLegacyExternalStorage
-* fix Deprecated API warning when build on Android 
+* fix Deprecated API warning when build on Android
 * delete uti, DocumentInteraction will be retrieved automatically on iOS (thanks to [@std-c](https://github.com/std-c))
 * fix returns wrong reponse on Windows
 ## 3.1.0

@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/services.dart';
-import 'package:open_file/src/common/open_result.dart';
+import 'package:better_open_file/src/common/open_result.dart';
 import 'macos.dart' as mac;
 import 'windows.dart' as windows;
 import 'linux.dart' as linux;
@@ -28,11 +28,11 @@ class OpenFile {
       } else if (Platform.isLinux) {
         var filePathLinux = Uri.file(filePath!);
         if (linuxByProcess) {
-          _result = Process.runSync('xdg-open', [filePathLinux.toString()])
-              .exitCode;
+          _result =
+              Process.runSync('xdg-open', [filePathLinux.toString()]).exitCode;
         } else {
-          _result = linux.system(
-              ['$linuxDesktopName-open', filePathLinux.toString()]);
+          _result = linux
+              .system(['$linuxDesktopName-open', filePathLinux.toString()]);
         }
       } else if (Platform.isWindows) {
         _windowsResult = windows.shellExecute('open', filePath!);
