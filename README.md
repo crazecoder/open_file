@@ -1,5 +1,5 @@
 # better_open_file
-[![pub package](https://img.shields.io/pub/v/open_file.svg)](https://pub.dartlang.org/packages/better_open_file)
+[![pub package](https://img.shields.io/pub/v/better_open_file.svg)](https://pub.dartlang.org/packages/better_open_file)
 
 NOTICE: This package is forked from here to remove a dangerous permission in android
 
