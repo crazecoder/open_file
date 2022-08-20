@@ -1,4 +1,4 @@
-group 'com.crazecoder.openfile'
+group 'com.joutvhu.openfile'
 version '1.0-SNAPSHOT'
 
 buildscript {

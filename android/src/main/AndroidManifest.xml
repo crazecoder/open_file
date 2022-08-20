@@ -1,12 +1,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools"
-          package="com.crazecoder.openfile">
+          package="com.joutvhu.openfile">
 
   <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
   <application>
-    <provider android:name="com.crazecoder.openfile.FileProvider"
-              android:authorities="${applicationId}.fileProvider.com.crazecoder.openfile"
+    <provider android:name="com.joutvhu.openfile.FileProvider"
+              android:authorities="${applicationId}.fileProvider.com.joutvhu.openfile"
               android:exported="false"
               android:grantUriPermissions="true"
               tools:replace="android:authorities">

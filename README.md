@@ -4,6 +4,8 @@
 
 A plug-in that can call native APP to open files with string result in flutter, support iOS(DocumentInteraction) / android(intent) / PC(ffi) / web(dart:html)
 
+This package is forked from [here](https://github.com/crazecoder/open_file) to remove a dangerous permission in android
+
 ## Usage
 
 To use this plugin, add [open_file_plus](https://pub.dartlang.org/packages/open_file_plus#-installing-tab-) as a dependency in your pubspec.yaml file.

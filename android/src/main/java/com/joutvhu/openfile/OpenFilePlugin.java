@@ -1,19 +1,15 @@
-package com.crazecoder.openfile;
+package com.joutvhu.openfile;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
-import android.provider.MediaStore;
 import android.provider.Settings;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -23,8 +19,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.PermissionChecker;
 
-import com.crazecoder.openfile.utils.JsonUtil;
-import com.crazecoder.openfile.utils.MapUtil;
+import com.joutvhu.openfile.utils.JsonUtil;
+import com.joutvhu.openfile.utils.MapUtil;
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityAware;
@@ -51,8 +47,8 @@ public class OpenFilePlugin implements
     /**
      * Plugin registration.
      */
-    private @Nullable
-    FlutterPluginBinding flutterPluginBinding;
+    @Nullable
+    private FlutterPluginBinding flutterPluginBinding;
 
     private Context context;
     private Activity activity;
@@ -153,8 +149,9 @@ public class OpenFilePlugin implements
 
         try {
             String appDirCanonicalPath = new File(context.getApplicationInfo().dataDir).getCanonicalPath();
+            String extCanonicalPath = context.getExternalFilesDir(null).getCanonicalPath();
             String fileCanonicalPath = new File(filePath).getCanonicalPath();
-            return !fileCanonicalPath.startsWith(appDirCanonicalPath);
+            return !(fileCanonicalPath.startsWith(appDirCanonicalPath) || fileCanonicalPath.startsWith(extCanonicalPath));
         } catch (IOException e) {
             e.printStackTrace();
             return true;
@@ -188,7 +185,7 @@ public class OpenFilePlugin implements
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             String packageName = context.getPackageName();
-            Uri uri = FileProvider.getUriForFile(context, packageName + ".fileProvider.com.crazecoder.openfile", new File(filePath));
+            Uri uri = FileProvider.getUriForFile(context, packageName + ".fileProvider.com.joutvhu.openfile", new File(filePath));
             intent.setDataAndType(uri, typeString);
         } else {
             intent.setDataAndType(Uri.fromFile(new File(filePath)), typeString);
@@ -388,7 +385,7 @@ public class OpenFilePlugin implements
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
-    public boolean onRequestPermissionsResult(int requestCode, String[] strings, int[] grantResults) {
+    public boolean onRequestPermissionsResult(int requestCode, @NonNull String[] strings, @NonNull int[] grantResults) {
         if (requestCode != REQUEST_CODE) return false;
         if (hasPermission(Manifest.permission.READ_EXTERNAL_STORAGE) && TYPE_STRING_APK.equals(typeString)) {
             openApkFile();
@@ -444,6 +441,7 @@ public class OpenFilePlugin implements
 
     @Override
     public void onAttachedToActivity(ActivityPluginBinding binding) {
+        assert flutterPluginBinding != null;
         channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "open_file");
         context = flutterPluginBinding.getApplicationContext();
         activity = binding.getActivity();

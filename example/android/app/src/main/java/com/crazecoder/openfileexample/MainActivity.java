@@ -1,4 +1,4 @@
-package com.crazecoder.openfileexample;
+package com.joutvhu.openfileexample;
 
 import android.os.Bundle;
 

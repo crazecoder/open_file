@@ -16,7 +16,7 @@ flutter:
   plugin:
     platforms:
       android:
-        package: com.crazecoder.openfile
+        package: com.joutvhu.openfile
         pluginClass: OpenFilePlugin
       ios:
         pluginClass: OpenFilePlugin
