@@ -1,0 +1,160 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = crlf
+indent_size = 4
+indent_style = space
+insert_final_newline = true
+max_line_length = 120
+tab_width = 4
+trim_trailing_whitespace = true
+
+[*.dart]
+quote_type = single
+indent_size = 4
+tab_width = 4
+max_line_length = 120
+
+[*.java]
+indent_size = 4
+tab_width = 4
+ij_java_blank_lines_after_anonymous_class_header = 0
+ij_java_blank_lines_after_class_header = 0
+ij_java_blank_lines_after_imports = 1
+ij_java_blank_lines_after_package = 1
+ij_java_blank_lines_around_class = 1
+ij_java_blank_lines_around_field = 0
+ij_java_blank_lines_around_field_in_interface = 0
+ij_java_blank_lines_around_initializer = 1
+ij_java_blank_lines_around_method = 1
+ij_java_blank_lines_around_method_in_interface = 1
+ij_java_blank_lines_before_class_end = 0
+ij_java_blank_lines_before_imports = 1
+ij_java_blank_lines_before_method_body = 0
+ij_java_blank_lines_before_package = 0
+ij_java_keep_blank_lines_before_right_brace = 1
+ij_java_keep_blank_lines_between_package_declaration_and_header = 1
+ij_java_keep_blank_lines_in_code = 1
+ij_java_keep_blank_lines_in_declarations = 1
+
+[*.properties]
+ij_properties_keep_blank_lines = true
+ij_properties_spaces_around_key_value_delimiter = false
+
+[.editorconfig]
+
+[{*.ant,*.fxml,*.jhm,*.jnlp,*.jrxml,*.rng,*.tld,*.wsdl,*.xml,*.xsd,*.xsl,*.xslt,*.xul}]
+indent_size = 2
+tab_width = 2
+ij_xml_keep_blank_lines = 1
+
+[{*.bash,*.sh,*.zsh}]
+indent_size = 2
+tab_width = 2
+
+[{*.c,*.c++,*.cc,*.cp,*.cpp,*.cu,*.cuh,*.cxx,*.h,*.h++,*.hh,*.hp,*.hpp,*.hxx,*.i,*.icc,*.ii,*.inl,*.ino,*.ipp,*.m,*.mm,*.pch,*.tcc,*.tpp}]
+indent_size = 4
+tab_width = 4
+
+[{*.gant,*.gradle,*.groovy,*.gy}]
+indent_size = 4
+tab_width = 4
+ij_groovy_keep_blank_lines_before_right_brace = 1
+ij_groovy_keep_blank_lines_in_code = 1
+ij_groovy_keep_blank_lines_in_declarations = 1
+
+[{*.gradle.kts,*.kt,*.kts,*.main.kts}]
+indent_size = 4
+tab_width = 4
+ij_kotlin_keep_blank_lines_before_right_brace = 1
+ij_kotlin_keep_blank_lines_in_code = 1
+ij_kotlin_keep_blank_lines_in_declarations = 1
+
+[{*.htm,*.html,*.sht,*.shtm,*.shtml}]
+indent_size = 2
+tab_width = 2
+ij_html_keep_blank_lines = 1
+ij_html_quote_style = double
+
+[*.haml]
+indent_size = 2
+
+[{*.markdown,*.md}]
+max_line_length = off
+trim_trailing_whitespace = false
+
+[{*.yaml,*.yml}]
+indent_size = 2
+tab_width = 2
+
+[*.css]
+indent_size = 2
+ij_css_keep_blank_lines_in_code = 1
+
+[*.less]
+indent_size = 2
+ij_less_keep_blank_lines_in_code = 1
+
+[*.sass]
+indent_size = 2
+ij_sass_keep_blank_lines_in_code = 1
+
+[*.scss]
+indent_size = 2
+ij_scss_keep_blank_lines_in_code = 1
+
+[*.styl]
+indent_size = 2
+ij_stylus_keep_blank_lines_in_code = 1
+
+[*.vue]
+indent_size = 2
+tab_width = 2
+
+[{*.ats,*.ts,*.util}]
+quote_type = single
+indent_size = 2
+tab_width = 2
+ij_continuation_indent_size = 2
+ij_typescript_import_sort_members = true
+ij_typescript_import_sort_module_name = true
+ij_typescript_keep_blank_lines_in_code = 1
+ij_typescript_use_double_quotes = false
+
+[{*.cjs,*.js}]
+quote_type = single
+indent_size = 2
+tab_width = 2
+ij_continuation_indent_size = 2
+ij_javascript_import_sort_members = true
+ij_javascript_import_sort_module_name = true
+ij_javascript_keep_blank_lines_in_code = 1
+ij_javascript_use_double_quotes = false
+
+[{*.cjsx,*.coffee}]
+indent_size = 2
+tab_width = 2
+ij_coffeescript_import_sort_members = true
+ij_coffeescript_import_sort_module_name = false
+ij_coffeescript_keep_blank_lines_in_code = 1
+
+[{*.har,*.jsb2,*.jsb3,*.json,.babelrc,.eslintrc,.prettierrc,.stylelintrc,bowerrc,jest.config}]
+indent_size = 2
+tab_width = 2
+ij_json_keep_blank_lines_in_code = 1
+
+[*.cs]
+indent_size = 4
+tab_width = 4
+
+[*.feature]
+indent_size = 2
+
+[*.proto]
+indent_size = 2
+tab_width = 2
+
+[{*.pb,*.textproto}]
+indent_size = 2
+tab_width = 2
