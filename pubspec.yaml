@@ -13,11 +13,16 @@ environment:
 # Dart Scripts Runner plugin https://github.com/joutvhu/dart-scripts
 scripts:
   publish: dart pub publish
+  lint: dart analyze .
 
 dependencies:
   flutter:
     sdk: flutter
   ffi: ^2.0.1
+
+dev_dependencies:
+  lints: ^2.0.0
+  test: ^1.16.0
 
 flutter:
   plugin:
