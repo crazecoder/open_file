@@ -3,10 +3,11 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/services.dart';
-import 'package:open_file/src/common/open_result.dart';
+import 'package:open_file_plus/src/common/open_result.dart';
+
+import 'linux.dart' as linux;
 import 'macos.dart' as mac;
 import 'windows.dart' as windows;
-import 'linux.dart' as linux;
 
 class OpenFile {
   static const MethodChannel _channel = const MethodChannel('open_file');
@@ -15,10 +16,7 @@ class OpenFile {
 
   ///linuxDesktopName like 'xdg'/'gnome'
   static Future<OpenResult> open(String? filePath,
-      {String? type,
-      String? uti,
-      String linuxDesktopName = "xdg",
-      bool linuxByProcess = false}) async {
+      {String? type, String? uti, String linuxDesktopName = "xdg", bool linuxByProcess = false}) async {
     assert(filePath != null);
     if (!Platform.isIOS && !Platform.isAndroid) {
       int _result;
@@ -28,11 +26,9 @@ class OpenFile {
       } else if (Platform.isLinux) {
         var filePathLinux = Uri.file(filePath!);
         if (linuxByProcess) {
-          _result = Process.runSync('xdg-open', [filePathLinux.toString()])
-              .exitCode;
+          _result = Process.runSync('xdg-open', [filePathLinux.toString()]).exitCode;
         } else {
-          _result = linux.system(
-              ['$linuxDesktopName-open', filePathLinux.toString()]);
+          _result = linux.system(['$linuxDesktopName-open', filePathLinux.toString()]);
         }
       } else if (Platform.isWindows) {
         _windowsResult = windows.shellExecute('open', filePath!);
