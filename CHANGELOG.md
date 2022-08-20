@@ -1,3 +1,8 @@
+## 3.3.0
+
+* Remove `android.permission.REQUEST_INSTALL_PACKAGES`
+* Bump version `ffi` to `^2.0.1`
+
 ## 3.2.1
 
 * Add command parser before create system
