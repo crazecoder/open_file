@@ -4,7 +4,7 @@
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
-    <application>
+    <application android:requestLegacyExternalStorage="true">
         <provider
             android:name="com.crazecoder.openfile.FileProvider"
             android:authorities="${applicationId}.fileProvider.com.crazecoder.openfile"
@@ -14,7 +14,7 @@
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/filepaths"
-                 />
+                />
         </provider>
     </application>
 </manifest>

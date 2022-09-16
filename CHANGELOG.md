@@ -1,23 +1,3 @@
-## 3.2.2
-* `FFi` updated to v2.
-* android migrated from `v1` to `v2`, 
-* folder name corrected, ` plaform -> platform`.
-* package version updated to `3.2.2`
-* Gradle updated to `gradle-7.3.1`
-## 3.2.1
-* Add command parser before create system call [#144](https://github.com/crazecoder/open_file/issues/144) (thanks to [@mludovico](https://github.com/mludovico))
-* Fix startActivity() might have NPE issue with filePath on Android (thanks to [@AlexV525](https://github.com/AlexV525))
-* Add error type return when file path is nil on iOS
-## 3.2.0
-* add csv/kml/gpx/torrent support on Android
-* remove android:requestLegacyExternalStorage
-* fix Deprecated API warning when build on Android 
-* delete uti, DocumentInteraction will be retrieved automatically on iOS (thanks to [@std-c](https://github.com/std-c))
-* fix returns wrong reponse on Windows
-## 3.1.0
-* upgrade FFI 1.0.0 (thanks to [@mit-mit](https://github.com/mit-mit))
-* add linuxByProcess parameter (thanks to [@mx1up](https://github.com/mx1up))
-* Migrate to Dart null safety system (thanks to [@orevial](https://github.com/orevial))
 ## 3.0.3
 * upgrade compileSdkVersion
 ## 3.0.2

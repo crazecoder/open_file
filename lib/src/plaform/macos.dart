@@ -1,13 +1,12 @@
 import 'dart:ffi' as ffi;
 
 import 'package:ffi/ffi.dart';
-import 'package:open_file/src/common/parse_args.dart';
 
 typedef SystemC = ffi.Int32 Function(ffi.Pointer<Utf8> command);
 
 typedef SystemDart = int Function(ffi.Pointer<Utf8> command);
 
-int system(List<String> args) {
+int system(String command) {
   // Load `stdlib`. On MacOS this is in libSystem.dylib.
   final dylib = ffi.DynamicLibrary.open('/usr/lib/libSystem.dylib');
 
@@ -15,11 +14,11 @@ int system(List<String> args) {
   final systemP = dylib.lookupFunction<SystemC, SystemDart>('system');
 
   // Allocate a pointer to a Utf8 array containing our command.
-  final cmdP = parseArgs(args).toNativeUtf8();
+  final cmdP = Utf8.toUtf8(command);
 
   // Invoke the command, and free the pointer.
-  final result = systemP(cmdP);
-  calloc.free(cmdP);
+  int result = systemP(cmdP);
+//  cmdP.free();
 
   return result;
 }

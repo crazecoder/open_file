@@ -22,18 +22,18 @@ int shellExecute(String operation, String file) {
 
   // Look up the `ShellExecuteW` function.
   final shellExecuteP =
-      dylib.lookupFunction<ShellExecuteC, ShellExecuteDart>('ShellExecuteW');
+  dylib.lookupFunction<ShellExecuteC, ShellExecuteDart>('ShellExecuteW');
 
   // Allocate pointers to Utf8 arrays containing the command arguments.
-  final operationP = operation.toNativeUtf16();
-  final fileP = file.toNativeUtf16();
+  final operationP = Utf16.toUtf16(operation);
+  final fileP = Utf16.toUtf16(file);
   const int SW_SHOWNORMAL = 1;
 
   // Invoke the command, and free the pointers.
-  final result = shellExecuteP(
+  var result = shellExecuteP(
       ffi.nullptr, operationP, fileP, ffi.nullptr, ffi.nullptr, SW_SHOWNORMAL);
-  calloc.free(operationP);
-  calloc.free(fileP);
+//  operationP.free();
+//  fileP.free();
 
   return result;
 }
