@@ -131,20 +131,17 @@ public class OpenFilePlugin implements MethodCallHandler
     private void startActivity() {
         File file = new File(filePath);
         if (!file.exists()) {
-            result(-2, "the " + filePath + " file does not exists");
+            result(-2, "the " + filePath + " file is not exists");
             return;
         }
 
         Intent intent = new Intent(Intent.ACTION_VIEW);
-        if(TYPE_STRING_APK.equals(typeString))
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        else
-            intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         intent.addCategory("android.intent.category.DEFAULT");
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             String packageName = context.getPackageName();
-            Uri uri = FileProvider.getUriForFile(context, packageName + ".fileProvider.com.crazecoder.openfile", new File(filePath));
+            Uri uri = FileProvider.getUriForFile(context, packageName + ".fileProvider", new File(filePath));
             intent.setDataAndType(uri, typeString);
         } else {
             intent.setDataAndType(Uri.fromFile(file), typeString);
@@ -166,7 +163,7 @@ public class OpenFilePlugin implements MethodCallHandler
 
     private String getFileType(String filePath) {
         String[] fileStrs = filePath.split("\\.");
-        String fileTypeStr = fileStrs[fileStrs.length - 1].toLowerCase();
+        String fileTypeStr = fileStrs[fileStrs.length - 1];
         switch (fileTypeStr) {
             case "3gp":
                 return "video/3gpp";
