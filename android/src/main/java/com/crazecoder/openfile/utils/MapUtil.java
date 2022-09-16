@@ -1,4 +1,4 @@
-package com.crazecoder.openfile.utils;
+package android.src.main.java.com.crazecoder.openfile.utils;
 
 import java.util.HashMap;
 import java.util.Map;
