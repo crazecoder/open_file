@@ -3,6 +3,11 @@
 
 NOTICE: This package is forked from here to remove a dangerous permission in android
 
+What's was changed on this fork:
+* Updated to FFI 2.0.x
+* Removed android.permission.REQUEST_INSTALL_PACKAGES and android.permission.READ_EXTERNAL_STORAGE
+* Updated some Gradle configurations
+
 A plug-in that can call native APP to open files with string result in flutter, support iOS(DocumentInteraction) / android(intent) / PC(ffi) / web(dart:html)
 
 ## Usage

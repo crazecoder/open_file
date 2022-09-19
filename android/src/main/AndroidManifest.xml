@@ -2,8 +2,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.crazecoder.openfile">
 
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-
     <application>
         <provider
             android:name="com.crazecoder.openfile.FileProvider"
