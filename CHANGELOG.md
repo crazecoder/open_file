@@ -1,3 +1,5 @@
+## 3.6.4
+* Removing android.permission.READ_EXTERNAL_STORAGE from the LIB Manifest.
 ## 3.6.3
 * Pub.dev badge
 ## 3.6.2
