@@ -35,7 +35,6 @@ OpenFile.open("/sdcard/example.txt");
             {".kml",    "application/vnd.google-earth.kml+xml"},
             {".gpx",    "application/gpx+xml"},
             {".csv",    "application/vnd.ms-excel"},
-            {".apk",    "application/vnd.android.package-archive"},
             {".asf",    "video/x-ms-asf"},
             {".avi",    "video/x-msvideo"},
             {".bin",    "application/octet-stream"},
