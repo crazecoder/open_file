@@ -9,16 +9,18 @@ description: Demonstrates how to use the open_file plugin.
 # Read more about versioning at semver.org.
 version: 1.0.0+1
 
-environment:
-  sdk: ">=2.1.0 <3.0.0"
-
 dependencies:
   flutter:
     sdk: flutter
+  dio: ^3.0.9
+  # path_provider: ^1.6.5
+
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^0.1.2
+  cupertino_icons: ^0.1.3
+  
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -67,4 +69,3 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.io/custom-fonts/#from-packages
-

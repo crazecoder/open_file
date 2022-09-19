@@ -1,4 +1,4 @@
-package com.crazecoder.openfile.utils;
+package android.src.main.java.com.crazecoder.openfile.utils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
