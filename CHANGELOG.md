@@ -1,3 +1,5 @@
+## 3.2.3
+* Migrate jCenter to mavenCentral
 ## 3.2.2
 * `FFi` updated to v2.
 * android migrated from `v1` to `v2`, 
