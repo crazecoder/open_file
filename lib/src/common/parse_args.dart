@@ -1,13 +1,13 @@
 String parseArgs(List<String> args) {
-    final commandList = args
-        .map(
-          (arg) => arg
-              .replaceAll(' ', '\\ ')
-              .replaceAll('(', '\\(')
-              .replaceAll(')', '\\)')
-	      .replaceAll('\'', '\\\''),
-        )
-        .toList();
+  final commandList = args
+      .map(
+        (arg) => arg
+            .replaceAll(' ', '\\ ')
+            .replaceAll('(', '\\(')
+            .replaceAll(')', '\\)')
+            .replaceAll('\'', '\\\''),
+      )
+      .toList();
 
-    return commandList.join(' ');
-  }
+  return commandList.join(' ');
+}
