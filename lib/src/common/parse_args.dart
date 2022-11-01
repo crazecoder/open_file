@@ -4,7 +4,8 @@ String parseArgs(List<String> args) {
           (arg) => arg
               .replaceAll(' ', '\\ ')
               .replaceAll('(', '\\(')
-              .replaceAll(')', '\\)'),
+              .replaceAll(')', '\\)')
+	      .replaceAll('\'', '\\\''),
         )
         .toList();
 
