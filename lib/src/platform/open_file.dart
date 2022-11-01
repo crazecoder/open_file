@@ -18,8 +18,10 @@ class OpenFile {
       {String? type,
       String? uti,
       String linuxDesktopName = "xdg",
+      bool linuxUseGio = false,
       bool linuxByProcess = false}) async {
     assert(filePath != null);
+    assert(linuxUseGio != false || linuxByProcess != false, "can't have both linuxUseGio and linuxByProcess");
     if (!Platform.isIOS && !Platform.isAndroid) {
       int _result;
       var _windowsResult;
@@ -28,11 +30,13 @@ class OpenFile {
       } else if (Platform.isLinux) {
         var filePathLinux = Uri.file(filePath!);
         if (linuxByProcess) {
-          _result = Process.runSync('xdg-open', [filePathLinux.toString()])
-              .exitCode;
+          _result =
+              Process.runSync('xdg-open', [filePathLinux.toString()]).exitCode;
+        } else if (linuxUseGio) {
+          _result = linux.system(['gio', 'open', filePathLinux.toString()]);
         } else {
-          _result = linux.system(
-              ['$linuxDesktopName-open', filePathLinux.toString()]);
+          _result = linux
+              .system(['$linuxDesktopName-open', filePathLinux.toString()]);
         }
       } else if (Platform.isWindows) {
         _windowsResult = windows.shellExecute('open', filePath!);
