@@ -89,7 +89,7 @@ public class OpenFilePlugin implements MethodCallHandler
             } else {
                 typeString = getFileType(filePath);
             }
-            if (pathRequiresPermission()) {
+            if (requireRuntimePermission(filePath)) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                     if (!isFileAvailable()) {
                         return;
@@ -140,25 +140,20 @@ public class OpenFilePlugin implements MethodCallHandler
         return isMediaStorePath;
     }
 
-    private boolean pathRequiresPermission() {
+    private boolean requireRuntimePermission(String filePath) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             return false;
         }
 
         try {
-//            String appDirCanonicalPath = new File(context.getApplicationInfo().dataDir).getCanonicalPath();
-//            String fileCanonicalPath = new File(filePath).getCanonicalPath();
-//            return !fileCanonicalPath.startsWith(appDirCanonicalPath);
-            String appDirFilePath = context.getExternalFilesDir(null).getCanonicalPath();
-            String appDirCachePath = context.getExternalCacheDir().getCanonicalPath();
+            String dataDir = new File(context.getApplicationInfo().dataDir).getCanonicalPath();
+            String externalFileDir = context.getExternalFilesDir(null).getCanonicalPath();
+            String externalCacheDir = context.getExternalCacheDir().getCanonicalPath();
+
             String fileCanonicalPath = new File(filePath).getCanonicalPath();
-            if (fileCanonicalPath.startsWith(appDirFilePath)) {
-                return false;
-            } else if (fileCanonicalPath.startsWith(appDirCachePath)) {
-                return false;
-            } else {
-                return true;
-            }
+            return !(fileCanonicalPath.startsWith(dataDir) //
+                    || fileCanonicalPath.startsWith(externalFileDir)
+                    || fileCanonicalPath.startsWith(externalCacheDir));
         } catch (IOException e) {
             e.printStackTrace();
             return true;
