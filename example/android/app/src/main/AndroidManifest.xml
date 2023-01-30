@@ -1,51 +1,62 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          xmlns:tools="http://schemas.android.com/tools"
-    package="com.crazecoder.openfileexample">
+     xmlns:tools="http://schemas.android.com/tools"
+     package="com.crazecoder.openfileexample">
 
-    <!-- The INTERNET permission is required for development. Specifically,
-         flutter needs it to communicate with the running application
-         to allow setting breakpoints, to provide hot reload, etc.
+     <!-- The INTERNET permission is required for development. Specifically,
+         flutter needs
+     it to communicate with the running application
+         to allow setting breakpoints, to
+     provide hot reload, etc.
     -->
-    <uses-permission android:name="android.permission.INTERNET"/>
+     <uses-permission android:name="android.permission.INTERNET" />
 
-    <!-- io.flutter.app.FlutterApplication is an android.app.Application that
-         calls FlutterMain.startInitialization(this); in its onCreate method.
-         In most cases you can leave this as-is, but you if you want to provide
-         additional functionality it is fine to subclass or reimplement
+     <!-- io.flutter.app.FlutterApplication is an android.app.Application that
+         calls
+     FlutterMain.startInitialization(this); in its onCreate method.
+         In most cases you can
+     leave this as-is, but you if you want to provide
+         additional functionality it is fine
+     to subclass or reimplement
          FlutterApplication and put your custom class here. -->
-    <application
-        android:name="io.flutter.app.FlutterApplication"
-        android:label="open_file_example"
-        android:icon="@mipmap/ic_launcher">
-        <activity
-            android:name=".MainActivity"
-            android:launchMode="singleTop"
-            android:theme="@style/LaunchTheme"
-            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|layoutDirection|fontScale|screenLayout|density"
-            android:hardwareAccelerated="true"
-            android:windowSoftInputMode="adjustResize">
-            <!-- This keeps the window background of the activity showing
-                 until Flutter renders its first frame. It can be removed if
-                 there is no splash screen (such as the default splash screen
-                 defined in @style/LaunchTheme). -->
-            <meta-data
-                android:name="io.flutter.app.android.SplashScreenUntilFirstFrame"
-                android:value="true" />
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
-        </activity>
-        <!--<provider-->
-                <!--android:name="androidx.core.content.FileProvider"-->
-                <!--android:authorities="${applicationId}.fileProvider"-->
-                <!--android:exported="false"-->
-                <!--android:grantUriPermissions="true"-->
-                <!--tools:replace="android:authorities">-->
-            <!--<meta-data-->
-                    <!--android:name="android.support.FILE_PROVIDER_PATHS"-->
-                    <!--android:resource="@xml/filepaths"-->
-                    <!--tools:replace="android:resource" />-->
-        <!--</provider>-->
-    </application>
+     <application
+          android:name="${applicationName}"
+          android:label="open_file_example"
+          android:icon="@mipmap/ic_launcher">
+          <activity
+               android:name=".MainActivity"
+               android:launchMode="singleTop"
+               android:theme="@style/LaunchTheme"
+               android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|layoutDirection|fontScale|screenLayout|density"
+               android:hardwareAccelerated="true"
+               android:windowSoftInputMode="adjustResize">
+               <!-- This keeps the window background of the activity showing
+                 until
+               Flutter renders its first frame. It can be removed if
+                 there is no
+               splash screen (such as the default splash screen
+                 defined in
+               @style/LaunchTheme). -->
+               <meta-data
+                    android:name="io.flutter.app.android.SplashScreenUntilFirstFrame"
+                    android:value="true" />
+               <intent-filter>
+                    <action android:name="android.intent.action.MAIN" />
+                    <category android:name="android.intent.category.LAUNCHER" />
+               </intent-filter>
+          </activity>
+          <!--<provider-->
+          <!--android:name="androidx.core.content.FileProvider"-->
+          <!--android:authorities="${applicationId}.fileProvider"-->
+          <!--android:exported="false"-->
+          <!--android:grantUriPermissions="true"-->
+          <!--tools:replace="android:authorities">-->
+          <!--<meta-data-->
+          <!--android:name="android.support.FILE_PROVIDER_PATHS"-->
+          <!--android:resource="@xml/filepaths"-->
+          <!--tools:replace="android:resource" />-->
+          <!--</provider>-->
+     </application>
+     <meta-data
+          android:name="flutterEmbedding"
+          android:value="2" />
 </manifest>
