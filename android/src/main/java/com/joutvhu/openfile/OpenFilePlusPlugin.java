@@ -14,13 +14,17 @@ import android.provider.Settings;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-import androidx.core.content.FileProvider;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.core.content.PermissionChecker;
 
 import com.joutvhu.openfile.utils.JsonUtil;
 import com.joutvhu.openfile.utils.MapUtil;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Map;
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityAware;
@@ -31,28 +35,23 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugin.common.PluginRegistry;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Map;
-
 /**
- * OpenFilePlugin
+ * OpenFilePlusPlugin
  */
-public class OpenFilePlugin implements
-    MethodCallHandler,
-    FlutterPlugin,
-    ActivityAware,
-    PluginRegistry.RequestPermissionsResultListener,
-    PluginRegistry.ActivityResultListener {
-    /**
-     * Plugin registration.
-     */
-    @Nullable
-    private FlutterPluginBinding flutterPluginBinding;
+public class OpenFilePlusPlugin implements FlutterPlugin, MethodCallHandler, ActivityAware,
+    PluginRegistry.RequestPermissionsResultListener, PluginRegistry.ActivityResultListener {
+    private static final int REQUEST_CODE = 33432;
+    private static final int RESULT_CODE = 0x12;
+    private static final String TYPE_STRING_APK = "application/vnd.android.package-archive";
+
+    /// The MethodChannel that will the communication between Flutter and native Android
+    ///
+    /// This local reference serves to register the plugin with the Flutter Engine and unregister it
+    /// when the Flutter Engine is detached from the Activity
+    private MethodChannel channel;
 
     private Context context;
     private Activity activity;
-    private MethodChannel channel;
 
     private Result result;
     private String filePath;
@@ -60,13 +59,9 @@ public class OpenFilePlugin implements
 
     private boolean isResultSubmitted = false;
 
-    private static final int REQUEST_CODE = 33432;
-    private static final int RESULT_CODE = 0x12;
-    private static final String TYPE_STRING_APK = "application/vnd.android.package-archive";
-
     @Deprecated
     public static void registerWith(PluginRegistry.Registrar registrar) {
-        OpenFilePlugin plugin = new OpenFilePlugin();
+        OpenFilePlusPlugin plugin = new OpenFilePlusPlugin();
         plugin.activity = registrar.activity();
         plugin.context = registrar.context();
         plugin.channel = new MethodChannel(registrar.messenger(), "open_file");
@@ -75,13 +70,16 @@ public class OpenFilePlugin implements
         registrar.addActivityResultListener(plugin);
     }
 
-    private boolean hasPermission(String permission) {
-        return ContextCompat.checkSelfPermission(activity, permission) == PermissionChecker.PERMISSION_GRANTED;
+    @Override
+    public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
+        this.context = flutterPluginBinding.getApplicationContext();
+        this.channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "open_file_plus");
+        this.channel.setMethodCallHandler(this);
     }
 
     @Override
     @SuppressLint("NewApi")
-    public void onMethodCall(MethodCall call, @NonNull Result result) {
+    public void onMethodCall(@NonNull MethodCall call, @NonNull Result result) {
         isResultSubmitted = false;
         if (call.method.equals("open_file")) {
             this.result = result;
@@ -117,6 +115,10 @@ public class OpenFilePlugin implements
             result.notImplemented();
             isResultSubmitted = true;
         }
+    }
+
+    private boolean hasPermission(String permission) {
+        return ContextCompat.checkSelfPermission(activity, permission) == PermissionChecker.PERMISSION_GRANTED;
     }
 
     private boolean isMediaStorePath() {
@@ -383,15 +385,15 @@ public class OpenFilePlugin implements
         activity.startActivityForResult(intent, RESULT_CODE);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
-    public boolean onRequestPermissionsResult(int requestCode, @NonNull String[] strings, @NonNull int[] grantResults) {
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    public boolean onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode != REQUEST_CODE) return false;
         if (hasPermission(Manifest.permission.READ_EXTERNAL_STORAGE) && TYPE_STRING_APK.equals(typeString)) {
             openApkFile();
             return false;
         }
-        for (String string : strings) {
+        for (String string : permissions) {
             if (!hasPermission(string)) {
                 result(-3, "Permission denied: " + string);
                 return false;
@@ -402,8 +404,7 @@ public class OpenFilePlugin implements
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
-    @Override
-    public boolean onActivityResult(int requestCode, int resultCode, Intent intent) {
+    public boolean onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (requestCode == RESULT_CODE) {
             if (canInstallApk()) {
                 startActivity();
@@ -423,11 +424,6 @@ public class OpenFilePlugin implements
     }
 
     @Override
-    public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
-        this.flutterPluginBinding = binding;
-    }
-
-    @Override
     public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
         if (channel == null) {
             // Could be on too low of an SDK to have started listening originally.
@@ -436,23 +432,18 @@ public class OpenFilePlugin implements
 
         channel.setMethodCallHandler(null);
         channel = null;
-        this.flutterPluginBinding = null;
     }
 
     @Override
-    public void onAttachedToActivity(ActivityPluginBinding binding) {
-        assert flutterPluginBinding != null;
-        channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "open_file");
-        context = flutterPluginBinding.getApplicationContext();
+    public void onAttachedToActivity(@NonNull ActivityPluginBinding binding) {
         activity = binding.getActivity();
-        channel.setMethodCallHandler(this);
         binding.addRequestPermissionsResultListener(this);
         binding.addActivityResultListener(this);
     }
 
     @Override
     public void onDetachedFromActivityForConfigChanges() {
-        onDetachedFromActivity();
+        // Do nothing
     }
 
     @Override
@@ -462,5 +453,6 @@ public class OpenFilePlugin implements
 
     @Override
     public void onDetachedFromActivity() {
+        // Do nothing
     }
 }

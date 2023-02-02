@@ -10,7 +10,7 @@ import 'macos.dart' as mac;
 import 'windows.dart' as windows;
 
 class OpenFile {
-  static const MethodChannel _channel = const MethodChannel('open_file');
+  static const MethodChannel _channel = const MethodChannel('open_file_plus');
 
   OpenFile._();
 
