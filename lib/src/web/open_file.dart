@@ -14,10 +14,10 @@ class OpenFile {
     String linuxDesktopName = "xdg",
     bool linuxByProcess = false,
   }) async {
-    final _b = await web.open("file://$filePath");
+    final b = await web.open("file://$filePath");
     return OpenResult(
-      type: _b ? ResultType.done : ResultType.error,
-      message: _b ? "done" : "there are some errors when open $filePath",
+      type: b ? ResultType.done : ResultType.error,
+      message: b ? "done" : "there are some errors when open $filePath",
     );
   }
 }

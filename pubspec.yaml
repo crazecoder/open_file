@@ -12,8 +12,8 @@ environment:
 
 # Dart Scripts Runner plugin https://github.com/joutvhu/dart-scripts
 scripts:
-  publish: dart pub publish
-  lint: dart analyze .
+  publish: flutter pub publish --dry-run
+  lint: flutter analyze .
 
 dependencies:
   flutter:
