@@ -1,0 +1,36 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+name: Publish package to pub.dev
+
+on:
+  release:
+    types:
+      - created
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.7.1'
+          channel: 'stable'
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Write Gradle Properties File
+        uses: joutvhu/write-file@v1
+        with:
+          path: ~/.pub-cache/credentials.json
+          contents: ${{ secrets.PUB_CREDENTIALS }}
+          write_mode: overwrite
+
+      - name: Publish package
+        run: flutter pub publish -f
