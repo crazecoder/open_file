@@ -354,7 +354,9 @@ public class OpenFilePlusPlugin implements FlutterPlugin, MethodCallHandler, Act
     private void openApkFile() {
         if (!canInstallApk()) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                startInstallPermissionSettingActivity();
+                if (!isResultSubmitted) {
+                    startInstallPermissionSettingActivity();
+                }
             } else {
                 ActivityCompat.requestPermissions(
                     activity,
@@ -370,7 +372,12 @@ public class OpenFilePlusPlugin implements FlutterPlugin, MethodCallHandler, Act
     @RequiresApi(api = Build.VERSION_CODES.M)
     private boolean canInstallApk() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            return activity.getPackageManager().canRequestPackageInstalls();
+            try {
+                return activity.getPackageManager().canRequestPackageInstalls();
+            } catch (Exception e) {
+                result(e instanceof SecurityException ? -3 : -4, e.getMessage());
+                return false;
+            }
         }
         return hasPermission(Manifest.permission.REQUEST_INSTALL_PACKAGES);
     }
