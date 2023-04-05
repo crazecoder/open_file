@@ -97,15 +97,6 @@ public class OpenFilePlugin implements MethodCallHandler
                 typeString = getFileType(filePath);
             }
             if (pathRequiresPermission()) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                    if(!isFileAvailable()){
-                        return;
-                    }
-                    if (!isMediaStorePath()&&!Environment.isExternalStorageManager()) {
-                        result(-3, "Permission denied: android.Manifest.permission.MANAGE_EXTERNAL_STORAGE");
-                        return;
-                    }
-                }
                 if (hasPermission(Manifest.permission.READ_EXTERNAL_STORAGE)) {
                     if (TYPE_STRING_APK.equals(typeString)) {
                         openApkFile();
