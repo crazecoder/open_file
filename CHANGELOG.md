@@ -1,3 +1,5 @@
+## 3.3.0
+* Remove the code of permission on Android, If you want to open an external file, You need to request permission
 ## 3.2.2
 * `FFi` updated to v2.
 * android migrated from `v1` to `v2`, 

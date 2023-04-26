@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 
 import 'package:open_file/open_file.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 void main() => runApp(MyApp());
 
@@ -14,12 +15,13 @@ class _MyAppState extends State<MyApp> {
   var _openResult = 'Unknown';
 
   Future<void> openFile() async {
-    final filePath = '/storage/emulated/0/update.apk';
-    final result = await OpenFile.open(filePath);
-
-    setState(() {
-      _openResult = "type=${result.type}  message=${result.message}";
-    });
+    if (await Permission.manageExternalStorage.request().isGranted) {
+      final result =
+          await OpenFile.open("/sdcard/Download/test.jpg");
+      setState(() {
+        _openResult = "type=${result.type}  message=${result.message}";
+      });
+    }
   }
 
   @override
