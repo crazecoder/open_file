@@ -7,9 +7,9 @@ class OpenFile {
   OpenFile._();
   static Future<OpenResult> open(String? filePath,
       {String? type,
-        String? uti,
-        String linuxDesktopName = "xdg",
-        bool linuxByProcess = false}) async {
+      String? uti,
+      String linuxDesktopName = "xdg",
+      bool linuxByProcess = false}) async {
     final _b = await web.open("file://$filePath");
     return OpenResult(
         type: _b ? ResultType.done : ResultType.error,
