@@ -97,12 +97,30 @@ public class OpenFilePlugin implements MethodCallHandler
                 return;
             }
             if (pathRequiresPermission()) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && !hasPermission(Manifest.permission.MANAGE_EXTERNAL_STORAGE)) {
-                    result(-3, "Permission denied: " + Manifest.permission.MANAGE_EXTERNAL_STORAGE);
-                    return;
-                } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !hasPermission(Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                    result(-3, "Permission denied: " + Manifest.permission.READ_EXTERNAL_STORAGE);
-                    return;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && isExternalStoragePublicMedia(mimeType)) {
+                        if (isImage(mimeType) && !hasPermission(Manifest.permission.READ_MEDIA_IMAGES)) {
+                            result(-3, "Permission denied: " + Manifest.permission.READ_MEDIA_IMAGES);
+                            return;
+                        }
+                        if (isVideo(mimeType) && !hasPermission(Manifest.permission.READ_MEDIA_VIDEO)) {
+                            result(-3, "Permission denied: " + Manifest.permission.READ_MEDIA_VIDEO);
+                            return;
+                        }
+                        if (isAudio(mimeType) && !hasPermission(Manifest.permission.READ_MEDIA_AUDIO)) {
+                            result(-3, "Permission denied: " + Manifest.permission.READ_MEDIA_AUDIO);
+                            return;
+                        }
+                    } else if (!Environment.isExternalStorageManager()) {
+                        result(-3, "Permission denied: " + Manifest.permission.MANAGE_EXTERNAL_STORAGE);
+                        return;
+                    }
+                } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (!hasPermission(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                        result(-3, "Permission denied: " + Manifest.permission.READ_EXTERNAL_STORAGE);
+                        return;
+                    }
+
                 }
             }
             if (TYPE_STRING_APK.equals(mimeType)) {
@@ -182,6 +200,50 @@ public class OpenFilePlugin implements MethodCallHandler
             message = "File opened incorrectly。";
         }
         result(type, message);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.S)
+    private boolean isExternalStoragePublicMedia(String mimeType) {
+        return isExternalStoragePublicPath()&&(isImage(mimeType) || isVideo(mimeType) || isAudio(mimeType));
+    }
+
+    private boolean isImage(String mimeType) {
+        return mimeType.contains("image/");
+    }
+
+    private boolean isVideo(String mimeType) {
+        return mimeType.contains("video/");
+    }
+
+    private boolean isAudio(String mimeType) {
+        return mimeType.contains("audio/");
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.S)
+    private boolean isExternalStoragePublicPath(){
+        boolean isExternalStoragePublicPath = false;
+        String[] mediaStorePath = {
+                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getPath()
+                ,Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).getPath()
+                ,Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath()
+                ,Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES).getPath()
+                ,Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_ALARMS).getPath()
+                ,Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_AUDIOBOOKS).getPath()
+                ,Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getPath()
+                ,Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC).getPath()
+                ,Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_NOTIFICATIONS).getPath()
+                ,Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PODCASTS).getPath()
+                ,Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_RECORDINGS).getPath()
+                ,Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_RINGTONES).getPath()
+                ,Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_SCREENSHOTS).getPath()
+        };
+        for (String s : mediaStorePath) {
+            if (filePath.contains(s)) {
+                isExternalStoragePublicPath = true;
+                break;
+            }
+        }
+        return isExternalStoragePublicPath;
     }
 
     private String getFileMimeType(String filePath) {
