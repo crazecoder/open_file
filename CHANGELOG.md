@@ -1,6 +1,10 @@
+## 3.3.2
+* Optimized the logic for determining the cache/files directory for android applications
+* add a conditional judgment for `PackageManager.queryIntentActivities`
+* update `ffi` to 2.0.2
 ## 3.3.1
 * Refine the media permissions for Android13
-* Add an [example]((https://github.com/crazecoder/open_file/blob/master/example/lib/main.dart)) of full use 
+* Add an [example](https://github.com/crazecoder/open_file/blob/master/example/lib/main.dart) of full use 
 ## 3.3.0
 * Remove the code of permission on Android, If you want to open an external file, You need to request permission
 ## 3.2.2

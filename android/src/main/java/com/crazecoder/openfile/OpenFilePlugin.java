@@ -1,27 +1,20 @@
 package com.crazecoder.openfile;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
-import android.provider.MediaStore;
-import android.provider.Settings;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.content.FileProvider;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.PermissionChecker;
 
@@ -68,21 +61,7 @@ public class OpenFilePlugin implements MethodCallHandler
 
     private static final String TYPE_STRING_APK = "application/vnd.android.package-archive";
 
-    @Deprecated
-    public static void registerWith(PluginRegistry.Registrar registrar) {
-        OpenFilePlugin plugin = new OpenFilePlugin();
-        plugin.activity = registrar.activity();
-        plugin.context = registrar.context();
-        plugin.channel = new MethodChannel(registrar.messenger(), "open_file");
-        plugin.channel.setMethodCallHandler(plugin);
-    }
-
-    private boolean hasPermission(String permission) {
-        return ContextCompat.checkSelfPermission(activity, permission) == PermissionChecker.PERMISSION_GRANTED;
-    }
-
     @Override
-    @SuppressLint("NewApi")
     public void onMethodCall(MethodCall call, @NonNull Result result) {
         isResultSubmitted = false;
         if (call.method.equals("open_file")) {
@@ -134,16 +113,27 @@ public class OpenFilePlugin implements MethodCallHandler
         }
     }
 
+
+    private boolean hasPermission(String permission) {
+        return ContextCompat.checkSelfPermission(activity, permission) == PermissionChecker.PERMISSION_GRANTED;
+    }
+
     private boolean pathRequiresPermission() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             return false;
         }
 
         try {
-            String appDirFilePath = context.getExternalFilesDir(null).getCanonicalPath();
-            String appDirCachePath = context.getExternalCacheDir().getCanonicalPath();
+            String appDirExternalFilePath = context.getExternalFilesDir(null).getCanonicalPath();
+            String appDirExternalCachePath = context.getExternalCacheDir().getCanonicalPath();
+
+            String appDirFilePath = context.getFilesDir().getCanonicalPath();
+            String appDirCachePath = context.getCacheDir().getCanonicalPath();
+
             String fileCanonicalPath = new File(filePath).getCanonicalPath();
-            if (fileCanonicalPath.startsWith(appDirFilePath)
+            if (fileCanonicalPath.startsWith(appDirExternalFilePath)
+                    || fileCanonicalPath.startsWith(appDirExternalCachePath)
+                    || fileCanonicalPath.startsWith(appDirFilePath)
                     || fileCanonicalPath.startsWith(appDirCachePath)) {
                 return false;
             } else {
@@ -183,7 +173,12 @@ public class OpenFilePlugin implements MethodCallHandler
         }
         intent.setDataAndType(uri, mimeType);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-        List<ResolveInfo> resolveInfoList = activity.getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+        List<ResolveInfo> resolveInfoList;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            resolveInfoList = activity.getPackageManager().queryIntentActivities(intent, PackageManager.ResolveInfoFlags.of(PackageManager.MATCH_DEFAULT_ONLY));
+        }else{
+            resolveInfoList = activity.getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+        }
         for (ResolveInfo resolveInfo : resolveInfoList) {
             String packageName = resolveInfo.activityInfo.packageName;
             activity.grantUriPermission(packageName, uri, Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
@@ -204,7 +199,7 @@ public class OpenFilePlugin implements MethodCallHandler
 
     @RequiresApi(api = Build.VERSION_CODES.S)
     private boolean isExternalStoragePublicMedia(String mimeType) {
-        return isExternalStoragePublicPath()&&(isImage(mimeType) || isVideo(mimeType) || isAudio(mimeType));
+        return isExternalStoragePublicPath() && (isImage(mimeType) || isVideo(mimeType) || isAudio(mimeType));
     }
 
     private boolean isImage(String mimeType) {
@@ -220,22 +215,22 @@ public class OpenFilePlugin implements MethodCallHandler
     }
 
     @RequiresApi(api = Build.VERSION_CODES.S)
-    private boolean isExternalStoragePublicPath(){
+    private boolean isExternalStoragePublicPath() {
         boolean isExternalStoragePublicPath = false;
         String[] mediaStorePath = {
                 Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getPath()
-                ,Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).getPath()
-                ,Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath()
-                ,Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES).getPath()
-                ,Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_ALARMS).getPath()
-                ,Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_AUDIOBOOKS).getPath()
-                ,Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getPath()
-                ,Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC).getPath()
-                ,Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_NOTIFICATIONS).getPath()
-                ,Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PODCASTS).getPath()
-                ,Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_RECORDINGS).getPath()
-                ,Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_RINGTONES).getPath()
-                ,Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_SCREENSHOTS).getPath()
+                , Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).getPath()
+                , Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath()
+                , Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES).getPath()
+                , Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_ALARMS).getPath()
+                , Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_AUDIOBOOKS).getPath()
+                , Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getPath()
+                , Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC).getPath()
+                , Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_NOTIFICATIONS).getPath()
+                , Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PODCASTS).getPath()
+                , Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_RECORDINGS).getPath()
+                , Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_RINGTONES).getPath()
+                , Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_SCREENSHOTS).getPath()
         };
         for (String s : mediaStorePath) {
             if (filePath.contains(s)) {
