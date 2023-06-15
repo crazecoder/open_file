@@ -210,7 +210,7 @@ public class OpenFilePlugin: NSObject, FlutterPlugin {
         case "pdf":
             uti = "com.adobe.pdf"
         default:
-            
+            uti = ""
         }
         return uti
     }
