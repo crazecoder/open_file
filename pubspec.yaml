@@ -23,7 +23,14 @@ flutter:
         pluginClass: OpenFilePlugin
       ios:
         pluginClass: OpenFilePlugin
-
+      windows:
+        default_package: open_file
+      linux:
+        default_package: open_file
+      macos:
+         pluginClass: OpenFilePlugin
+      web:
+        default_package: open_file
   # To add assets to your plugin package, add an assets section, like this:
   # assets:
   #  - images/a_dot_burr.jpeg
