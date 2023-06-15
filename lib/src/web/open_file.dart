@@ -10,9 +10,15 @@ class OpenFile {
       String? uti,
       String linuxDesktopName = "xdg",
       bool linuxByProcess = false}) async {
-    final _b = await web.open("file://$filePath");
-    return OpenResult(
-        type: _b ? ResultType.done : ResultType.error,
-        message: _b ? "done" : "there are some errors when open $filePath");
+    if (filePath?.isNotEmpty == true) {
+      final _b = await web.open(filePath!);
+      return OpenResult(
+          type: _b ? ResultType.done : ResultType.error,
+          message: _b ? "done" : "there are some errors when open $filePath");
+    }else{
+      return OpenResult(
+          type: ResultType.error,
+          message: "$filePath can not null or empty");
+    }
   }
 }
