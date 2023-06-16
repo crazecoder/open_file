@@ -11,13 +11,14 @@ class OpenFile {
   static const MethodChannel _channel = const MethodChannel('open_file');
 
   OpenFile._();
-
-  ///linuxDesktopName like 'xdg'/'gnome'
+  ///[filePath] On web you need to pass the file name to determine the file type
+  ///[linuxDesktopName] like 'xdg'/'gnome'
   static Future<OpenResult> open(String? filePath,
       {String? type,
       String? uti,
       String linuxDesktopName = "xdg",
-      bool linuxByProcess = false}) async {
+      bool linuxByProcess = false,
+      Uint8List? webData}) async {
     assert(filePath != null);
     if (!Platform.isMacOS && !Platform.isIOS && !Platform.isAndroid) {
       int _result;

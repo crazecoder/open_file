@@ -6,32 +6,39 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 
-Future<bool> open(String uri) async {
-  // 创建一个 file input 元素
-  final fileInput = FileUploadInputElement()
-    ..dir = uri
-    ..accept = _getMimeType(uri).mimeType; // 设置文件类型过滤
-  // fileInput.value = uri;
-// 监听 file input 元素的 change 事件
-  fileInput.onChange.listen((event) {
-    final files = fileInput.files!;
-    if (files.isNotEmpty) {
-      final reader = FileReader();
-      // if (_getMimeType(uri) == ContentType.binary)
-      reader.readAsArrayBuffer(files.first);
-      // else
-      //   reader.readAsDataUrl(files.first);
-      reader.onLoad.listen((event) {
-        // if (reader.result is String) {
-        //   final contents = reader.result as String?;
-        //   if (contents?.isNotEmpty == true) show(contents!);
-        // } else {
-        downloadFile(reader.result as Uint8List, uri.split("/").last);
-        // }
-      });
-    }
-  });
-  fileInput.click();
+Future<bool> open(String? uri, {Uint8List? data}) async {
+  var fileName = DateTime.now().millisecondsSinceEpoch.toString();
+  if (uri?.isNotEmpty == true) {
+    fileName = uri!.split("/").last;
+  }
+  if (data == null || data.isEmpty) {
+    final fileInput = FileUploadInputElement()
+      ..dir = uri
+      ..accept = _getMimeType(uri).mimeType;
+    // fileInput.value = uri;
+    fileInput.onChange.listen((event) {
+      final files = fileInput.files!;
+      if (files.isNotEmpty) {
+        final reader = FileReader();
+        // if (_getMimeType(uri) == ContentType.binary)
+        reader.readAsArrayBuffer(files.first);
+        // else
+        //   reader.readAsDataUrl(files.first);
+        reader.onLoad.listen((event) {
+          // if (reader.result is String) {
+          //   final contents = reader.result as String?;
+          //   if (contents?.isNotEmpty == true) show(contents!);
+          // } else {
+          downloadFile(reader.result as Uint8List, fileName);
+          // }
+        });
+      }
+    });
+    fileInput.click();
+  } else {
+    downloadFile(data, fileName);
+  }
+
   // downloadFile(data, uri.split("/").last);
   return true;
 }
@@ -52,8 +59,8 @@ void downloadFile(Uint8List data, String fileName) {
   anchor.click();
 }
 
-ContentType _getMimeType(String path1) {
-  final path = path1.toLowerCase();
+ContentType _getMimeType(String? path1) {
+  final path = path1?.toLowerCase() ?? "";
   if (path.endsWith('.html')) {
     return ContentType.html;
   } else if (path.endsWith('.js')) {
