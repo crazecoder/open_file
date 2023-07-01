@@ -4,7 +4,6 @@ import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:open_file/src/common/open_result.dart';
-import 'macos.dart' as mac;
 import 'windows.dart' as windows;
 import 'linux.dart' as linux;
 
@@ -12,22 +11,21 @@ class OpenFile {
   static const MethodChannel _channel = const MethodChannel('open_file');
 
   OpenFile._();
-
-  ///linuxDesktopName like 'xdg'/'gnome'
+  ///[filePath] On web you need to pass the file name to determine the file type
+  ///[linuxDesktopName] like 'xdg'/'gnome'
   static Future<OpenResult> open(String? filePath,
       {String? type,
       String? uti,
       String linuxDesktopName = "xdg",
       bool linuxUseGio = false,
-      bool linuxByProcess = false}) async {
+      bool linuxByProcess = false,
+      Uint8List? webData}) async {
     assert(filePath != null);
     assert(linuxUseGio != false || linuxByProcess != false, "can't have both linuxUseGio and linuxByProcess");
-    if (!Platform.isIOS && !Platform.isAndroid) {
+    if (!Platform.isMacOS && !Platform.isIOS && !Platform.isAndroid) {
       int _result;
       var _windowsResult;
-      if (Platform.isMacOS) {
-        _result = mac.system(['open', '$filePath']);
-      } else if (Platform.isLinux) {
+      if (Platform.isLinux) {
         var filePathLinux = Uri.file(filePath!);
         if (linuxByProcess) {
           _result =

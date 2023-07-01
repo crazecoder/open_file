@@ -1,7 +1,11 @@
+import 'dart:typed_data';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 
 import 'package:open_file/open_file.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 void main() => runApp(MyApp());
 
@@ -14,12 +18,88 @@ class _MyAppState extends State<MyApp> {
   var _openResult = 'Unknown';
 
   Future<void> openFile() async {
-    final filePath = '/storage/emulated/0/update.apk';
-    final result = await OpenFile.open(filePath);
+    _openWebFile();
+  }
 
+// ignore: unused_element
+  _openWebFile() async {
+    //open an app private storage file
+    FilePickerResult? fileResult = await FilePicker.platform.pickFiles();
+    if (fileResult?.files.first != null) {
+      Uint8List fileBytes = fileResult!.files.first.bytes!;
+      
+      final result = await OpenFile.open(
+          fileResult.files.first.name,
+          webData: fileBytes);
+      setState(() {
+        _openResult = "type=${result.type}  message=${result.message}";
+      });
+    }
+  }
+
+  // ignore: unused_element
+  _openAppPrivateFile() async {
+    //open an app private storage file
+    final result = await OpenFile.open(
+        "/data/data/com.crazecoder.openfileexample/cache/IMG20230610192318.jpg");
     setState(() {
       _openResult = "type=${result.type}  message=${result.message}";
     });
+  }
+
+  // ignore: unused_element
+  _openOtherAppFile() async {
+    //open an external storage image file on android 13
+    if (await Permission.manageExternalStorage.request().isGranted) {
+      final result = await OpenFile.open("/data/user/0/xxx/images/1.jpg");
+      setState(() {
+        _openResult = "type=${result.type}  message=${result.message}";
+      });
+    }
+  }
+
+  // ignore: unused_element
+  _openExternalImage() async {
+    //open an external storage image file on android 13
+    if (await Permission.photos.request().isGranted) {
+      final result = await OpenFile.open("/sdcard/Download/R-C.jpg");
+      setState(() {
+        _openResult = "type=${result.type}  message=${result.message}";
+      });
+    }
+  }
+
+  // ignore: unused_element
+  _openExternalVideo() async {
+    //open an external storage video file on android 13
+    if (await Permission.videos.request().isGranted) {
+      final result = await OpenFile.open("/sdcard/Download/R-C.mp4");
+      setState(() {
+        _openResult = "type=${result.type}  message=${result.message}";
+      });
+    }
+  }
+
+  // ignore: unused_element
+  _openExternalAudio() async {
+    //open an external storage audio file on android 13
+    if (await Permission.audio.request().isGranted) {
+      final result = await OpenFile.open("/sdcard/Download/R-C.mp3");
+      setState(() {
+        _openResult = "type=${result.type}  message=${result.message}";
+      });
+    }
+  }
+
+  // ignore: unused_element
+  _openExternalFile() async {
+    //open an external storage file
+    if (await Permission.manageExternalStorage.request().isGranted) {
+      final result = await OpenFile.open("/sdcard/Android/data/R-C.xml");
+      setState(() {
+        _openResult = "type=${result.type}  message=${result.message}";
+      });
+    }
   }
 
   @override

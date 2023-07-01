@@ -6,6 +6,9 @@ A plug-in that can call native APP to open files with string result in flutter, 
 ## Usage
 
 To use this plugin, add [open_file](https://pub.dartlang.org/packages/open_file#-installing-tab-) as a dependency in your pubspec.yaml file.
+
+If you want to open an external file, You need to request permission start in 3.3.0, This is an [example](https://github.com/crazecoder/open_file/blob/master/example/lib/main.dart)
+
 ```yaml
 dependencies:
   #androidx
