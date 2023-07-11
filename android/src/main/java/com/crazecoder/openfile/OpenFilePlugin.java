@@ -78,15 +78,15 @@ public class OpenFilePlugin implements MethodCallHandler
             if (pathRequiresPermission()) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && isExternalStoragePublicMedia(mimeType)) {
-                        if (isImage(mimeType) && !hasPermission(Manifest.permission.READ_MEDIA_IMAGES)) {
+                        if (isImage(mimeType) && !hasPermission(Manifest.permission.READ_MEDIA_IMAGES) && !Environment.isExternalStorageManager()) {
                             result(-3, "Permission denied: " + Manifest.permission.READ_MEDIA_IMAGES);
                             return;
                         }
-                        if (isVideo(mimeType) && !hasPermission(Manifest.permission.READ_MEDIA_VIDEO)) {
+                        if (isVideo(mimeType) && !hasPermission(Manifest.permission.READ_MEDIA_VIDEO) && !Environment.isExternalStorageManager()) {
                             result(-3, "Permission denied: " + Manifest.permission.READ_MEDIA_VIDEO);
                             return;
                         }
-                        if (isAudio(mimeType) && !hasPermission(Manifest.permission.READ_MEDIA_AUDIO)) {
+                        if (isAudio(mimeType) && !hasPermission(Manifest.permission.READ_MEDIA_AUDIO) && !Environment.isExternalStorageManager()) {
                             result(-3, "Permission denied: " + Manifest.permission.READ_MEDIA_AUDIO);
                             return;
                         }
