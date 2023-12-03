@@ -20,7 +20,7 @@ dependencies:
 
 ## Example
 ```dart
-import 'package:open_file/better_open_file.dart';
+import 'package:better_open_file/better_open_file.dart';
 
 OpenFile.open("/sdcard/example.txt");
 //OpenFile.open("/sdcard/example.txt", type: "text/plain", uti: "public.plain-text");
