@@ -98,6 +98,7 @@ OpenFile.open("/sdcard/example.txt");
             {".xml",    "text/plain"},
             {".z",      "application/x-compress"},
             {".zip",    "application/x-zip-compressed"},
+            {".dwg",    "application/x-autocad"},
             {"",        "*/*"}
 }
 

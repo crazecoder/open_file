@@ -380,6 +380,8 @@ public class OpenFilePlugin implements MethodCallHandler
                 return "application/x-compress";
             case "zip":
                 return "application/x-zip-compressed";
+            case "dwg":
+                return "application/x-autocad";
             default:
                 return "*/*";
         }
