@@ -37,10 +37,6 @@ android {
     lintOptions {
         disable 'InvalidPackage'
     }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_7
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
     buildToolsVersion '30.0.2'
 }
 dependencies{
