@@ -1,3 +1,6 @@
+## 3.6.5
+* Fixed import path in readme
+* Add namespace to Gradle
 ## 3.6.4
 * Removing android.permission.READ_EXTERNAL_STORAGE from the LIB Manifest.
 ## 3.6.3
