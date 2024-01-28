@@ -37,7 +37,6 @@ android {
     lintOptions {
         disable 'InvalidPackage'
     }
-    buildToolsVersion '30.0.2'
 }
 dependencies{
     implementation 'androidx.appcompat:appcompat:1.6.1'
