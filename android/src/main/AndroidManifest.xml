@@ -8,6 +8,7 @@
             android:authorities="${applicationId}.fileProvider.com.crazecoder.openfile"
             android:exported="false"
             android:grantUriPermissions="true"
+            android:requestLegacyExternalStorage="true"
             tools:replace="android:authorities">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"

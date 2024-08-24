@@ -1,4 +1,5 @@
 <paths>
+    <root-path name="root" path="" />
     <external-path
             name="external-path"
             path="."/>
