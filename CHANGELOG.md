@@ -1,3 +1,8 @@
+## 3.4.0
+* Optimized the logical judgment of permission requests for each android version
+* update `ffi` to 2.1.3
+* AGP 8 namespace issue fix (thanks to [@prataptej](https://github.com/prataptej))
+* add linuxUseGio parameter (thanks to [@brainwo](https://github.com/brainwo))
 ## 3.3.2
 * Optimized the logic for determining the cache/files directory for android applications
 * add a conditional judgment for `PackageManager.queryIntentActivities`
