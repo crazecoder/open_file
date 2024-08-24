@@ -18,7 +18,7 @@ class _MyAppState extends State<MyApp> {
   var _openResult = 'Unknown';
 
   Future<void> openFile() async {
-    _openWebFile();
+    _openExternalImage();
   }
 
 // ignore: unused_element
@@ -26,11 +26,10 @@ class _MyAppState extends State<MyApp> {
     //open an app private storage file
     FilePickerResult? fileResult = await FilePicker.platform.pickFiles();
     if (fileResult?.files.first != null) {
-      Uint8List fileBytes = fileResult!.files.first.bytes!;
-      
-      final result = await OpenFile.open(
-          fileResult.files.first.name,
-          webData: fileBytes);
+      Uint8List? fileBytes = fileResult!.files.first.bytes;
+
+      final result =
+          await OpenFile.open(fileResult.files.first.path, webData: fileBytes);
       setState(() {
         _openResult = "type=${result.type}  message=${result.message}";
       });
