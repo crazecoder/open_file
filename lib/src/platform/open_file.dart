@@ -17,9 +17,11 @@ class OpenFile {
       {String? type,
       String? uti,
       String linuxDesktopName = "xdg",
+      bool linuxUseGio = false,
       bool linuxByProcess = false,
       Uint8List? webData}) async {
     assert(filePath != null);
+    assert(linuxUseGio != false || linuxByProcess != false, "can't have both linuxUseGio and linuxByProcess");
     if (!Platform.isMacOS && !Platform.isIOS && !Platform.isAndroid) {
       int _result;
       var _windowsResult;
@@ -28,6 +30,8 @@ class OpenFile {
         if (linuxByProcess) {
           _result =
               Process.runSync('xdg-open', [filePathLinux.toString()]).exitCode;
+        } else if (linuxUseGio) {
+          _result = linux.system(['gio', 'open', filePathLinux.toString()]);
         } else {
           _result = linux
               .system(['$linuxDesktopName-open', filePathLinux.toString()]);
