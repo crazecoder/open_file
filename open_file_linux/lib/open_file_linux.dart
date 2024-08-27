@@ -19,33 +19,36 @@ class OpenFileLinux extends OpenFilePlatform {
   @override
   Future<OpenResult> open(String? filePath,
       {String? type,
-        String? uti,
-        String linuxDesktopName = "xdg",
-        bool linuxUseGio = false,
-        bool linuxByProcess = false,
-        Uint8List? webData}) async {
+      String? uti,
+      String linuxDesktopName = "xdg",
+      bool linuxUseGio = false,
+      bool linuxByProcess = true,
+      Uint8List? webData}) async {
     assert(filePath != null);
-    if (Platform.isLinux) {
-      assert(linuxUseGio != false || linuxByProcess != false,
-      "can't have both linuxUseGio and linuxByProcess");
-    }
+    assert(linuxUseGio != true || linuxByProcess != true,
+        "can't have both linuxUseGio and linuxByProcess");
+
     int _result;
     var filePathLinux = Uri.file(filePath!);
-    if (linuxByProcess) {
-      _result =
-          Process.runSync('xdg-open', [filePathLinux.toString()]).exitCode;
-    } else if (linuxUseGio) {
+    if (linuxUseGio) {
       _result = system(['gio', 'open', filePathLinux.toString()]);
     } else {
-      _result = system(['$linuxDesktopName-open', filePathLinux.toString()]);
+      if (linuxByProcess) {
+        _result = (await Process.run(
+                '$linuxDesktopName-open', [filePathLinux.toString()]))
+            .exitCode;
+      } else {
+        _result = system(['$linuxDesktopName-open', filePathLinux.toString()]);
+      }
     }
+
     return OpenResult(
         type: _result == 0 ? ResultType.done : ResultType.error,
         message: _result == 0
             ? "done"
             : _result == -1
-            ? "This operating system is not currently supported"
-            : "there are some errors when open $filePath");
+                ? "This operating system is not currently supported"
+                : "there are some errors when open $filePath");
   }
 
   int system(List<String> command) {
