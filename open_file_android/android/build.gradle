@@ -1,0 +1,43 @@
+group 'com.crazecoder.openfile'
+version '1.0-SNAPSHOT'
+
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:7.3.1'
+    }
+}
+
+rootProject.allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+apply plugin: 'com.android.library'
+
+android {
+
+    // conditional for compatibility with older gradle versions
+    if (project.android.hasProperty('namespace')) {
+        namespace "com.crazecoder.openfile"
+    }
+
+    compileSdk 34
+
+    defaultConfig {
+        minSdk 16
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+    lintOptions {
+        disable 'InvalidPackage'
+    }
+}
+dependencies{
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+}
