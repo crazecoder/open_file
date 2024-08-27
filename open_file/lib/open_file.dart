@@ -15,12 +15,11 @@ class OpenFile {
   ///In linux, you must specify a parameter that tells the application whether to open using [linuxUseGio] or [linuxByProcess]
   static Future<OpenResult> open(String? filePath,
       {String? type,
-        String? uti,
-        String linuxDesktopName = "xdg",
-        bool linuxUseGio = false,
-        bool linuxByProcess = false,
-        Uint8List? webData}) async {
-
+      String? uti,
+      String linuxDesktopName = "xdg",
+      bool linuxUseGio = false,
+      bool linuxByProcess = true,
+      Uint8List? webData}) async {
     return OpenFilePlatform.platform.open(
       filePath,
       type: type,

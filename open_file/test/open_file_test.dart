@@ -4,7 +4,6 @@ import 'package:open_file_platform_interface/open_file_platform_interface.dart';
 
 void main() {
   group('OpenFile', () {
-
     setUp(() {
       OpenFilePlatform.platform = OpenFile.platform;
     });

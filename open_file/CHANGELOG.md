@@ -1,3 +1,5 @@
+## 3.5.0+1
+* linuxByProcess defaults to true [#156](https://github.com/crazecoder/open_file/pull/156)
 ## 3.5.0
 * Utilize the new platform_interface package.
 * Updates minimum Flutter version to 1.20.0.
