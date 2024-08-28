@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:open_file/open_file.dart';
 import 'dart:async';
+import 'package:path/path.dart' as path;
 
 import 'package:permission_handler/permission_handler.dart';
 
 void main() => runApp(MyApp());
+
+const types = {
+  "application/pdf": "pdf",
+  ".dwg": "application/x-autocad"
+};
 
 class MyApp extends StatefulWidget {
   @override
@@ -15,17 +21,25 @@ class _MyAppState extends State<MyApp> {
   var _openResult = 'Unknown';
 
   Future<void> openFile() async {
-    _openWebFile();
+    _openExternalImage();
   }
 
-// ignore: unused_element
+  _openOtherTypeFile() async {
+    final filePath = "/sdcard/Download/R-C.dwg";
+    final extension = path.extension(filePath);
+    final result = await OpenFile.open(filePath, type: types[extension]);
+    setState(() {
+      _openResult = "type=${result.type}  message=${result.message}";
+    });
+  }
+
+  // ignore: unused_element
   _openWebFile() async {
     //open an app private storage file
     // FilePickerResult? fileResult = await FilePicker.platform.pickFiles();
     // if (fileResult?.files.first != null) {
     //   Uint8List? fileBytes = fileResult!.files.first.bytes;
-    final result =
-    await OpenFile.open("./icons/Icon-512.png");
+    final result = await OpenFile.open("./icons/Icon-512.png");
     setState(() {
       _openResult = "type=${result.type}  message=${result.message}";
     });

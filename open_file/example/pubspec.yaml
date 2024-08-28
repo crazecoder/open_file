@@ -37,6 +37,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   permission_handler: ^11.3.1
   file_picker: ^5.3.2
+  path: ^1.9.0
   open_file:
     path: ../
 
