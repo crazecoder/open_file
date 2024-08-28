@@ -25,7 +25,7 @@ class _MyAppState extends State<MyApp> {
         ),
         body: Center(
           child: GestureDetector(child: Text(_result),onTap: ()async{
-            final resultType = await _openFileLinuxPlugin.open("/User/Download/example.txt");
+            final resultType = await _openFileLinuxPlugin.open("/home/parallels/Downloads/c53c258fdd13ae138df5c6ff7aaa8e35.jpeg");
 
             setState(() {
               _result = resultType.message;
