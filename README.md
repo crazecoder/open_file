@@ -22,6 +22,17 @@ dependencies:
 import 'package:open_file/open_file.dart';
 
 OpenFile.open("/sdcard/example.txt");
+
+//Support for custom add types
+const types = {
+  ".pdf": "application/pdf",
+  ".dwg": "application/x-autocad"
+};
+_openOtherTypeFile() async {
+  final filePath = "/sdcard/Download/R-C.dwg";
+  final extension = path.extension(filePath);//import 'package:path/path.dart' as path;
+  await OpenFile.open(filePath, type: types[extension]);
+}
 //OpenFile.open("/sdcard/example.txt", type: "text/plain", uti: "public.plain-text");
 ```
 
@@ -122,13 +133,6 @@ when Conflict with other plugins about FileProvider, add code below in your `/an
         </provider>
     </application>
 </manifest>
-```
-furthermore add code below in your `/android/app/src/main/res/xml/filepaths.xml`
-```xml
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <external-path name="external_storage_directory" path="." />
-</resources>
 ```
 
 when Android dependency 'com.android.support:appcompat-v7' has different version for the compile error, add code below in your /android/build.gradle
