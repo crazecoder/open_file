@@ -1,3 +1,5 @@
+## 3.5.1
+* update ```open_file_linux: ^0.0.3``` to fix [#291](https://github.com/crazecoder/open_file/issues/291)
 ## 3.5.0+1
 * linuxByProcess defaults to true [#156](https://github.com/crazecoder/open_file/pull/156)
 ## 3.5.0
