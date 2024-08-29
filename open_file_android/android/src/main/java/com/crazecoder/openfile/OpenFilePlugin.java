@@ -44,12 +44,8 @@ public class OpenFilePlugin implements MethodCallHandler
         , FlutterPlugin
         , ActivityAware
         , PluginRegistry.ActivityResultListener {
-    /**
-     * Plugin registration.
-     */
-    private @Nullable
-    FlutterPluginBinding flutterPluginBinding;
 
+    private @Nullable FlutterPluginBinding flutterPluginBinding;
     private Context context;
     private Activity activity;
     private MethodChannel channel;
@@ -221,7 +217,7 @@ public class OpenFilePlugin implements MethodCallHandler
     private boolean canInstallApk() {
         try {
             return activity.getPackageManager().canRequestPackageInstalls();
-        }catch (SecurityException e){
+        } catch (SecurityException e) {
             e.printStackTrace();
             return false;
         }
@@ -235,13 +231,23 @@ public class OpenFilePlugin implements MethodCallHandler
         }
     }
 
+    private void setMethodCallHandler() {
+        if (channel == null) {
+            channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "open_file");
+        }
+        channel.setMethodCallHandler(this);
+    }
+
     @Override
     public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
-        this.flutterPluginBinding = binding;
+        flutterPluginBinding = binding;
+        context = binding.getApplicationContext();
+        setMethodCallHandler();
     }
 
     @Override
     public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
+        flutterPluginBinding = null;
         if (channel == null) {
             // Could be on too low of an SDK to have started listening originally.
             return;
@@ -249,18 +255,13 @@ public class OpenFilePlugin implements MethodCallHandler
 
         channel.setMethodCallHandler(null);
         channel = null;
-        this.flutterPluginBinding = null;
     }
 
     @Override
-    public void onAttachedToActivity(ActivityPluginBinding binding) {
-        channel =
-                new MethodChannel(
-                        flutterPluginBinding.getBinaryMessenger(), "open_file");
-        context = flutterPluginBinding.getApplicationContext();
+    public void onAttachedToActivity(@NonNull ActivityPluginBinding binding) {
         activity = binding.getActivity();
-        channel.setMethodCallHandler(this);
         binding.addActivityResultListener(this);
+        setMethodCallHandler();
     }
 
     @Override
