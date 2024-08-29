@@ -33,8 +33,8 @@ static NSString *const CHANNEL_NAME = @"open_file";
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
     if ([@"open_file" isEqualToString:call.method]) {
         _result = result;
-        NSString *msg = call.arguments[@"file_path"];
-        if(msg==nil){
+        NSString *filePath = call.arguments[@"file_path"];
+        if(filePath==nil){
             NSDictionary * dict = @{@"message":@"the file path cannot be null", @"type":@-4};
             NSData * jsonData = [NSJSONSerialization dataWithJSONObject:dict options:NSJSONWritingPrettyPrinted error:nil];
             NSString * json = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
@@ -42,94 +42,28 @@ static NSString *const CHANNEL_NAME = @"open_file";
             return;
         }
         NSFileManager *fileManager=[NSFileManager defaultManager];
-        BOOL fileExist=[fileManager fileExistsAtPath:msg];
+        BOOL fileExist=[fileManager fileExistsAtPath:filePath];
         if(fileExist){
-            //            NSURL *resourceToOpen = [NSURL fileURLWithPath:msg];
-//            NSString *exestr = [[msg pathExtension] lowercaseString];
-            _documentController = [UIDocumentInteractionController interactionControllerWithURL:[NSURL fileURLWithPath:msg]];
+            _documentController = [UIDocumentInteractionController interactionControllerWithURL:[NSURL fileURLWithPath:filePath]];
             _documentController.delegate = self;
             NSString *uti = call.arguments[@"uti"];
             BOOL isBlank = [self isBlankString:uti];
             if(!isBlank){
                 _documentController.UTI = uti;
             }
-//             else{
-//                 if([exestr isEqualToString:@"rtf"]){
-//                     _documentController.UTI=@"public.rtf";
-//                 }else if([exestr isEqualToString:@"txt"]){
-//                     _documentController.UTI=@"public.plain-text";
-//                 }else if([exestr isEqualToString:@"html"]||
-//                          [exestr isEqualToString:@"htm"]){
-//                     _documentController.UTI=@"public.html";
-//                 }else if([exestr isEqualToString:@"xml"]){
-//                     _documentController.UTI=@"public.xml";
-//                 }else if([exestr isEqualToString:@"tar"]){
-//                     _documentController.UTI=@"public.tar-archive";
-//                 }else if([exestr isEqualToString:@"gz"]||
-//                          [exestr isEqualToString:@"gzip"]){
-//                     _documentController.UTI=@"org.gnu.gnu-zip-archive";
-//                 }else if([exestr isEqualToString:@"tgz"]){
-//                     _documentController.UTI=@"org.gnu.gnu-zip-tar-archive";
-//                 }else if([exestr isEqualToString:@"jpg"]||
-//                          [exestr isEqualToString:@"jpeg"]){
-//                     _documentController.UTI=@"public.jpeg";
-//                 }else if([exestr isEqualToString:@"png"]){
-//                     _documentController.UTI=@"public.png";
-//                 }else if([exestr isEqualToString:@"avi"]){
-//                     _documentController.UTI=@"public.avi";
-//                 }else if([exestr isEqualToString:@"mpg"]||
-//                          [exestr isEqualToString:@"mpeg"]){
-//                     _documentController.UTI=@"public.mpeg";
-//                 }else if([exestr isEqualToString:@"mp4"]){
-//                     _documentController.UTI=@"public.mpeg-4";
-//                 }else if([exestr isEqualToString:@"3gpp"]||
-//                          [exestr isEqualToString:@"3gp"]){
-//                     _documentController.UTI=@"public.3gpp";
-//                 }else if([exestr isEqualToString:@"mp3"]){
-//                     _documentController.UTI=@"public.mp3";
-//                 }else if([exestr isEqualToString:@"zip"]){
-//                     _documentController.UTI=@"com.pkware.zip-archive";
-//                 }else if([exestr isEqualToString:@"gif"]){
-//                     _documentController.UTI=@"com.compuserve.gif";
-//                 }else if([exestr isEqualToString:@"bmp"]){
-//                     _documentController.UTI=@"com.microsoft.bmp";
-//                 }else if([exestr isEqualToString:@"ico"]){
-//                     _documentController.UTI=@"com.microsoft.ico";
-//                 }else if([exestr isEqualToString:@"doc"]){
-//                     _documentController.UTI=@"com.microsoft.word.doc";
-//                 }else if([exestr isEqualToString:@"xls"]){
-//                     _documentController.UTI=@"com.microsoft.excel.xls";
-//                 }else if([exestr isEqualToString:@"ppt"]){
-//                     _documentController.UTI=@"com.microsoft.powerpoint.​ppt";
-//                 }else if([exestr isEqualToString:@"wav"]){
-//                     _documentController.UTI=@"com.microsoft.waveform-​audio";
-//                 }else if([exestr isEqualToString:@"wm"]){
-//                     _documentController.UTI=@"com.microsoft.windows-​media-wm";
-//                 }else if([exestr isEqualToString:@"wmv"]){
-//                     _documentController.UTI=@"com.microsoft.windows-​media-wmv";
-//                 }else if([exestr isEqualToString:@"pdf"]){
-//                     _documentController.UTI=@"com.adobe.pdf";
-//                 }else {
-//                     NSLog(@"doc type not supported for preview");
-//                     NSLog(@"%@", exestr);
-//                 }
-//             }
             @try {
                 BOOL previewSucceeded = [_documentController presentPreviewAnimated:YES];
                 if(!previewSucceeded){
-                    [_documentController presentOpenInMenuFromRect:CGRectMake(500,20,100,100) inView:[UIApplication sharedApplication].delegate.window.rootViewController.view animated:YES];
+                    //                    [_documentController presentOpenInMenuFromRect:CGRectMake(500,20,100,100) inView:[UIApplication sharedApplication].delegate.window.rootViewController.view animated:YES];
+                    NSURL *fileURL = [NSURL fileURLWithPath:filePath];
+                    [self openFileWithUIActivityViewController:fileURL];
                 }
             }@catch (NSException *exception) {
-                NSDictionary * dict = @{@"message":@"File opened incorrectly。", @"type":@-4};
-                NSData * jsonData = [NSJSONSerialization dataWithJSONObject:dict options:NSJSONWritingPrettyPrinted error:nil];
-                NSString * json = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+                NSString * json = [self getJson:@"File opened incorrectly。" type:@-4];
                 result(json);
             }
         }else{
-            NSDictionary * dict = @{@"message":@"the file does not exist", @"type":@-2};
-            NSData * jsonData = [NSJSONSerialization dataWithJSONObject:dict options:NSJSONWritingPrettyPrinted error:nil];
-            NSString * json = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-
+            NSString * json = [self getJson:@"the file does not exist。" type:@-2];
             result(json);
         }
     } else {
@@ -137,20 +71,24 @@ static NSString *const CHANNEL_NAME = @"open_file";
     }
 }
 
-- (void)documentInteractionControllerDidEndPreview:(UIDocumentInteractionController *)controller {
-    NSDictionary * dict = @{@"message":@"done", @"type":@0};
-    NSData * jsonData = [NSJSONSerialization dataWithJSONObject:dict options:NSJSONWritingPrettyPrinted error:nil];
-    NSString * json = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+- (void)openFileWithUIActivityViewController:(NSURL *)fileURL{
+    UIActivityViewController *activityViewController = [[UIActivityViewController alloc] initWithActivityItems:@[fileURL] applicationActivities:nil];
+    
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+        activityViewController.popoverPresentationController.sourceView = _viewController.view;
+        activityViewController.popoverPresentationController.sourceRect = CGRectMake(CGRectGetMidX(_viewController.view.bounds), CGRectGetMidY(_viewController.view.bounds), 0, 0);
+        activityViewController.popoverPresentationController.permittedArrowDirections = UIPopoverArrowDirectionAny;
+    }
+    
+    [_viewController presentViewController:activityViewController animated:YES completion:^{ [self doneEnd];}];
+}
 
-    _result(json);
+- (void)documentInteractionControllerDidEndPreview:(UIDocumentInteractionController *)controller {
+    [self doneEnd];
 }
 
 - (void)documentInteractionControllerDidDismissOpenInMenu:(UIDocumentInteractionController *)controller {
-      NSDictionary * dict = @{@"message":@"done", @"type":@0};
-      NSData * jsonData = [NSJSONSerialization dataWithJSONObject:dict options:NSJSONWritingPrettyPrinted error:nil];
-      NSString * json = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-
-      _result(json);
+    [self doneEnd];
 }
 
 - (UIViewController *)documentInteractionControllerViewControllerForPreview:(UIDocumentInteractionController *)controller {
@@ -169,4 +107,80 @@ static NSString *const CHANNEL_NAME = @"open_file";
     }
     return NO;
 }
+
+- (NSString*) getJson:(NSString *)message type:(NSNumber*)type {
+    NSDictionary * dict = @{@"message":message, @"type":type};
+    NSData * jsonData = [NSJSONSerialization dataWithJSONObject:dict options:NSJSONWritingPrettyPrinted error:nil];
+    NSString * json = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+    
+    return json;
+}
+
+- (void)doneEnd {
+    NSString * json = [self getJson:@"done" type:@0];
+    _result(json);
+}
+
+-(void) setControllerUTI:(NSString*) filePath __attribute__(( deprecated ( "Now it's automatic" ))){
+    NSURL *resourceToOpen = [NSURL fileURLWithPath:filePath];
+    NSString *exestr = [[filePath pathExtension] lowercaseString];
+    if([exestr isEqualToString:@"rtf"]){
+        _documentController.UTI=@"public.rtf";
+    }else if([exestr isEqualToString:@"txt"]){
+        _documentController.UTI=@"public.plain-text";
+    }else if([exestr isEqualToString:@"html"]||[exestr isEqualToString:@"htm"]){
+        _documentController.UTI=@"public.html";
+    }else if([exestr isEqualToString:@"xml"]){
+        _documentController.UTI=@"public.xml";
+    }else if([exestr isEqualToString:@"tar"]){
+        _documentController.UTI=@"public.tar-archive";
+    }else if([exestr isEqualToString:@"gz"]||[exestr isEqualToString:@"gzip"]){
+        _documentController.UTI=@"org.gnu.gnu-zip-archive";
+    }else if([exestr isEqualToString:@"tgz"]){
+        _documentController.UTI=@"org.gnu.gnu-zip-tar-archive";
+    }else if([exestr isEqualToString:@"jpg"]||
+             [exestr isEqualToString:@"jpeg"]){
+        _documentController.UTI=@"public.jpeg";
+    }else if([exestr isEqualToString:@"png"]){
+        _documentController.UTI=@"public.png";
+    }else if([exestr isEqualToString:@"avi"]){
+        _documentController.UTI=@"public.avi";
+    }else if([exestr isEqualToString:@"mpg"]||
+             [exestr isEqualToString:@"mpeg"]){
+        _documentController.UTI=@"public.mpeg";
+    }else if([exestr isEqualToString:@"mp4"]){
+        _documentController.UTI=@"public.mpeg-4";
+    }else if([exestr isEqualToString:@"3gpp"]||
+             [exestr isEqualToString:@"3gp"]){
+        _documentController.UTI=@"public.3gpp";
+    }else if([exestr isEqualToString:@"mp3"]){
+        _documentController.UTI=@"public.mp3";
+    }else if([exestr isEqualToString:@"zip"]){
+        _documentController.UTI=@"com.pkware.zip-archive";
+    }else if([exestr isEqualToString:@"gif"]){
+        _documentController.UTI=@"com.compuserve.gif";
+    }else if([exestr isEqualToString:@"bmp"]){
+        _documentController.UTI=@"com.microsoft.bmp";
+    }else if([exestr isEqualToString:@"ico"]){
+        _documentController.UTI=@"com.microsoft.ico";
+    }else if([exestr isEqualToString:@"doc"]){
+        _documentController.UTI=@"com.microsoft.word.doc";
+    }else if([exestr isEqualToString:@"xls"]){
+        _documentController.UTI=@"com.microsoft.excel.xls";
+    }else if([exestr isEqualToString:@"ppt"]){
+        _documentController.UTI=@"com.microsoft.powerpoint.​ppt";
+    }else if([exestr isEqualToString:@"wav"]){
+        _documentController.UTI=@"com.microsoft.waveform-​audio";
+    }else if([exestr isEqualToString:@"wm"]){
+        _documentController.UTI=@"com.microsoft.windows-​media-wm";
+    }else if([exestr isEqualToString:@"wmv"]){
+        _documentController.UTI=@"com.microsoft.windows-​media-wmv";
+    }else if([exestr isEqualToString:@"pdf"]){
+        _documentController.UTI=@"com.adobe.pdf";
+    }else {
+        NSLog(@"doc type not supported for preview");
+        NSLog(@"%@", exestr);
+    }
+}
+
 @end
