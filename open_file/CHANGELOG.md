@@ -1,3 +1,7 @@
+## 3.5.2
+* update ```open_file_ios: ^1.0.1```
+  replace presentOpenInMenuFromRect with presentViewController
+* update ```open_file_android: ^1.0.1``` to fix [#245](https://github.com/crazecoder/open_file/issues/245)
 ## 3.5.1
 * update ```open_file_linux: ^0.0.3``` to fix [#291](https://github.com/crazecoder/open_file/issues/291)
 ## 3.5.0+1
