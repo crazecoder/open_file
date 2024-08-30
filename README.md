@@ -33,7 +33,7 @@ _openOtherTypeFile() async {
   final extension = path.extension(filePath);//import 'package:path/path.dart' as path;
   await OpenFile.open(filePath, type: types[extension]);
 }
-//OpenFile.open("/sdcard/example.txt", type: "text/plain", uti: "public.plain-text");
+//OpenFile.open("/sdcard/example.txt", type: "text/plain", isIOSAppOpen: true);
 ```
 
 ## Support
