@@ -18,18 +18,19 @@ class OpenFileIOS extends OpenFilePlatform {
   MethodChannel get channel => _channel;
 
   @override
-  Future<OpenResult> open(String? filePath,
-      {String? type,
-        String? uti,
-        String linuxDesktopName = "xdg",
-        bool linuxUseGio = false,
-        bool linuxByProcess = false,
-        Uint8List? webData}) async {
+  Future<OpenResult> open(
+    String? filePath, {
+    String? type,
+    bool isIOSAppOpen = false,
+    String linuxDesktopName = "xdg",
+    bool linuxUseGio = false,
+    bool linuxByProcess = false,
+  }) async {
     assert(filePath != null);
-    Map<String, String?> map = {
+    Map<String, dynamic> map = {
       "file_path": filePath!,
       "type": type,
-      "uti": uti,
+      "isIOSAppOpen": isIOSAppOpen,
     };
     final result = await _channel.invokeMethod('open_file', map);
     final resultMap = json.decode(result) as Map<String, dynamic>;

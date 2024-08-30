@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:typed_data';
 import 'dart:ffi' as ffi;
 
 import 'package:ffi/ffi.dart';
@@ -17,13 +16,14 @@ class OpenFileLinux extends OpenFilePlatform {
   }
 
   @override
-  Future<OpenResult> open(String? filePath,
-      {String? type,
-      String? uti,
-      String linuxDesktopName = "xdg",
-      bool linuxUseGio = false,
-      bool linuxByProcess = true,
-      Uint8List? webData}) async {
+  Future<OpenResult> open(
+    String? filePath, {
+    String? type,
+    bool isIOSAppOpen = false,
+    String linuxDesktopName = "xdg",
+    bool linuxUseGio = false,
+    bool linuxByProcess = true,
+  }) async {
     assert(filePath != null);
     assert(linuxUseGio != true || linuxByProcess != true,
         "can't have both linuxUseGio and linuxByProcess");

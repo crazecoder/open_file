@@ -44,20 +44,22 @@ static NSString *const CHANNEL_NAME = @"open_file";
         NSFileManager *fileManager=[NSFileManager defaultManager];
         BOOL fileExist=[fileManager fileExistsAtPath:filePath];
         if(fileExist){
-            _documentController = [UIDocumentInteractionController interactionControllerWithURL:[NSURL fileURLWithPath:filePath]];
+            NSURL *fileURL = [NSURL fileURLWithPath:filePath];
+            _documentController = [UIDocumentInteractionController interactionControllerWithURL:fileURL];
             _documentController.delegate = self;
-            NSString *uti = call.arguments[@"uti"];
-            BOOL isBlank = [self isBlankString:uti];
-            if(!isBlank){
-                _documentController.UTI = uti;
-            }
+            BOOL isAppOpen = [call.arguments[@"isIOSAppOpen"] boolValue];
             @try {
-                BOOL previewSucceeded = [_documentController presentPreviewAnimated:YES];
-                if(!previewSucceeded){
-                    //                    [_documentController presentOpenInMenuFromRect:CGRectMake(500,20,100,100) inView:[UIApplication sharedApplication].delegate.window.rootViewController.view animated:YES];
-                    NSURL *fileURL = [NSURL fileURLWithPath:filePath];
+                if (isAppOpen) {
                     [self openFileWithUIActivityViewController:fileURL];
+                }else{
+                    BOOL previewSucceeded = [_documentController presentPreviewAnimated:YES];
+                    if(!previewSucceeded){
+                        //                    [_documentController presentOpenInMenuFromRect:CGRectMake(500,20,100,100) inView:[UIApplication sharedApplication].delegate.window.rootViewController.view animated:YES];
+                        
+                        [self openFileWithUIActivityViewController:fileURL];
+                    }
                 }
+                
             }@catch (NSException *exception) {
                 NSString * json = [self getJson:@"File opened incorrectly。" type:@-4];
                 result(json);
@@ -122,7 +124,7 @@ static NSString *const CHANNEL_NAME = @"open_file";
 }
 
 -(void) setControllerUTI:(NSString*) filePath __attribute__(( deprecated ( "Now it's automatic" ))){
-    NSURL *resourceToOpen = [NSURL fileURLWithPath:filePath];
+//    NSURL *resourceToOpen = [NSURL fileURLWithPath:filePath];
     NSString *exestr = [[filePath pathExtension] lowercaseString];
     if([exestr isEqualToString:@"rtf"]){
         _documentController.UTI=@"public.rtf";

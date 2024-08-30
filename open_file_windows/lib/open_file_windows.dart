@@ -1,5 +1,4 @@
 import 'dart:ffi' as ffi;
-import 'dart:typed_data';
 import 'package:ffi/ffi.dart';
 import 'package:open_file_platform_interface/open_file_platform_interface.dart';
 
@@ -23,13 +22,14 @@ class OpenFileWindows extends OpenFilePlatform {
     OpenFilePlatform.platform = OpenFileWindows();
   }
 
-  Future<OpenResult> open(String? filePath,
-      {String? type,
-        String? uti,
-        String linuxDesktopName = "xdg",
-        bool linuxUseGio = false,
-        bool linuxByProcess = false,
-        Uint8List? webData}) async {
+  Future<OpenResult> open(
+    String? filePath, {
+    String? type,
+    bool isIOSAppOpen = false,
+    String linuxDesktopName = "xdg",
+    bool linuxUseGio = false,
+    bool linuxByProcess = false,
+  }) async {
     assert(filePath != null);
     final _windowsResult = shellExecute('open', filePath!);
     final _result = _windowsResult <= 32 ? 1 : 0;
@@ -38,8 +38,8 @@ class OpenFileWindows extends OpenFilePlatform {
         message: _result == 0
             ? "done"
             : _result == -1
-            ? "This operating system is not currently supported"
-            : "there are some errors when open $filePath   HINSTANCE=$_windowsResult");
+                ? "This operating system is not currently supported"
+                : "there are some errors when open $filePath   HINSTANCE=$_windowsResult");
   }
 
   int shellExecute(String operation, String file) {
@@ -48,7 +48,7 @@ class OpenFileWindows extends OpenFilePlatform {
 
     // Look up the `ShellExecuteW` function.
     final shellExecuteP =
-    dylib.lookupFunction<ShellExecuteC, ShellExecuteDart>('ShellExecuteW');
+        dylib.lookupFunction<ShellExecuteC, ShellExecuteDart>('ShellExecuteW');
 
     // Allocate pointers to Utf8 arrays containing the command arguments.
     final operationP = operation.toNativeUtf16();

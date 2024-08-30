@@ -1,3 +1,7 @@
+## 3.5.3
+* remove `uti`, DocumentInteraction Auto on iOS.
+* remove `webData`, only open files in the project directory on the web
+* add `isIOSAppOpen` Whether to use the app to open on iOS.
 ## 3.5.2
 * update ```open_file_ios: ^1.0.1```
   replace presentOpenInMenuFromRect with presentViewController

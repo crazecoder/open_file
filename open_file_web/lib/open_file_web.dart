@@ -1,4 +1,3 @@
-import 'dart:typed_data';
 import 'dart:async';
 import 'dart:html' as html;
 
@@ -16,13 +15,14 @@ class OpenFilePlugin extends OpenFilePlatform {
 
   ///Only files in the web project directory are supported
   @override
-  Future<OpenResult> open(String? filePath,
-      {String? type,
-      String? uti,
-      String linuxDesktopName = "xdg",
-      bool linuxUseGio = false,
-      bool linuxByProcess = false,
-      Uint8List? webData}) async {
+  Future<OpenResult> open(
+    String? filePath, {
+    String? type,
+    bool isIOSAppOpen = false,
+    String linuxDesktopName = "xdg",
+    bool linuxUseGio = false,
+    bool linuxByProcess = false,
+  }) async {
     if (filePath?.isNotEmpty == true) {
       final window = html.window;
 

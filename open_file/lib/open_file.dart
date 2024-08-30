@@ -13,21 +13,21 @@ class OpenFile {
   ///Returns a [OpenResult] object wrapping the error message if it has occurred.
   ///if user has already opened the file, returns [ResultType.done]
   ///In linux, you must specify a parameter that tells the application whether to open using [linuxUseGio] or [linuxByProcess]
-  static Future<OpenResult> open(String? filePath,
-      {String? type,
-      String? uti,
-      String linuxDesktopName = "xdg",
-      bool linuxUseGio = false,
-      bool linuxByProcess = true,
-      Uint8List? webData}) async {
+  static Future<OpenResult> open(
+    String? filePath, {
+    String? type,
+    bool isIOSAppOpen = false,
+    String linuxDesktopName = "xdg",
+    bool linuxUseGio = false,
+    bool linuxByProcess = true,
+  }) async {
     return OpenFilePlatform.platform.open(
       filePath,
       type: type,
-      uti: uti,
+      isIOSAppOpen: isIOSAppOpen,
       linuxDesktopName: linuxDesktopName,
       linuxUseGio: linuxUseGio,
       linuxByProcess: linuxByProcess,
-      webData: webData,
     );
   }
 }
