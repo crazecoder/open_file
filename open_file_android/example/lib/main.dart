@@ -30,7 +30,7 @@ class _MyAppState extends State<MyApp> {
       Uint8List? fileBytes = fileResult!.files.first.bytes;
 
       final result =
-      await OpenFileAndroid().open(fileResult.files.first.path, webData: fileBytes);
+      await OpenFileAndroid().open(fileResult.files.first.path);
       setState(() {
         _openResult = "type=${result.type}  message=${result.message}";
       });
