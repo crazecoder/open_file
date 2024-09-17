@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:open_file_platform_interface/open_file_platform_interface.dart';
+export 'package:open_file_platform_interface/open_file_platform_interface.dart'
+    show OpenResult, ResultType;
 
 /// Provides an easy way to open file from the library,
 class OpenFile {

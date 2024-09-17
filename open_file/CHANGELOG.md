@@ -1,3 +1,5 @@
+## 3.5.4
+* fix [#294](https://github.com/crazecoder/open_file/issues/294)
 ## 3.5.3
 * remove `uti`, DocumentInteraction Auto on iOS.
 * remove `webData`, only open files in the project directory on the web
