@@ -1,7 +1,7 @@
 name: open_file_web
 description: web implementation of the open_file plugin.
 repository: https://github.com/crazecoder/open_file/tree/master/open_file_macos
-version: 0.0.2
+version: 0.0.3
 
 environment:
   sdk: ">=2.17.0 <4.0.0"
