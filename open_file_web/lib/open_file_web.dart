@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'dart:html' as html;
+import 'package:web/web.dart' as web;
 
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'package:open_file_platform_interface/open_file_platform_interface.dart';
@@ -24,14 +24,14 @@ class OpenFilePlugin extends OpenFilePlatform {
     bool linuxByProcess = false,
   }) async {
     if (filePath?.isNotEmpty == true) {
-      final window = html.window;
+      final window = web.window;
 
       final windowBase = window.open(filePath!, "");
       return OpenResult(
-          type: (windowBase.opener == window)
+          type: (windowBase?.opener == window)
               ? ResultType.done
               : ResultType.error,
-          message: (windowBase.opener == window)
+          message: (windowBase?.opener == window)
               ? "done"
               : "there are some errors when open $filePath");
     } else {
