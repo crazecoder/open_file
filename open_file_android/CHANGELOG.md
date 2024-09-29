@@ -1,3 +1,5 @@
+## 1.0.3
+* fix [#300](https://github.com/crazecoder/open_file/issues/300)
 ## 1.0.2
 * update `open_file_platform_interface: ^1.0.2`.
 ## 1.0.1

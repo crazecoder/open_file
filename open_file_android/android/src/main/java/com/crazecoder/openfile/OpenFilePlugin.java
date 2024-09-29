@@ -131,17 +131,15 @@ public class OpenFilePlugin implements MethodCallHandler
         }
 
         try {
+            String fileCanonicalPath = new File(filePath).getCanonicalPath();
+
             String appDirExternalFilePath = context.getExternalFilesDir(null).getCanonicalPath();
             String appDirExternalCachePath = context.getExternalCacheDir().getCanonicalPath();
 
-            String appDirFilePath = context.getFilesDir().getCanonicalPath();
-            String appDirCachePath = context.getCacheDir().getCanonicalPath();
-
-            String fileCanonicalPath = new File(filePath).getCanonicalPath();
+            boolean isDataFile = FileUtil.isDataFile(context,fileCanonicalPath);
             if (fileCanonicalPath.startsWith(appDirExternalFilePath)
                     || fileCanonicalPath.startsWith(appDirExternalCachePath)
-                    || fileCanonicalPath.startsWith(appDirFilePath)
-                    || fileCanonicalPath.startsWith(appDirCachePath)) {
+                    || isDataFile) {
                 return false;
             } else {
                 return true;

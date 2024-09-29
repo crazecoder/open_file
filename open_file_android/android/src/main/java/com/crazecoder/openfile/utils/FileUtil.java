@@ -7,6 +7,7 @@ import android.os.Environment;
 import androidx.annotation.RequiresApi;
 
 import java.io.File;
+import java.io.IOException;
 
 public class FileUtil {
     public static String getFileMimeType(String filePath) {
@@ -225,6 +226,17 @@ public class FileUtil {
             }
         }
         return isExternalStoragePublicPath;
+    }
+
+    public static boolean isDataFile(Context context,String fileCanonicalPath) throws IOException {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            String appDirDataPath = context.getDataDir().getCanonicalPath();
+            return fileCanonicalPath.startsWith(appDirDataPath);
+        }else{
+            String appDirFilePath = context.getFilesDir().getCanonicalPath();
+            String appDirCachePath = context.getCacheDir().getCanonicalPath();
+            return fileCanonicalPath.startsWith(appDirFilePath)||fileCanonicalPath.startsWith(appDirCachePath);
+        }
     }
 
 }
