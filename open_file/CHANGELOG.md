@@ -1,3 +1,7 @@
+## 3.5.7
+* fix [#300](https://github.com/crazecoder/open_file/issues/300)
+## 3.5.6
+* fix [#298](https://github.com/crazecoder/open_file/issues/298)
 ## 3.5.5
 fix for wasm (thanks to [@sgehrman](https://github.com/sgehrman))
 ## 3.5.4
