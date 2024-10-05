@@ -1,3 +1,6 @@
+## 1.0.4
+* use canonicalPath instead of path
+* use checkUriPermission to check whether the file has permission to open
 ## 1.0.3
 * fix [#300](https://github.com/crazecoder/open_file/issues/300)
 ## 1.0.2

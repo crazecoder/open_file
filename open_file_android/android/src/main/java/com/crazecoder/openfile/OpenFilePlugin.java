@@ -67,7 +67,7 @@ public class OpenFilePlugin implements MethodCallHandler
         if (call.method.equals("open_file")) {
             this.result = result;
             if (call.hasArgument("file_path")) {
-                filePath = call.argument("file_path");
+                filePath = FileUtil.getCanonicalPath(call.argument("file_path"));
             }
 
             if (call.hasArgument("type") && call.argument("type") != null) {
@@ -87,7 +87,7 @@ public class OpenFilePlugin implements MethodCallHandler
         if (!isFileAvailable()) {
             return;
         }
-        if (pathRequiresPermission()) {
+        if (!FileUtil.hasUriPermission(context, filePath)) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && FileUtil.isExternalStoragePublicMedia(filePath, mimeType)) {
                     if (FileUtil.isImage(mimeType) && !hasPermission(Manifest.permission.READ_MEDIA_IMAGES) && !Environment.isExternalStorageManager()) {
@@ -102,6 +102,7 @@ public class OpenFilePlugin implements MethodCallHandler
                         result(-3, "Permission denied: " + Manifest.permission.READ_MEDIA_AUDIO);
                         return;
                     }
+
                 } else if (!Environment.isExternalStorageManager()) {
                     result(-3, "Permission denied: " + Manifest.permission.MANAGE_EXTERNAL_STORAGE);
                     return;
@@ -125,37 +126,11 @@ public class OpenFilePlugin implements MethodCallHandler
         return ContextCompat.checkSelfPermission(activity, permission) == PermissionChecker.PERMISSION_GRANTED;
     }
 
-    private boolean pathRequiresPermission() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            return false;
-        }
-
-        try {
-            String fileCanonicalPath = new File(filePath).getCanonicalPath();
-
-            String appDirExternalFilePath = context.getExternalFilesDir(null).getCanonicalPath();
-            String appDirExternalCachePath = context.getExternalCacheDir().getCanonicalPath();
-
-            boolean isDataFile = FileUtil.isDataFile(context,fileCanonicalPath);
-            if (fileCanonicalPath.startsWith(appDirExternalFilePath)
-                    || fileCanonicalPath.startsWith(appDirExternalCachePath)
-                    || isDataFile) {
-                return false;
-            } else {
-                return true;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            return true;
-        }
-    }
-
     private boolean isFileAvailable() {
         if (filePath == null) {
             result(-4, "the file path cannot be null");
             return false;
         }
-
         return true;
     }
 
@@ -165,16 +140,7 @@ public class OpenFilePlugin implements MethodCallHandler
         }
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.addCategory(Intent.CATEGORY_DEFAULT);
-        Uri uri;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            if (FileUtil.isOtherAndroidDataDir(context, filePath)) {
-                uri = Uri.parse(FileUtil.changeToUri(filePath));
-            } else {
-                uri = FileProvider.getUriForFile(context, context.getPackageName() + ".fileProvider.com.crazecoder.openfile", new File(filePath));
-            }
-        } else {
-            uri = Uri.fromFile(new File(filePath));
-        }
+        Uri uri = FileUtil.getFileUri(context, filePath);
         intent.setDataAndType(uri, mimeType);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         List<ResolveInfo> resolveInfoList;

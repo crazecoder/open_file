@@ -1,10 +1,14 @@
 package com.crazecoder.openfile.utils;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 
 import androidx.annotation.RequiresApi;
+import androidx.core.content.FileProvider;
 
 import java.io.File;
 import java.io.IOException;
@@ -154,36 +158,6 @@ public class FileUtil {
         }
     }
 
-    public static String changeToPathUri(String path) {
-        return "content://com.android.externalstorage.documents/document/primary%3AAndroid%2Fdata%2F" + getAuthority(path, true, true);
-    }
-
-    public static String changeToUri(String path) {
-        return "content://com.android.externalstorage.documents/tree/primary%3AAndroid%2Fdata/document/primary%3AAndroid%2Fdata%2F" + getAuthority(path, false, true);
-    }
-
-    public static String getAuthority(String filePath, boolean isParentPath, boolean isUtf8) {
-        String path = filePath;
-        if (isParentPath) {
-            File parent = new File(path).getParentFile();
-            if (parent != null) path = parent.getAbsolutePath();
-
-        }
-        if (path.endsWith("/")) {
-            path = path.substring(0, path.length() - 1);
-        }
-        String resultPath = path.replace("/storage/emulated/0/", "")
-                .replace("Android/data/", "");
-        if (isUtf8) {
-            resultPath = resultPath.replace("/", "%2F");
-        }
-        return resultPath;
-    }
-
-    public static boolean isOtherAndroidDataDir(Context context, String filePath) {
-        return filePath.contains("/Android/data/") && !filePath.contains(context.getPackageName());
-    }
-
     public static boolean isImage(String mimeType) {
         return mimeType.contains("image/");
     }
@@ -228,14 +202,111 @@ public class FileUtil {
         return isExternalStoragePublicPath;
     }
 
-    public static boolean isDataFile(Context context,String fileCanonicalPath) throws IOException {
+    public static String getCanonicalPath(String filePath) {
+        if (filePath == null) {
+            return null;
+        }
+        String canonicalPath;
+        File file = new File(filePath);
+        try {
+            canonicalPath = file.getCanonicalPath();
+        } catch (IOException e) {
+            canonicalPath = file.getPath();
+        }
+        return canonicalPath;
+    }
+
+    public static Uri getFileUri(Context context, String filePath) {
+        Uri uri;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            if (isOtherAndroidDataDir(context, filePath)) {
+                uri = Uri.parse(changeToUri(filePath));
+            } else {
+                uri = FileProvider.getUriForFile(context, context.getPackageName() + ".fileProvider.com.crazecoder.openfile", new File(filePath));
+            }
+        } else {
+            uri = Uri.fromFile(new File(filePath));
+        }
+        return uri;
+    }
+
+    public static boolean hasUriPermission(Context context, String filePath) {
+        Uri uri = getFileUri(context, filePath);
+        int modeFlags = context.checkUriPermission(uri, android.os.Process.myPid(), android.os.Process.myUid(),
+                Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+        return modeFlags == PackageManager.PERMISSION_GRANTED;
+    }
+
+    /***
+     * @deprecated use hasUriPermission instead
+     * @param context
+     * @param filePath
+     * @return
+     */
+    @Deprecated
+    private static boolean pathRequiresPermission(Context context, String filePath) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            return false;
+        }
+        try {
+            String fileCanonicalPath = new File(filePath).getCanonicalPath();
+
+            String appDirExternalFilePath = context.getExternalFilesDir(null).getCanonicalPath();
+            String appDirExternalCachePath = context.getExternalCacheDir().getCanonicalPath();
+
+            boolean isDataFile = FileUtil.isDataFile(context, fileCanonicalPath);
+            if (fileCanonicalPath.startsWith(appDirExternalFilePath)
+                    || fileCanonicalPath.startsWith(appDirExternalCachePath)
+                    || isDataFile) {
+                return false;
+            } else {
+                return true;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return true;
+        }
+    }
+
+    private static String changeToPathUri(String path) {
+        return "content://com.android.externalstorage.documents/document/primary%3AAndroid%2Fdata%2F" + getAuthority(path, true, true);
+    }
+
+    private static String changeToUri(String path) {
+        return "content://com.android.externalstorage.documents/tree/primary%3AAndroid%2Fdata/document/primary%3AAndroid%2Fdata%2F" + getAuthority(path, false, true);
+    }
+
+    private static String getAuthority(String filePath, boolean isParentPath, boolean isUtf8) {
+        String path = filePath;
+        if (isParentPath) {
+            File parent = new File(path).getParentFile();
+            if (parent != null) path = parent.getAbsolutePath();
+
+        }
+        if (path.endsWith("/")) {
+            path = path.substring(0, path.length() - 1);
+        }
+        String resultPath = path.replace("/storage/emulated/0/", "")
+                .replace("Android/data/", "");
+        if (isUtf8) {
+            resultPath = resultPath.replace("/", "%2F");
+        }
+        return resultPath;
+    }
+
+    private static boolean isOtherAndroidDataDir(Context context, String filePath) {
+        return filePath.contains("/Android/data/") && !filePath.contains(context.getPackageName());
+    }
+
+    private static boolean isDataFile(Context context, String fileCanonicalPath) throws IOException {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
             String appDirDataPath = context.getDataDir().getCanonicalPath();
             return fileCanonicalPath.startsWith(appDirDataPath);
-        }else{
+        } else {
             String appDirFilePath = context.getFilesDir().getCanonicalPath();
             String appDirCachePath = context.getCacheDir().getCanonicalPath();
-            return fileCanonicalPath.startsWith(appDirFilePath)||fileCanonicalPath.startsWith(appDirCachePath);
+            return fileCanonicalPath.startsWith(appDirFilePath) || fileCanonicalPath.startsWith(appDirCachePath);
         }
     }
 
