@@ -1,3 +1,5 @@
+## 1.0.3
+- fix LateInitializationError
 ## 1.0.2
 - remove `uti`, DocumentInteraction Auto on iOS.
 - remove `webData`, only open files in the project directory on the web

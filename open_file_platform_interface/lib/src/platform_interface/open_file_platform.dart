@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
-
+import '../method_channel/method_channel_open_file.dart';
 import '../types/open_result.dart';
 
 abstract class OpenFilePlatform extends PlatformInterface {
   static final Object _token = Object();
-  static late OpenFilePlatform _instance;
+  static OpenFilePlatform _instance = MethodChannelOpenFile();
 
   static OpenFilePlatform get platform => _instance;
 
