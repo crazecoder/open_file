@@ -1,9 +1,15 @@
+## 3.5.9
+* [Android] fix [#302](https://github.com/crazecoder/open_file/issues/302)
+* [Linux] fix [#303](https://github.com/crazecoder/open_file/issues/303)
+## 3.5.8
+* [Android] use canonicalPath instead of path
+* [Android] use checkUriPermission to check whether the file has permission to open
 ## 3.5.7
 * fix [#300](https://github.com/crazecoder/open_file/issues/300)
 ## 3.5.6
 * fix [#298](https://github.com/crazecoder/open_file/issues/298)
 ## 3.5.5
-fix for wasm (thanks to [@sgehrman](https://github.com/sgehrman))
+* fix for wasm (thanks to [@sgehrman](https://github.com/sgehrman))
 ## 3.5.4
 * fix [#294](https://github.com/crazecoder/open_file/issues/294)
 ## 3.5.3
