@@ -202,6 +202,11 @@ public class FileUtil {
         return isExternalStoragePublicPath;
     }
 
+    public static boolean isNeedPermission(String filePath) {
+        File file = new File(filePath);
+        return !file.canRead();
+    }
+
     public static String getCanonicalPath(String filePath) {
         if (filePath == null) {
             return null;
@@ -230,7 +235,14 @@ public class FileUtil {
         return uri;
     }
 
-    public static boolean hasUriPermission(Context context, String filePath) {
+    /***
+     * @deprecated use isNeedPermission instead
+     * @param context
+     * @param filePath
+     * @return
+     */
+    @Deprecated
+    private static boolean hasUriPermission(Context context, String filePath) {
         Uri uri = getFileUri(context, filePath);
         int modeFlags = context.checkUriPermission(uri, android.os.Process.myPid(), android.os.Process.myUid(),
                 Intent.FLAG_GRANT_READ_URI_PERMISSION);

@@ -1,7 +1,7 @@
 name: open_file_linux
 description: Linux platform implementation of open_file
 repository: https://github.com/crazecoder/open_file/tree/master/open_file_linux
-version: 0.0.4
+version: 0.0.5
 
 environment:
   sdk: ">=2.17.0 <4.0.0"
@@ -11,7 +11,7 @@ dependencies:
   flutter:
     sdk: flutter
   ffi: ^2.1.3
-  open_file_platform_interface: ^1.0.2
+  open_file_platform_interface: ^1.0.3
 
 dev_dependencies:
   flutter_test:
@@ -36,4 +36,5 @@ flutter:
     implements: open_file
     platforms:
       linux:
+        dartPluginClass: OpenFileLinux
         pluginClass: OpenFileLinuxPlugin

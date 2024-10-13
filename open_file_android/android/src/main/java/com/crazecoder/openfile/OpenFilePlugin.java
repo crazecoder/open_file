@@ -14,7 +14,6 @@ import android.os.Environment;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-import androidx.core.content.FileProvider;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.PermissionChecker;
 
@@ -31,8 +30,6 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugin.common.PluginRegistry;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -87,7 +84,7 @@ public class OpenFilePlugin implements MethodCallHandler
         if (!isFileAvailable()) {
             return;
         }
-        if (!FileUtil.hasUriPermission(context, filePath)) {
+        if (FileUtil.isNeedPermission(filePath)) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && FileUtil.isExternalStoragePublicMedia(filePath, mimeType)) {
                     if (FileUtil.isImage(mimeType) && !hasPermission(Manifest.permission.READ_MEDIA_IMAGES) && !Environment.isExternalStorageManager()) {
@@ -255,7 +252,6 @@ public class OpenFilePlugin implements MethodCallHandler
             if (requestCode == REQUEST_CODE_FOR_DIR && (uri = data.getData()) != null) {
                 context.getContentResolver().takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                 doOpen();
-
             }
         }
         return false;
