@@ -1,3 +1,5 @@
+## 3.5.10
+* [MacOS] Optimized code and fix [#312](https://github.com/crazecoder/open_file/issues/312)
 ## 3.5.9
 * [Android] fix [#302](https://github.com/crazecoder/open_file/issues/302)
 * [Linux] fix [#303](https://github.com/crazecoder/open_file/issues/303)
