@@ -12,33 +12,86 @@ public class OpenFilePlugin: NSObject, FlutterPlugin {
         switch call.method {
         case "open_file":
             let arguments = call.arguments as? Dictionary<String,Any>
-            let filePath = arguments!["file_path"]
+            let filePath = arguments!["file_path"] as? String
             if(filePath==nil){
-                let map = ["message":"the file path cannot be null", "type":-4] as [String : Any]
-                result(convertDictionaryToString(dict:map))
+                self.result(result:result,message:"the file path cannot be null",type:-4)
                 return
             }
-            let fileExist = FileManager.default.fileExists(atPath: filePath as! String)
+            let fileExist = FileManager.default.fileExists(atPath: filePath!)
             if(fileExist){
-                let documentURL = URL(fileURLWithPath: filePath as! String )
+                let documentURL = URL(fileURLWithPath: filePath!)
                 let fileType = documentURL.pathExtension
-                canOpen(fileURL: documentURL){b in
-                    DispatchQueue.main.async{
-                        if(!b){
-                            self.openSelectPanel(filePath:filePath as! String,fileType: fileType ,result: result)
-                        }else{
-                            self.open(documentURL: documentURL, result: result)
-                        }
-                    }
-                    
+                if(!canOpen(filePath: filePath!)){
+                    self.openSelectPanel(filePath:filePath!,fileType: fileType ,result: result)
+                }else{
+                    self.open(documentURL: documentURL, result: result)
                 }
-                
-                
+            }else{
+                self.result(result:result,message:"the file does not exist",type:-2)
             }
             
         default:
             result(FlutterMethodNotImplemented)
         }
+    }
+    
+    private func canOpen(filePath: String) ->Bool{
+        return FileManager.default.isReadableFile(atPath: filePath)
+    }
+    
+    private func convertDictionaryToString(dict:[String:Any]) -> String {
+        var result:String = ""
+        do {
+            let jsonData = try JSONSerialization.data(withJSONObject: dict, options: JSONSerialization.WritingOptions.init(rawValue: 0))
+            
+            if let JSONString = String(data: jsonData, encoding: String.Encoding.utf8) {
+                result = JSONString
+            }
+            
+        } catch {
+            result = ""
+        }
+        return result
+    }
+    
+    private func openSelectPanel(filePath:String,fileType: String,result: @escaping FlutterResult){
+        let fileUrl = URL(fileURLWithPath:filePath)
+        let openPanel = NSOpenPanel()
+        openPanel.canChooseFiles = false
+        openPanel.canChooseDirectories = true
+        openPanel.allowsMultipleSelection = false
+        openPanel.allowedFileTypes = [fileType]
+        openPanel.directoryURL = fileUrl
+        openPanel.showsHiddenFiles = true
+        openPanel.allowsOtherFileTypes = false
+        let currentLanguage = Locale.current.languageCode
+        openPanel.prompt = (currentLanguage == "zh") ?"允许":"Accept"
+        openPanel.beginSheetModal(for: NSApplication.shared.mainWindow!) { (openResult) in
+            if (openResult.rawValue == NSApplication.ModalResponse.OK.rawValue) {
+                let selectedURL = openPanel.url!
+                var isReadable: Bool = false
+                if FileManager.default.fileExists(atPath: selectedURL.path, isDirectory: nil) && FileManager.default.isReadableFile(atPath: selectedURL.path) {
+                    isReadable = true
+                }
+                if isReadable {
+                    self.open(documentURL: fileUrl, result: result)
+                } else {
+                    self.result(result:result,message:"Operation not permitted",type:-3)
+                }
+            }else{
+                self.result(result:result,message:"Operation not permitted",type:-3)
+            }
+        }
+    }
+    
+    private func open(documentURL:URL,result: FlutterResult){
+        NSWorkspace.shared.open([documentURL], withAppBundleIdentifier: nil, options: .default, additionalEventParamDescriptor: nil, launchIdentifiers: nil)
+        self.result(result:result,message:"done",type:0)
+    }
+    
+    private func result(result: FlutterResult,message:String,type:Int){
+        let map = ["message":message, "type":type]as [String : Any]
+        result(convertDictionaryToString(dict: map))
     }
     
     @available(*, deprecated, message: "This method is just test.")
@@ -59,7 +112,7 @@ public class OpenFilePlugin: NSObject, FlutterPlugin {
         if (status != true) {
             print("Prompting for accessibility permissions")
             let alert = NSAlert()
-            alert.messageText = "This app requires accessibility permissions to function properly. Please grant access in the System Preferences app when prompted."
+            alert.messageText = "This app requires disk permissions to function properly. Please grant access in the System Preferences app when prompted."
             alert.addButton(withTitle: "OK")
             alert.runModal()
             onDenied()
@@ -85,85 +138,6 @@ public class OpenFilePlugin: NSObject, FlutterPlugin {
         } else {
             return false
         }
-    }
-    
-    
-    private func canOpen(fileURL: URL,completeHandler:@escaping (Bool)->Void) {
-        guard let workspace = NSWorkspace.shared.urlForApplication(toOpen: fileURL) else {
-            // no app found to open
-            completeHandler(false)
-            return
-        }
-        
-        //Can the app be opened normally
-        if #available(macOS 10.15, *) {
-            let configuration = NSWorkspace.OpenConfiguration()
-            configuration.activates = false
-            
-            NSWorkspace.shared.open(
-                [fileURL],
-                withApplicationAt: workspace,
-                configuration: configuration,
-                completionHandler: { _, error in
-                    if let error = error {
-                        print("Error opening file:", error.localizedDescription)
-                        completeHandler(false)
-                    }else{
-                        completeHandler(true)
-                    }
-                }
-            )
-        }
-        
-        
-    }
-    
-    private func convertDictionaryToString(dict:[String:Any]) -> String {
-        var result:String = ""
-        do {
-            let jsonData = try JSONSerialization.data(withJSONObject: dict, options: JSONSerialization.WritingOptions.init(rawValue: 0))
-            
-            if let JSONString = String(data: jsonData, encoding: String.Encoding.utf8) {
-                result = JSONString
-            }
-            
-        } catch {
-            result = ""
-        }
-        return result
-    }
-    
-    private func openSelectPanel(filePath:String,fileType: String,result: @escaping FlutterResult){
-        
-        let openPanel = NSOpenPanel()
-        openPanel.canChooseFiles = true
-        openPanel.canChooseDirectories = false
-        openPanel.allowsMultipleSelection = false
-        openPanel.allowedFileTypes = [fileType]
-        openPanel.directoryURL = URL(fileURLWithPath:filePath)
-        openPanel.showsHiddenFiles = true
-        openPanel.allowsOtherFileTypes = false
-        openPanel.beginSheetModal(for: NSApplication.shared.mainWindow!) { (openResult) in
-            if (openResult.rawValue == NSApplication.ModalResponse.OK.rawValue) {
-                let selectedURL = openPanel.url!
-                var isReadable: ObjCBool = false
-                if FileManager.default.fileExists(atPath: selectedURL.path, isDirectory: nil) && FileManager.default.isReadableFile(atPath: selectedURL.path) {
-                    isReadable = true
-                }
-                if isReadable.boolValue {
-                    self.open(documentURL: selectedURL, result: result)
-                } else {
-                    let map = ["message":"Operation not permitted", "type":-4] as [String : Any]
-                    result(self.convertDictionaryToString(dict:map))
-                }
-            }
-        }
-    }
-    
-    private func open(documentURL:URL,result: FlutterResult){
-        NSWorkspace.shared.open([documentURL], withAppBundleIdentifier: nil, options: .default, additionalEventParamDescriptor: nil, launchIdentifiers: nil)
-        let map = ["message":"done", "type":0]as [String : Any]
-        result(convertDictionaryToString(dict: map))
     }
     
     @available(*, deprecated, message: "This method is no longer used.")

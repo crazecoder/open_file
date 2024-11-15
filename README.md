@@ -1,5 +1,5 @@
 # open_file
-[![pub package](https://img.shields.io/pub/v/open_file.svg)](https://pub.dartlang.org/packages/open_file) [![Discord](https://img.shields.io/badge/discord-FlutterDev-blue.svg)](https://discord.gg/q6yFDws3Xc)
+[![pub package](https://img.shields.io/pub/v/open_file.svg)](https://pub.dartlang.org/packages/open_file) [![Discord](https://img.shields.io/badge/discord-FlutterDev-green.svg)](https://discord.gg/q6yFDws3Xc)
 
 A plug-in that can call native APP to open files with string result in flutter, support iOS(DocumentInteraction) / android(intent) / PC(ffi) / web(dart:html)
 
@@ -184,4 +184,12 @@ subprojects {
             {".wmv",    "com.microsoft.windows-​media-wmv"},
             {".pdf",    "com.adobe.pdf"}
 }
+```
+### MacOS
+add this to the entitlements file
+```
+<key>com.apple.security.app-sandbox</key>
+<true/>
+<key>com.apple.security.files.user-selected.read-only</key>
+<true/>
 ```
