@@ -4,7 +4,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'open_file_mac'
-  s.version          = '0.0.1'
+  s.version          = '1.0.3'
   s.summary          = 'The MacOS implementation of open_file.'
   s.description      = <<-DESC
 A new Flutter plugin project.
@@ -14,7 +14,8 @@ A new Flutter plugin project.
   s.author           = { 'crazecoder' => '21527312@qq.com' }
 
   s.source           = { :path => '.' }
-  s.source_files     = 'Classes/**/*'
+  s.source_files     = 'open_file_mac/Sources/open_file_mac/**/*.swift'
+  s.resource_bundles = {'open_file_mac_privacy' => ['open_file_mac/Sources/open_file_mac/Resources/PrivacyInfo.xcprivacy']}
   s.dependency 'FlutterMacOS'
 
   s.platform = :osx, '10.11'
