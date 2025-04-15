@@ -12,7 +12,7 @@ let package = Package(
     .iOS("12.0")
   ],
   products: [
-    .library(name: "open_file_ios", targets: ["open_file_ios"])
+    .library(name: "open-file-ios", targets: ["open_file_ios"])
   ],
   dependencies: [],
   targets: [
