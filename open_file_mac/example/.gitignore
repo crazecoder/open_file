@@ -33,3 +33,4 @@ migrate_working_dir/
 .pub/
 /build/
 **/Flutter/ephemeral/
+**/Pods/
