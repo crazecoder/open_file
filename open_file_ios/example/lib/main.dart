@@ -20,7 +20,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   // ignore: unused_element
-  _openPickFile() async {
+  Future<void> _openPickFile() async {
     FilePickerResult? fileResult = await FilePicker.platform.pickFiles();
     if (fileResult?.files.first != null) {
       final result = await OpenFileIOS().open(fileResult!.files.first.path);
@@ -30,7 +30,7 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
-  _openExternalImage() async {
+  Future<void> _openExternalImage() async {
     setState(() {
       canRequestFocus = false;
     });
@@ -61,7 +61,7 @@ class _MyAppState extends State<MyApp> {
                 canRequestFocus: canRequestFocus,
               ),
               TextButton(
-                onPressed: openFile,
+                onPressed: _openPickFile,
                 child: const Text('Tap to open file'),
               ),
             ],

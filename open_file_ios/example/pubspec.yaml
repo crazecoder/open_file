@@ -42,7 +42,7 @@ dependencies:
     # The example app is bundled with the plugin so we use a path dependency on
     # the parent directory to use the current plugin's version.
     path: ../
-  file_picker: ^5.3.2
+  file_picker: ^10.1.2
 
 dev_dependencies:
   flutter_test:
