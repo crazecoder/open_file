@@ -1,12 +1,8 @@
-
-import 'dart:typed_data';
+import 'dart:async';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:open_file_ios/open_file_ios.dart';
-import 'dart:async';
-
-
 
 void main() => runApp(MyApp());
 
@@ -24,23 +20,23 @@ class _MyAppState extends State<MyApp> {
   }
 
   // ignore: unused_element
-  _openPickFile() async {
+  Future<void> _openPickFile() async {
     FilePickerResult? fileResult = await FilePicker.platform.pickFiles();
     if (fileResult?.files.first != null) {
-
-      final result =
-      await OpenFileIOS().open(fileResult!.files.first.path);
+      final result = await OpenFileIOS().open(fileResult!.files.first.path);
       setState(() {
         _openResult = "type=${result.type}  message=${result.message}";
       });
     }
   }
 
-  _openExternalImage() async {
+  Future<void> _openExternalImage() async {
     setState(() {
       canRequestFocus = false;
     });
-    final result = await OpenFileIOS().open("/Users/crazecoder/Library/Developer/CoreSimulator/Devices/9FDE8459-AD12-4665-A0C0-FF1A5D82CF9D/data/Downloads/1.jpeg",isIOSAppOpen: true);
+    final result = await OpenFileIOS().open(
+        "/Users/crazecoder/Library/Developer/CoreSimulator/Devices/9FDE8459-AD12-4665-A0C0-FF1A5D82CF9D/data/Downloads/1.jpeg",
+        isIOSAppOpen: true);
     // final result = await OpenFileIOS().open("/Users/crazecoder/Library/Developer/CoreSimulator/Devices/9FDE8459-AD12-4665-A0C0-FF1A5D82CF9D/data/Downloads/R-C.jpeg");
     setState(() {
       _openResult = "type=${result.type}  message=${result.message}";
@@ -60,9 +56,12 @@ class _MyAppState extends State<MyApp> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Text('open result: $_openResult\n'),
-              TextField(autofocus: false,canRequestFocus: canRequestFocus,),
+              TextField(
+                autofocus: false,
+                canRequestFocus: canRequestFocus,
+              ),
               TextButton(
-                onPressed: openFile,
+                onPressed: _openPickFile,
                 child: const Text('Tap to open file'),
               ),
             ],

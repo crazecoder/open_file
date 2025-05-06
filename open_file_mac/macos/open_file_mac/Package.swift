@@ -13,7 +13,7 @@ let package = Package(
     .macOS("10.14")
   ],
   products: [
-    .library(name: "open_file_mac", targets: ["open_file_mac"])
+    .library(name: "open-file-mac", targets: ["open_file_mac"])
   ],
   dependencies: [],
   targets: [
