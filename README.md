@@ -1,11 +1,11 @@
 # open_file
-[![pub package](https://img.shields.io/pub/v/open_file.svg)](https://pub.dartlang.org/packages/open_file) [![Discord](https://img.shields.io/badge/discord-FlutterDev-green.svg)](https://discord.gg/q6yFDws3Xc)
+[![pub package](https://img.shields.io/pub/v/open_file.svg)](https://pub.dev/packages/open_file) [![Discord](https://img.shields.io/badge/discord-FlutterDev-green.svg)](https://discord.gg/q6yFDws3Xc)
 
 A plug-in that can call native APP to open files with string result in flutter, support iOS(DocumentInteraction) / android(intent) / PC(ffi) / web(dart:html)
 
 ## Usage
 
-To use this plugin, add [open_file](https://pub.dartlang.org/packages/open_file#-installing-tab-) as a dependency in your pubspec.yaml file.
+To use this plugin, add [open_file](https://pub.dev/packages/open_file#-installing-tab-) as a dependency in your pubspec.yaml file.
 
 If you want to open an external file, You need to request permission start in 3.3.0, This is an [example](https://github.com/crazecoder/open_file/blob/master/open_file/example/lib/main.dart)
 
@@ -185,7 +185,7 @@ subprojects {
             {".pdf",    "com.adobe.pdf"}
 }
 ```
-### MacOS
+### macOS
 add this to the entitlements file
 ```
 <key>com.apple.security.app-sandbox</key>
