@@ -5,9 +5,27 @@
 
 static NSString *const CHANNEL_NAME = @"open_file";
 
+static UIViewController *RootViewController(void) {
+  if (@available(iOS 13, *)) { // UIApplication.keyWindow is deprecated
+    NSSet *scenes = [[UIApplication sharedApplication] connectedScenes];
+    for (UIScene *scene in scenes) {
+      if ([scene isKindOfClass:[UIWindowScene class]]) {
+        NSArray *windows = ((UIWindowScene *)scene).windows;
+        for (UIWindow *window in windows) {
+          if (window.isKeyWindow) {
+            return window.rootViewController;
+          }
+        }
+      }
+    }
+    return nil;
+  } else {
+      return [UIApplication sharedApplication].delegate.window.rootViewController;
+  }
+}
+
 @implementation OpenFilePlugin{
     FlutterResult _result;
-    UIViewController *_viewController;
     UIDocumentInteractionController *_documentController;
     UIDocumentInteractionController *_interactionController;
 }
@@ -16,18 +34,8 @@ static NSString *const CHANNEL_NAME = @"open_file";
     FlutterMethodChannel* channel = [FlutterMethodChannel
                                      methodChannelWithName:CHANNEL_NAME
                                      binaryMessenger:[registrar messenger]];
-    UIViewController *viewController =
-    [UIApplication sharedApplication].delegate.window.rootViewController;
-    OpenFilePlugin* instance = [[OpenFilePlugin alloc] initWithViewController:viewController];
+    OpenFilePlugin* instance = [[OpenFilePlugin alloc] init];
     [registrar addMethodCallDelegate:instance channel:channel];
-}
-
-- (instancetype)initWithViewController:(UIViewController *)viewController {
-    self = [super init];
-    if (self) {
-        _viewController = viewController;
-    }
-    return self;
 }
 
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
@@ -49,14 +57,22 @@ static NSString *const CHANNEL_NAME = @"open_file";
             _documentController.delegate = self;
             BOOL isAppOpen = [call.arguments[@"isIOSAppOpen"] boolValue];
             @try {
+                UIViewController *rootViewController = RootViewController();
+                if (!rootViewController) {
+                    NSDictionary * dict = @{@"message":@"the root view controller could not be found", @"type":@-4};
+                    NSData * jsonData = [NSJSONSerialization dataWithJSONObject:dict options:NSJSONWritingPrettyPrinted error:nil];
+                    NSString * json = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+                    result(json);
+                    return;
+                }
                 if (isAppOpen) {
-                    [self openFileWithUIActivityViewController:fileURL];
+                    [self openFileWithUIActivityViewController:fileURL vc:rootViewController];
                 }else{
                     BOOL previewSucceeded = [_documentController presentPreviewAnimated:YES];
                     if(!previewSucceeded){
                         //                    [_documentController presentOpenInMenuFromRect:CGRectMake(500,20,100,100) inView:[UIApplication sharedApplication].delegate.window.rootViewController.view animated:YES];
                         
-                        [self openFileWithUIActivityViewController:fileURL];
+                        [self openFileWithUIActivityViewController:fileURL vc:rootViewController];
                     }
                 }
                 
@@ -73,16 +89,16 @@ static NSString *const CHANNEL_NAME = @"open_file";
     }
 }
 
-- (void)openFileWithUIActivityViewController:(NSURL *)fileURL{
+- (void)openFileWithUIActivityViewController:(NSURL *)fileURL vc:(UIViewController *)rootViewController {
     UIActivityViewController *activityViewController = [[UIActivityViewController alloc] initWithActivityItems:@[fileURL] applicationActivities:nil];
     
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
-        activityViewController.popoverPresentationController.sourceView = _viewController.view;
-        activityViewController.popoverPresentationController.sourceRect = CGRectMake(CGRectGetMidX(_viewController.view.bounds), CGRectGetMidY(_viewController.view.bounds), 0, 0);
+        activityViewController.popoverPresentationController.sourceView = rootViewController.view;
+        activityViewController.popoverPresentationController.sourceRect = CGRectMake(CGRectGetMidX(rootViewController.view.bounds), CGRectGetMidY(rootViewController.view.bounds), 0, 0);
         activityViewController.popoverPresentationController.permittedArrowDirections = UIPopoverArrowDirectionAny;
     }
     
-    [_viewController presentViewController:activityViewController animated:YES completion:^{ [self doneEnd];}];
+    [rootViewController presentViewController:activityViewController animated:YES completion:^{ [self doneEnd];}];
 }
 
 - (void)documentInteractionControllerDidEndPreview:(UIDocumentInteractionController *)controller {
@@ -94,7 +110,7 @@ static NSString *const CHANNEL_NAME = @"open_file";
 }
 
 - (UIViewController *)documentInteractionControllerViewControllerForPreview:(UIDocumentInteractionController *)controller {
-    return [UIApplication sharedApplication].delegate.window.rootViewController;
+    return RootViewController();
 }
 
 - (BOOL) isBlankString:(NSString *)string {
