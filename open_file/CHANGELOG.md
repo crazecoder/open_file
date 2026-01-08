@@ -1,3 +1,7 @@
+## 3.5.11
+* [IOS] Fix compatibility with UIScene (thanks to [@amake](https://github.com/amake))
+* [IOS] Add SPM support (thanks to [@vicajilau](https://github.com/vicajilau))
+* [MacOS] Add SPM support
 ## 3.5.10
 * [MacOS] Optimized code and fix [#312](https://github.com/crazecoder/open_file/issues/312)
 ## 3.5.9

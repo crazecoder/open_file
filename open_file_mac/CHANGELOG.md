@@ -1,3 +1,5 @@
+## 1.0.4
+* Add SPM support
 ## 1.0.3
 * fix [#312](https://github.com/crazecoder/open_file/issues/312).
 ## 1.0.2
