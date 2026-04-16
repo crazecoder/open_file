@@ -1,3 +1,9 @@
+## 1.0.5
+* Add UISceneDelegate support for compatibility with Flutter 3.38+ and iOS 26+.
+  Uses `FlutterPluginRegistrar.viewController` to obtain the root view controller,
+  eliminating reliance on deprecated `UIApplication.windows` enumeration.
+  Falls back to `UIWindowScene.keyWindow` (iOS 15+) or window iteration (iOS 13–14).
+
 ## 1.0.4
 * Fix compatibility with UIScene.
 ## 1.0.3

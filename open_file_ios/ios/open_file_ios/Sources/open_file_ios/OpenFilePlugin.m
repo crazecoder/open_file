@@ -5,37 +5,70 @@
 
 static NSString *const CHANNEL_NAME = @"open_file";
 
-static UIViewController *RootViewController(void) {
-  if (@available(iOS 13, *)) { // UIApplication.keyWindow is deprecated
-    NSSet *scenes = [[UIApplication sharedApplication] connectedScenes];
-    for (UIScene *scene in scenes) {
-      if ([scene isKindOfClass:[UIWindowScene class]]) {
-        NSArray *windows = ((UIWindowScene *)scene).windows;
-        for (UIWindow *window in windows) {
-          if (window.isKeyWindow) {
-            return window.rootViewController;
-          }
-        }
-      }
-    }
-    return nil;
-  } else {
-      return [UIApplication sharedApplication].delegate.window.rootViewController;
-  }
-}
+// Extends FlutterPluginRegistrar to expose viewController available on the
+// concrete FlutterViewControllerRegistrar class used at runtime.
+@protocol OpenFileFlutterPluginRegistrar <FlutterPluginRegistrar>
+@property(nonatomic, readonly, weak) UIViewController *viewController;
+@end
 
 @implementation OpenFilePlugin{
     FlutterResult _result;
     UIDocumentInteractionController *_documentController;
     UIDocumentInteractionController *_interactionController;
+    NSObject<OpenFileFlutterPluginRegistrar> *_registrar;
 }
 
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
     FlutterMethodChannel* channel = [FlutterMethodChannel
                                      methodChannelWithName:CHANNEL_NAME
                                      binaryMessenger:[registrar messenger]];
-    OpenFilePlugin* instance = [[OpenFilePlugin alloc] init];
+    OpenFilePlugin* instance = [[OpenFilePlugin alloc] initWithRegistrar:registrar];
     [registrar addMethodCallDelegate:instance channel:channel];
+}
+
+- (instancetype)initWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
+    self = [super init];
+    if (self) {
+        _registrar = (NSObject<OpenFileFlutterPluginRegistrar> *)registrar;
+    }
+    return self;
+}
+
+// Returns the root view controller using the registrar's viewController for
+// UISceneDelegate compatibility (required for Flutter 3.38+ / iOS 26+).
+// Falls back to scene enumeration for environments where the registrar does
+// not expose viewController.
+- (UIViewController *)rootViewController {
+    if ([_registrar respondsToSelector:@selector(viewController)]) {
+        UIViewController *vc = _registrar.viewController;
+        if (vc != nil) {
+            return vc;
+        }
+    }
+    if (@available(iOS 15, *)) {
+        for (UIScene *scene in [[UIApplication sharedApplication] connectedScenes]) {
+            if ([scene isKindOfClass:[UIWindowScene class]]) {
+                UIWindow *keyWindow = ((UIWindowScene *)scene).keyWindow;
+                if (keyWindow != nil) {
+                    return keyWindow.rootViewController;
+                }
+            }
+        }
+        return nil;
+    } else if (@available(iOS 13, *)) {
+        for (UIScene *scene in [[UIApplication sharedApplication] connectedScenes]) {
+            if ([scene isKindOfClass:[UIWindowScene class]]) {
+                for (UIWindow *window in ((UIWindowScene *)scene).windows) {
+                    if (window.isKeyWindow) {
+                        return window.rootViewController;
+                    }
+                }
+            }
+        }
+        return nil;
+    } else {
+        return [UIApplication sharedApplication].delegate.window.rootViewController;
+    }
 }
 
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
@@ -57,7 +90,7 @@ static UIViewController *RootViewController(void) {
             _documentController.delegate = self;
             BOOL isAppOpen = [call.arguments[@"isIOSAppOpen"] boolValue];
             @try {
-                UIViewController *rootViewController = RootViewController();
+                UIViewController *rootViewController = [self rootViewController];
                 if (!rootViewController) {
                     NSDictionary * dict = @{@"message":@"the root view controller could not be found", @"type":@-4};
                     NSData * jsonData = [NSJSONSerialization dataWithJSONObject:dict options:NSJSONWritingPrettyPrinted error:nil];
@@ -110,7 +143,7 @@ static UIViewController *RootViewController(void) {
 }
 
 - (UIViewController *)documentInteractionControllerViewControllerForPreview:(UIDocumentInteractionController *)controller {
-    return RootViewController();
+    return [self rootViewController];
 }
 
 - (BOOL) isBlankString:(NSString *)string {
