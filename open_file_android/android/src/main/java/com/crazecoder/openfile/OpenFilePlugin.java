@@ -56,8 +56,6 @@ public class OpenFilePlugin implements MethodCallHandler
 
     private int REQUEST_CODE_FOR_DIR = 0x111;
 
-    private static final String TYPE_STRING_APK = "application/vnd.android.package-archive";
-
     @Override
     public void onMethodCall(MethodCall call, @NonNull Result result) {
         isResultSubmitted = false;
@@ -112,10 +110,6 @@ public class OpenFilePlugin implements MethodCallHandler
 
             }
         }
-        if (TYPE_STRING_APK.equals(mimeType)) {
-            openApkFile();
-            return;
-        }
         startActivity();
     }
 
@@ -164,24 +158,6 @@ public class OpenFilePlugin implements MethodCallHandler
             message = "File opened incorrectly。";
         }
         result(type, message);
-    }
-
-    private void openApkFile() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && !canInstallApk()) {
-            result(-3, "Permission denied: " + Manifest.permission.REQUEST_INSTALL_PACKAGES);
-        } else {
-            startActivity();
-        }
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    private boolean canInstallApk() {
-        try {
-            return activity.getPackageManager().canRequestPackageInstalls();
-        } catch (SecurityException e) {
-            e.printStackTrace();
-            return false;
-        }
     }
 
     private void result(int type, String message) {
