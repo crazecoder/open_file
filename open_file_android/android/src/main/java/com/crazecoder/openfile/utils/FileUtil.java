@@ -18,6 +18,8 @@ public class FileUtil {
         String[] fileStrs = filePath.split("\\.");
         String fileTypeStr = fileStrs[fileStrs.length - 1].toLowerCase();
         switch (fileTypeStr) {
+            case "ics":
+                return "text/calendar";
             case "3gp":
                 return "video/3gpp";
             case "torrent":
