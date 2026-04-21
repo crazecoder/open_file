@@ -340,5 +340,5 @@ packages:
     source: hosted
     version: "5.12.0"
 sdks:
-  dart: ">=3.9.0-0 <4.0.0"
-  flutter: ">=3.27.0"
+  dart: ">=3.11.0 <4.0.0"
+  flutter: ">=3.41.0"

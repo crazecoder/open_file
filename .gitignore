@@ -6,10 +6,12 @@
 .DS_Store
 .atom/
 .build/
+**/.build/
 .buildlog/
 .history
 .svn/
 .swiftpm/
+**/.swiftpm/
 migrate_working_dir/
 
 # IntelliJ related
