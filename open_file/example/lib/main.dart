@@ -7,10 +7,7 @@ import 'package:permission_handler/permission_handler.dart';
 
 void main() => runApp(MyApp());
 
-const types = {
-  "application/pdf": "pdf",
-  ".dwg": "application/x-autocad"
-};
+const types = {"application/pdf": "pdf", ".dwg": "application/x-autocad"};
 
 class MyApp extends StatefulWidget {
   @override
@@ -24,6 +21,7 @@ class _MyAppState extends State<MyApp> {
     _openExternalImage();
   }
 
+  // ignore: unused_element
   _openOtherTypeFile() async {
     final filePath = "/sdcard/Download/R-C.dwg";
     final extension = path.extension(filePath);
