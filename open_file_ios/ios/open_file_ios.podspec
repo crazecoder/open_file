@@ -6,7 +6,7 @@ Pod::Spec.new do |s|
   s.version          = '1.0.3'
   s.summary          = 'The iOS implementation of open_file.'
   s.description      = <<-DESC
-A new Flutter project.
+The iOS implementation of open_file.
                        DESC
   s.homepage         = 'https://github.com/crazecoder/open_file/tree/master/open_file_ios'
   s.license          = { :file => '../LICENSE' }

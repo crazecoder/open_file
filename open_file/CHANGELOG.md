@@ -1,3 +1,8 @@
+## 4.0.0
+* [Android] Remove the REQUEST_INSTALL_PACKAGES permission check.
+* [IOS] Fix SPM support (thanks to [@vicajilau](https://github.com/vicajilau)).
+* Minimum Flutter version is 3.41.0
+* Minimum Dart version is 3.11.0
 ## 3.5.11
 * [IOS] Fix compatibility with UIScene (thanks to [@amake](https://github.com/amake))
 * [IOS] Add SPM support (thanks to [@vicajilau](https://github.com/vicajilau))

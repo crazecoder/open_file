@@ -1,3 +1,7 @@
+## 1.1.0
+* Remove the REQUEST_INSTALL_PACKAGES permission check
+* Minimum Flutter version is 3.41.0
+* Minimum Dart version is 3.11.0
 ## 1.0.6
 * update `open_file_platform_interface: ^1.0.3`.
 ## 1.0.5
