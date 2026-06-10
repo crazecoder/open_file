@@ -1,13 +1,9 @@
-
-import 'dart:typed_data';
-
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 
 import 'package:open_file_android/open_file_android.dart';
 import 'package:permission_handler/permission_handler.dart';
-
 
 void main() => runApp(MyApp());
 
@@ -27,16 +23,12 @@ class _MyAppState extends State<MyApp> {
   _openPickFile() async {
     FilePickerResult? fileResult = await FilePicker.platform.pickFiles();
     if (fileResult?.files.first != null) {
-      Uint8List? fileBytes = fileResult!.files.first.bytes;
-
-      final result =
-      await OpenFileAndroid().open(fileResult.files.first.path);
+      final result = await OpenFileAndroid().open(fileResult!.files.first.path);
       setState(() {
         _openResult = "type=${result.type}  message=${result.message}";
       });
     }
   }
-
 
   // ignore: unused_element
   _openAppPrivateFile() async {
@@ -52,7 +44,8 @@ class _MyAppState extends State<MyApp> {
   _openOtherAppFile() async {
     //open an external storage image file on android 13
     if (await Permission.manageExternalStorage.request().isGranted) {
-      final result = await OpenFileAndroid().open("/data/user/0/xxx/images/1.jpg");
+      final result =
+          await OpenFileAndroid().open("/data/user/0/xxx/images/1.jpg");
       setState(() {
         _openResult = "type=${result.type}  message=${result.message}";
       });
@@ -96,7 +89,8 @@ class _MyAppState extends State<MyApp> {
   _openExternalFile() async {
     //open an external storage file
     if (await Permission.manageExternalStorage.request().isGranted) {
-      final result = await OpenFileAndroid().open("/sdcard/Android/data/R-C.xml");
+      final result =
+          await OpenFileAndroid().open("/sdcard/Android/data/R-C.xml");
       setState(() {
         _openResult = "type=${result.type}  message=${result.message}";
       });
