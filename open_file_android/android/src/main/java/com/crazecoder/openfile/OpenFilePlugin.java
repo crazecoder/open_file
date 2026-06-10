@@ -10,6 +10,9 @@ import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.provider.DocumentsContract;
+import android.provider.MediaStore;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -56,6 +59,8 @@ public class OpenFilePlugin implements MethodCallHandler
 
     private int REQUEST_CODE_FOR_DIR = 0x111;
 
+//    private static final String TYPE_STRING_APK = "application/vnd.android.package-archive";
+    
     @Override
     public void onMethodCall(MethodCall call, @NonNull Result result) {
         isResultSubmitted = false;
@@ -68,7 +73,7 @@ public class OpenFilePlugin implements MethodCallHandler
             if (call.hasArgument("type") && call.argument("type") != null) {
                 mimeType = call.argument("type");
             } else {
-                mimeType = FileUtil.getFileMimeType(filePath);
+                mimeType = FileUtil.getFileMimeType(context, filePath);
             }
             doOpen();
 
@@ -79,12 +84,13 @@ public class OpenFilePlugin implements MethodCallHandler
     }
 
     private void doOpen() {
-        if (!isFileAvailable()) {
+        if (!FileUtil.isFileAvailable(filePath)) {
+            result(-4, "The file path is unavailable");
             return;
         }
-        if (FileUtil.isNeedPermission(filePath)) {
+        if (FileUtil.isNeedPermission(context, filePath)) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && FileUtil.isExternalStoragePublicMedia(filePath, mimeType)) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && FileUtil.isExternalStoragePublicMedia(context, filePath, mimeType)) {
                     if (FileUtil.isImage(mimeType) && !hasPermission(Manifest.permission.READ_MEDIA_IMAGES) && !Environment.isExternalStorageManager()) {
                         result(-3, "Permission denied: " + Manifest.permission.READ_MEDIA_IMAGES);
                         return;
@@ -110,6 +116,10 @@ public class OpenFilePlugin implements MethodCallHandler
 
             }
         }
+//        if (TYPE_STRING_APK.equals(mimeType)) {
+//            openApkFile();
+//            return;
+//        }
         startActivity();
     }
 
@@ -117,18 +127,7 @@ public class OpenFilePlugin implements MethodCallHandler
         return ContextCompat.checkSelfPermission(activity, permission) == PermissionChecker.PERMISSION_GRANTED;
     }
 
-    private boolean isFileAvailable() {
-        if (filePath == null) {
-            result(-4, "the file path cannot be null");
-            return false;
-        }
-        return true;
-    }
-
     private void startActivity() {
-        if (!isFileAvailable()) {
-            return;
-        }
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.addCategory(Intent.CATEGORY_DEFAULT);
         Uri uri = FileUtil.getFileUri(context, filePath);
@@ -158,6 +157,24 @@ public class OpenFilePlugin implements MethodCallHandler
             message = "File opened incorrectly。";
         }
         result(type, message);
+    }
+
+    private void openApkFile() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && !canInstallApk()) {
+            result(-3, "Permission denied: " + Manifest.permission.REQUEST_INSTALL_PACKAGES);
+        } else {
+            startActivity();
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private boolean canInstallApk() {
+        try {
+            return activity.getPackageManager().canRequestPackageInstalls();
+        } catch (SecurityException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     private void result(int type, String message) {

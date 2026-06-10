@@ -1,11 +1,13 @@
 package com.crazecoder.openfile.utils;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.provider.DocumentsContract;
 
 import androidx.annotation.RequiresApi;
 import androidx.core.content.FileProvider;
@@ -14,7 +16,10 @@ import java.io.File;
 import java.io.IOException;
 
 public class FileUtil {
-    public static String getFileMimeType(String filePath) {
+    public static String getFileMimeType(Context context, String filePath) {
+        if (isContentUri(filePath)) {
+            return getContentMimeType(context, filePath);
+        }
         String[] fileStrs = filePath.split("\\.");
         String fileTypeStr = fileStrs[fileStrs.length - 1].toLowerCase();
         switch (fileTypeStr) {
@@ -158,6 +163,11 @@ public class FileUtil {
         }
     }
 
+    private static String getContentMimeType(Context context, String filePath) {
+        Uri uri = Uri.parse(filePath);
+        return context.getContentResolver().getType(uri);
+    }
+
     public static boolean isImage(String mimeType) {
         return mimeType.contains("image/");
     }
@@ -171,12 +181,15 @@ public class FileUtil {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.S)
-    public static boolean isExternalStoragePublicMedia(String filePath, String mimeType) {
-        return isExternalStoragePublicPath(filePath) && (isImage(mimeType) || isVideo(mimeType) || isAudio(mimeType));
+    public static boolean isExternalStoragePublicMedia(Context context, String filePath, String mimeType) {
+        return isExternalStoragePublicPath(context, filePath) && (isImage(mimeType) || isVideo(mimeType) || isAudio(mimeType));
     }
 
     @RequiresApi(api = Build.VERSION_CODES.S)
-    public static boolean isExternalStoragePublicPath(String filePath) {
+    public static boolean isExternalStoragePublicPath(Context context, String filePath) {
+        if (isContentUri(filePath)) {
+            return isContentExternalStoragePublicPath(context, filePath);
+        }
         boolean isExternalStoragePublicPath = false;
         String[] mediaStorePath = {
                 Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getPath()
@@ -202,14 +215,58 @@ public class FileUtil {
         return isExternalStoragePublicPath;
     }
 
-    public static boolean isNeedPermission(String filePath) {
+    private static boolean isContentExternalStoragePublicPath(Context context, String path) {
+        File file = new File(path);
+        if (!file.exists()) return false;
+
+        try {
+            String canonical = file.getCanonicalPath();
+
+            File external = Environment.getExternalStorageDirectory();
+            return canonical.startsWith(external.getCanonicalPath());
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public static boolean isFileAvailable(String filePath) {
+        if (filePath == null) {
+            return false;
+        }
+        if (isContentUri(filePath)) {
+            return true;
+        }
+        File file = new File(filePath);
+        return file.exists();
+    }
+
+    public static boolean isNeedPermission(Context context, String filePath) {
+        if (isContentUri(filePath)) {
+            return isContentNeedPermission(context, filePath);
+        }
         File file = new File(filePath);
         return !file.canRead();
+    }
+
+    private static boolean isContentNeedPermission(Context context, String path) {
+        Uri uri = Uri.parse(path);
+        try {
+            context.getContentResolver().openInputStream(uri);
+            return false;
+        } catch (SecurityException e){
+            return true;
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     public static String getCanonicalPath(String filePath) {
         if (filePath == null) {
             return null;
+        }
+        if (isContentUri(filePath)){
+            return filePath;
         }
         String canonicalPath;
         File file = new File(filePath);
@@ -222,6 +279,9 @@ public class FileUtil {
     }
 
     public static Uri getFileUri(Context context, String filePath) {
+        if (isContentUri(filePath)) {
+            return Uri.parse(filePath);
+        }
         Uri uri;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             if (isOtherAndroidDataDir(context, filePath)) {
@@ -320,6 +380,12 @@ public class FileUtil {
             String appDirCachePath = context.getCacheDir().getCanonicalPath();
             return fileCanonicalPath.startsWith(appDirFilePath) || fileCanonicalPath.startsWith(appDirCachePath);
         }
+    }
+
+    public static boolean isContentUri(String path) {
+        if (path == null || path.isEmpty()) return false;
+        Uri uri = Uri.parse(path);
+        return ContentResolver.SCHEME_CONTENT.equals(uri.getScheme());
     }
 
 }

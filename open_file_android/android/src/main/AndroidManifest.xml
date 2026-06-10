@@ -2,13 +2,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.crazecoder.openfile">
 
-    <application>
+    <application android:requestLegacyExternalStorage="true">
         <provider
             android:name="com.crazecoder.openfile.FileProvider"
             android:authorities="${applicationId}.fileProvider.com.crazecoder.openfile"
             android:exported="false"
             android:grantUriPermissions="true"
-            android:requestLegacyExternalStorage="true"
             tools:replace="android:authorities">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
