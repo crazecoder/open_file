@@ -195,6 +195,8 @@ static UIViewController *RootViewController(void) {
         _documentController.UTI=@"com.microsoft.windows-​media-wmv";
     }else if([exestr isEqualToString:@"pdf"]){
         _documentController.UTI=@"com.adobe.pdf";
+    }else if([exestr isEqualToString:@"ics"]){
+    _documentController.UTI = @"com.apple.ical.ics";
     }else {
         NSLog(@"doc type not supported for preview");
         NSLog(@"%@", exestr);
