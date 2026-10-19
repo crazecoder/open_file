@@ -2,13 +2,13 @@ import 'dart:ffi' as ffi;
 import 'package:ffi/ffi.dart';
 import 'package:open_file_platform_interface/open_file_platform_interface.dart';
 
-typedef ShellExecuteC = ffi.Int32 Function(
+typedef ShellExecuteC = ffi.IntPtr Function(
     ffi.Pointer hwnd,
     ffi.Pointer lpOperation,
     ffi.Pointer lpFile,
     ffi.Pointer lpParameters,
     ffi.Pointer lpDirectory,
-    ffi.Uint32 nShowCmd);
+    ffi.Int32 nShowCmd);
 typedef ShellExecuteDart = int Function(
     ffi.Pointer parentWindow,
     ffi.Pointer operation,
